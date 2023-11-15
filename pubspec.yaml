@@ -14,8 +14,11 @@ dependencies:
   cupertino_icons: ^1.0.2
   sqflite: ^2.0.0
   path: ^1.8.3
+  path_provider: ^2.0.5
   encrypt: ^5.0.0
   pointycastle: ^3.1.1
+  carousel_slider: ^4.2.1
+  flutter_slidable: ^3.0.1
   flutter_secure_storage: ^4.2.0
 
 dev_dependencies:

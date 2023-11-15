@@ -1,20 +1,18 @@
 // models/scene.dart
 
-import 'package:conversation_notebook/models/user.dart';
-
 class Scene {
   int? id;
   String sceneName;
   String? backgroundPath;
-  User user1;
-  User user2;
+  int user1Id;
+  int user2Id;
 
   Scene({
     this.id,
     required this.sceneName,
     this.backgroundPath,
-    required this.user1,
-    required this.user2,
+    required this.user1Id,
+    required this.user2Id,
   });
 
   Map<String, dynamic> toMap() {
@@ -22,8 +20,18 @@ class Scene {
       'id': id,
       'sceneName': sceneName,
       'backgroundPath': backgroundPath,
-      'user1': user1.toMap(),
-      'user2': user2.toMap(),
+      'user1Id': user1Id,
+      'user2Id': user2Id,
     };
+  }
+
+  factory Scene.fromMap(Map<String, dynamic> map) {
+    return Scene(
+      id: map['id'],
+      sceneName: map['sceneName'],
+      backgroundPath: map['backgroundPath'],
+      user1Id: map['user1Id'],
+      user2Id: map['user2Id'],
+    );
   }
 }

@@ -24,4 +24,14 @@ class User {
       'backgroundPath': backgroundPath,
     };
   }
+
+  factory User.fromMap(Map<String, dynamic> map) {
+    return User(
+      id: map['id'],
+      username: map['username'],
+      description: map['description'],
+      avatarPath: map['avatarPath'],
+      backgroundPath: map['backgroundPath'],
+    );
+  }
 }
