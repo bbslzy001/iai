@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../helpers/database_helper.dart';
+import '../models/user.dart';
 import 'chat_screen.dart';
 
 class UserCard {
@@ -18,13 +20,24 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   PageController _pageController = PageController(viewportFraction: 0.8);
-  List<UserCard> userCards = [
-    UserCard('User1', 'Description for User1'),
-    UserCard('User2', 'Description for User2'),
-    // Add more user cards as needed
-  ];
-
+  List<User> userList = [];
   String currentUser = 'User1';
+
+  @override
+  void initState() {
+    super.initState();
+    // Load user cards from the database when the screen initializes
+    _loadUserCards();
+  }
+
+  Future<void> _loadUserCards() async {
+    // Fetch user information from the database
+    List<User> users = await DatabaseHelper().getUsers();
+
+    setState(() {
+      userList = users;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,17 +52,14 @@ class _MainScreenState extends State<MainScreen> {
               // 排除手机顶部状态栏
               padding: EdgeInsets.only(top: statusBarHeight),
               height: screenHeight * 0.2,
-              color: Colors.blue,
               child: buildTopLayout(),
             ),
             Container(
-              height: screenHeight * 0.7,
-              color: Colors.green,
+              height: screenHeight * 0.65,
               child: buildCenterLayout(),
             ),
             Container(
-              height: screenHeight * 0.1,
-              color: Colors.red,
+              height: screenHeight * 0.15,
               child: buildBottomLayout(),
             ),
           ],
@@ -67,32 +77,33 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             Container(
               height: totalHeight,
-              color: Colors.blue,
               child: Center(
                 child: Text(
-                  'Notebook',
+                  'Note Book',
                   style: TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
+                    fontFamily: 'Pacifico',
                   ),
                 ),
               ),
             ),
             Positioned(
-              top: 8.0,
-              right: 8.0,
-              child: FloatingActionButton(
-                onPressed: () {
-                  // 点击按钮的操作
-                },
-                backgroundColor: Colors.red, // 调整按钮颜色
-                child: Text(
-                  'B',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+              top: 0,
+              right: 0,
+              child: SizedBox(
+                width: 48, // 调整宽度以适应按钮
+                height: 48, // 调整高度以适应按钮
+                child: IconButton(
+                  onPressed: () {
+                    // 点击按钮的操作
+                  },
+                  icon: Icon(
+                    Icons.add,
+                    color: Colors.black, // 调整按钮颜色
+                    size: 32,
                   ),
+                  alignment: Alignment.center, // 设置图标居中
                 ),
               ),
             ),
@@ -109,14 +120,14 @@ class _MainScreenState extends State<MainScreen> {
         double totalHeight = constraints.maxHeight;
 
         return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // 轮播图布局（85%）
             SizedBox(
-              height: totalHeight * 0.8, // Set a fixed height or adjust as needed
+              height: totalHeight * 0.85, // Set a fixed height or adjust as needed
               child: PageView.builder(
                 controller: _pageController,
-                itemCount: userCards.length,
+                itemCount: userList.length,
                 itemBuilder: (context, index) {
                   return AnimatedBuilder(
                     animation: _pageController,
@@ -130,7 +141,7 @@ class _MainScreenState extends State<MainScreen> {
                       return Center(
                         child: SizedBox(
                           width: totalWidth * 0.75,
-                          height: Curves.easeInOut.transform(value) * totalHeight * 0.7,
+                          height: Curves.easeInOut.transform(value) * totalHeight * 0.75,
                           child: child,
                         ),
                       );
@@ -171,17 +182,23 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget buildBottomLayout() {
     return Center(
-      child: ElevatedButton(
+      child: OutlinedButton(
         onPressed: () {
           _startChatScreen();
         },
-        style: ElevatedButton.styleFrom(
+        style: OutlinedButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          side: BorderSide(color: Colors.blue), // 调整边框颜色
         ),
         child: Text(
           'Start',
           style: TextStyle(
             fontSize: 24,
+            color: Colors.blue, // 调整字体颜色
+            fontFamily: 'Pacifico',
           ),
         ),
       ),
@@ -189,7 +206,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget buildCardLayout(int index) {
-    final card = userCards[index];
+    final user = userList[index];
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -222,7 +239,7 @@ class _MainScreenState extends State<MainScreen> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
                       child: Text(
-                        card.name,
+                        user.username,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -234,7 +251,7 @@ class _MainScreenState extends State<MainScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                     child: Text(
-                      card.description,
+                      user.description ?? '', // Use an empty string if user.description is null
                       textAlign: TextAlign.start,
                       style: TextStyle(
                         fontSize: 16,
@@ -264,24 +281,21 @@ class _MainScreenState extends State<MainScreen> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: 200, // Set the desired height of the drawer
-          child: Column(
-            children: [
-              ListTile(
-                title: Text('User1'),
-                onTap: () {
-                  _updateCurrentUser('User1');
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('User2'),
-                onTap: () {
-                  _updateCurrentUser('User2');
-                  Navigator.pop(context);
-                },
-                // Add more user options as needed
-              ),
+          padding: EdgeInsets.all(16.0),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.4, // 设置最大高度为屏幕高度的80%
+          ),
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              for (User user in userList)
+                ListTile(
+                  title: Text(user.username),
+                  onTap: () {
+                    _updateCurrentUser(user.username);
+                    Navigator.pop(context); // 关闭底部弹窗
+                  },
+                ),
             ],
           ),
         );
@@ -302,7 +316,7 @@ class _MainScreenState extends State<MainScreen> {
       MaterialPageRoute(
         builder: (context) => ChatScreen(
           currentUser: currentUser,
-          oppositeUser: userCards[currentPage].name,
+          oppositeUser: userList[currentPage].username,
         ),
       ),
     );

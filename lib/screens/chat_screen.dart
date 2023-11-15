@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:conversation_notebook/models/message_model.dart';
+import 'package:conversation_notebook/models/message.dart';
 import 'setting_screen.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -19,7 +19,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void addMessage(String text) {
     setState(() {
-      _messages.insert(0, Message(text, widget.currentUser));
+      //_messages.insert(0, Message(text, widget.currentUser));
     });
   }
 
@@ -52,7 +52,8 @@ class _ChatScreenState extends State<ChatScreen> {
               reverse: true,
               itemBuilder: (context, index) {
                 final message = _messages[index];
-                final bool isMe = message.sender == widget.currentUser;
+                //final bool isMe = message.sender == widget.currentUser;
+                final bool isMe = false;
 
                 return Align(
                   alignment: isMe ? Alignment.topRight : Alignment.topLeft,
@@ -67,14 +68,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          message.sender,
+                          'message.sender',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: isMe ? Colors.white : Colors.black,
                           ),
                         ),
                         Text(
-                          message.content,
+                          'message.content',
                           style: TextStyle(color: isMe ? Colors.white : Colors.black),
                         ),
                       ],
