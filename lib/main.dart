@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'package:conversation_notebook/color_schemes.dart';
 import 'package:conversation_notebook/pages/add_scene_page.dart';
 import 'package:conversation_notebook/pages/add_user_page.dart';
 import 'package:conversation_notebook/pages/chat_page.dart';
@@ -21,6 +22,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Character',
+      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
+      darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
       initialRoute: '/',
       onGenerateRoute: (settings) {
         switch (settings.name) {
