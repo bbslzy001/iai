@@ -241,8 +241,16 @@ class TabWidgetContent extends StatelessWidget {
               ),
             ],
           ),
-          child: ListTile(
-            title: Text(data is List<Scene> ? data[index].sceneName : data[index].username),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300), // MD3 uses a neutral color palette
+            ),
+            child: ListTile(
+              title: Text(
+                data is List<Scene> ? data[index].sceneName : data[index].username,
+              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), // MD3 uses more padding
+            ),
           ),
         );
       },

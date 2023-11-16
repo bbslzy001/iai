@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import 'package:conversation_notebook/models/message.dart';
 import 'package:conversation_notebook/models/user.dart';
-import 'package:conversation_notebook/pages/setting_page.dart';
 
 class ChatPage extends StatefulWidget {
   final int user1Id;
