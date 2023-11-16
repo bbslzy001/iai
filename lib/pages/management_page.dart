@@ -19,13 +19,23 @@ class _ManagementPageState extends State<ManagementPage> {
   final GlobalKey<_TabWidgetState> _scenesTabWidgetKey = GlobalKey<_TabWidgetState>();
   final GlobalKey<_TabWidgetState> _usersTabWidgetKey = GlobalKey<_TabWidgetState>();
 
+  bool isChanged = false;
+
+  void isChangedCallback() {
+      isChanged = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2, // Number of tabs
       child: Scaffold(
         appBar: AppBar(
-          leading: BackButton(color: Colors.black),
+          leading: BackButton(
+            onPressed: () {
+              Navigator.pop(context, isChanged);
+            },
+          ),
           title: Text('Management'),
           actions: [
             PopupMenuButton<String>(
@@ -34,6 +44,7 @@ class _ManagementPageState extends State<ManagementPage> {
                   Navigator.of(context).pushNamed('/addScene').then((result) {
                     if (result != null && result is bool && result) {
                       // 通过持有GlobalKey来获取相应的_TabContentState对象，然后调用其方法来刷新数据
+                      isChanged = true;  // 表明数据发生变化
                       _scenesTabWidgetKey.currentState?.updateStateCallback();
                     }
                   });
@@ -41,6 +52,7 @@ class _ManagementPageState extends State<ManagementPage> {
                   Navigator.of(context).pushNamed('/addUser').then((result) {
                     if (result != null && result is bool && result) {
                       // 通过持有GlobalKey来获取相应的_TabContentState对象，然后调用其方法来刷新数据
+                      isChanged = true;  // 表明数据发生变化
                       _usersTabWidgetKey.currentState?.updateStateCallback();
                     }
                   });
@@ -65,11 +77,18 @@ class _ManagementPageState extends State<ManagementPage> {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            TabWidget(tabName: 'Scenes', key: _scenesTabWidgetKey),
-            TabWidget(tabName: 'Users', key: _usersTabWidgetKey),
-          ],
+        body: WillPopScope(
+          // 拦截返回按钮，返回时传递数据
+          onWillPop: () async {
+            Navigator.pop(context, isChanged);
+            return false;
+          },
+          child: TabBarView(
+            children: [
+              TabWidget(tabName: 'Scenes', isChangedCallback: isChangedCallback, key: _scenesTabWidgetKey),
+              TabWidget(tabName: 'Users', isChangedCallback: isChangedCallback, key: _usersTabWidgetKey),
+            ],
+          ),
         ),
       ),
     );
@@ -78,8 +97,9 @@ class _ManagementPageState extends State<ManagementPage> {
 
 class TabWidget extends StatefulWidget {
   final String tabName;
+  final VoidCallback isChangedCallback;
 
-  const TabWidget({Key? key, required this.tabName}) : super(key: key);
+  const TabWidget({Key? key, required this.tabName, required this.isChangedCallback}) : super(key: key);
 
   @override
   _TabWidgetState createState() => _TabWidgetState();
@@ -149,7 +169,7 @@ class _TabWidgetState extends State<TabWidget> with AutomaticKeepAliveClientMixi
           } else {
             // 数据准备好后，构建页面
             List<dynamic> data = snapshot.data![0];
-            return TabWidgetContent(data);
+            return TabWidgetContent(data: data, updateStateCallback: updateStateCallback, isChangedCallback: widget.isChangedCallback);
           }
         },
       ),
@@ -161,44 +181,71 @@ class _TabWidgetState extends State<TabWidget> with AutomaticKeepAliveClientMixi
 }
 
 class TabWidgetContent extends StatelessWidget {
-  final List<dynamic> _data;
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final List<dynamic> data;
+  final VoidCallback updateStateCallback;
+  final VoidCallback isChangedCallback;
 
-  const TabWidgetContent(this._data, {Key? key}) : super(key: key);
+  TabWidgetContent({Key? key, required this.data, required this.updateStateCallback, required this.isChangedCallback}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: _data.length,
+      itemCount: data.length,
       itemBuilder: (context, index) {
         return Slidable(
           endActionPane: ActionPane(
             motion: ScrollMotion(),
             children: [
               SlidableAction(
-                onPressed: doNothing,
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                icon: Icons.delete,
-                label: 'Delete',
-              ),
-              SlidableAction(
-                onPressed: doNothing,
+                onPressed: (BuildContext context) {
+                  if (data[index] is Scene) {
+                    Navigator.of(context).pushNamed('/editScene', arguments: {
+                      'sceneId': data[index].id as int,
+                    }).then((result) {
+                      if (result != null && result is bool && result) {
+                        isChangedCallback();
+                        updateStateCallback();
+                      }
+                    });
+                  } else {
+                    Navigator.of(context).pushNamed('/editUser', arguments: {
+                      'userId': data[index].id as int,
+                    }).then((result) {
+                      if (result != null && result is bool && result) {
+                        isChangedCallback();
+                        updateStateCallback();
+                      }
+                    });
+                  }
+                },
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
                 icon: Icons.edit,
                 label: 'Edit',
               ),
+              SlidableAction(
+                onPressed: (BuildContext context) async {
+                  if (data[index] is Scene) {
+                    await _dbHelper.deleteScene(data[index].id!);
+                  } else {
+                    await _dbHelper.deleteUser(data[index].id!);
+                  }
+                  isChangedCallback();
+                  updateStateCallback();
+                },
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                icon: Icons.delete,
+                label: 'Delete',
+              ),
             ],
           ),
           child: ListTile(
-            title: Text(_data is List<Scene> ? _data[index].sceneName : _data[index].username),
+            title: Text(data is List<Scene> ? data[index].sceneName : data[index].username),
           ),
         );
       },
     );
-  }
-
-  void doNothing(BuildContext context) {
-    // Add your action implementation here
   }
 }
