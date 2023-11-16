@@ -34,7 +34,7 @@ class _AddScenePageState extends State<AddScenePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          leading: BackButton(color: Colors.black),
+          leading: BackButton(),
           title: Text('Add Scene'),
         ),
         body: FutureBuilder(
@@ -82,11 +82,13 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           TextFormField(
             initialValue: _scene.sceneName,
-            decoration: InputDecoration(labelText: 'Scene Name'),
+            decoration: InputDecoration(
+              labelText: 'Scene Name',
+              border: OutlineInputBorder(),
+            ),
             onChanged: (value) {
               setState(() {
                 _scene.sceneName = value;
@@ -96,7 +98,10 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
           SizedBox(height: 16),
           TextFormField(
             initialValue: _scene.backgroundPath,
-            decoration: InputDecoration(labelText: 'Background Path'),
+            decoration: InputDecoration(
+              labelText: 'Background Path',
+              border: OutlineInputBorder(),
+            ),
             onChanged: (value) {
               setState(() {
                 _scene.backgroundPath = value;
@@ -104,39 +109,51 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
             },
           ),
           SizedBox(height: 16),
-          DropdownButton<int>(
+          DropdownButtonFormField<int>(
+            decoration: InputDecoration(
+              labelText: 'Select User 1',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
             value: _scene.user1Id == -1 ? null : _scene.user1Id,
-            items: widget.users.map((user) {
+            items: widget.users.map<DropdownMenuItem<int>>((User user) {
               return DropdownMenuItem<int>(
                 value: user.id,
                 child: Text(user.username),
               );
             }).toList(),
-            onChanged: (value) {
+            onChanged: (int? newValue) {
               setState(() {
-                _scene.user1Id = value ?? _scene.user1Id;
+                _scene.user1Id = newValue ?? _scene.user1Id;
               });
             },
-            hint: Text('Select User 1'),
+            icon: const Icon(Icons.arrow_drop_down),
           ),
           SizedBox(height: 16),
-          DropdownButton<int>(
+          DropdownButtonFormField<int>(
+            decoration: InputDecoration(
+              labelText: 'Select User 2',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
             value: _scene.user2Id == -1 ? null : _scene.user2Id,
-            items: widget.users.map((user) {
+            items: widget.users.map<DropdownMenuItem<int>>((User user) {
               return DropdownMenuItem<int>(
                 value: user.id,
                 child: Text(user.username),
               );
             }).toList(),
-            onChanged: (value) {
+            onChanged: (int? newValue) {
               setState(() {
-                _scene.user2Id = value ?? _scene.user2Id;
+                _scene.user2Id = newValue ?? _scene.user2Id;
               });
             },
-            hint: Text('Select User 2'),
+            icon: const Icon(Icons.arrow_drop_down),
           ),
           SizedBox(height: 32),
-          ElevatedButton(
+          FilledButton.tonal(
             onPressed: (_scene.sceneName != '' && _scene.user1Id != -1 && _scene.user2Id != -1)
                 ? () async {
                     await _dbHelper.insertScene(_scene);
@@ -144,11 +161,6 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
                     Navigator.pop(context, true);
                   }
                 : null, // 设置为null禁用按钮
-            style: ElevatedButton.styleFrom(
-              backgroundColor: (_scene.sceneName != '' && _scene.user1Id != -1 && _scene.user2Id != -1)
-                  ? Colors.blue // 按钮颜色
-                  : Colors.grey, // 禁用时的颜色
-            ),
             child: Text('Finish'),
           ),
         ],

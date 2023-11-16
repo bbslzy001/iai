@@ -44,7 +44,7 @@ class _EditScenePageState extends State<EditScenePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(color: Colors.black),
+        leading: BackButton(),
         title: Text('Edit Scene'),
       ),
       body: FutureBuilder(
@@ -95,11 +95,13 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextFormField(
               initialValue: widget.scene.sceneName,
-              decoration: InputDecoration(labelText: 'Scene Name'),
+              decoration: InputDecoration(
+                labelText: 'Scene Name',
+                border: OutlineInputBorder(),
+              ),
               onChanged: (value) {
                 setState(() {
                   widget.scene.sceneName = value;
@@ -109,7 +111,10 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
             SizedBox(height: 16),
             TextFormField(
               initialValue: widget.scene.backgroundPath,
-              decoration: InputDecoration(labelText: 'Background Path'),
+              decoration: InputDecoration(
+                labelText: 'Background Path',
+                border: OutlineInputBorder(),
+              ),
               onChanged: (value) {
                 setState(() {
                   widget.scene.backgroundPath = value;
@@ -117,39 +122,51 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
               },
             ),
             SizedBox(height: 16),
-            DropdownButton<int>(
+            DropdownButtonFormField<int>(
+              decoration: InputDecoration(
+                labelText: 'Select User 1',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
               value: widget.scene.user1Id,
-              items: widget.users.map((user) {
+              items: widget.users.map<DropdownMenuItem<int>>((User user) {
                 return DropdownMenuItem<int>(
                   value: user.id,
                   child: Text(user.username),
                 );
               }).toList(),
-              onChanged: (value) {
+              onChanged: (int? newValue) {
                 setState(() {
-                  widget.scene.user1Id = value ?? widget.scene.user1Id;
+                  widget.scene.user1Id = newValue ?? widget.scene.user1Id;
                 });
               },
-              hint: Text('Select User 1'),
+              icon: const Icon(Icons.arrow_drop_down),
             ),
             SizedBox(height: 16),
-            DropdownButton<int>(
+            DropdownButtonFormField<int>(
+              decoration: InputDecoration(
+                labelText: 'Select User 2',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
               value: widget.scene.user2Id,
-              items: widget.users.map((user) {
+              items: widget.users.map<DropdownMenuItem<int>>((User user) {
                 return DropdownMenuItem<int>(
                   value: user.id,
                   child: Text(user.username),
                 );
               }).toList(),
-              onChanged: (value) {
+              onChanged: (int? newValue) {
                 setState(() {
-                  widget.scene.user2Id = value ?? widget.scene.user2Id;
+                  widget.scene.user2Id = newValue ?? widget.scene.user2Id;
                 });
               },
-              hint: Text('Select User 2'),
+              icon: const Icon(Icons.arrow_drop_down),
             ),
             SizedBox(height: 32),
-            ElevatedButton(
+            FilledButton.tonal(
               onPressed: (widget.scene.sceneName != '')
                   ? () async {
                       await _dbHelper.updateScene(widget.scene);
@@ -157,11 +174,6 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                       Navigator.pop(context, true);
                     }
                   : null, // 设置为null禁用按钮
-              style: ElevatedButton.styleFrom(
-                backgroundColor: (widget.scene.sceneName != '')
-                    ? Colors.blue // 按钮颜色
-                    : Colors.grey, // 禁用时的颜色
-              ),
               child: Text('Finish'),
             ),
           ],

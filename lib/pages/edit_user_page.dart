@@ -35,7 +35,7 @@ class _EditUserPageState extends State<EditUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(color: Colors.black),
+        leading: BackButton(),
         title: Text('Edit User'),
       ),
       body: FutureBuilder(
@@ -84,11 +84,13 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextFormField(
               initialValue: widget.user.username,
-              decoration: InputDecoration(labelText: 'Username'),
+              decoration: InputDecoration(
+                labelText: 'Username',
+                border: OutlineInputBorder(),
+              ),
               onChanged: (value) {
                 setState(() {
                   widget.user.username = value;
@@ -98,7 +100,10 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
             SizedBox(height: 16),
             TextFormField(
               initialValue: widget.user.description,
-              decoration: InputDecoration(labelText: 'Description'),
+              decoration: InputDecoration(
+                labelText: 'Description',
+                border: OutlineInputBorder(),
+              ),
               onChanged: (value) {
                 setState(() {
                   widget.user.description = value;
@@ -108,7 +113,10 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
             SizedBox(height: 16),
             TextFormField(
               initialValue: widget.user.avatarPath,
-              decoration: InputDecoration(labelText: 'Avatar Path'),
+              decoration: InputDecoration(
+                labelText: 'Avatar Path',
+                border: OutlineInputBorder(),
+              ),
               onChanged: (value) {
                 setState(() {
                   widget.user.avatarPath = value;
@@ -118,7 +126,10 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
             SizedBox(height: 16),
             TextFormField(
               initialValue: widget.user.backgroundPath,
-              decoration: InputDecoration(labelText: 'Background Path'),
+              decoration: InputDecoration(
+                labelText: 'Background Path',
+                border: OutlineInputBorder(),
+              ),
               onChanged: (value) {
                 setState(() {
                   widget.user.backgroundPath = value;
@@ -126,7 +137,7 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
               },
             ),
             SizedBox(height: 32),
-            ElevatedButton(
+            FilledButton.tonal(
               onPressed: (widget.user.username != '')
                   ? () async {
                       await _dbHelper.insertUser(widget.user);
@@ -134,11 +145,6 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
                       Navigator.pop(context, true);
                     }
                   : null, // 设置为null禁用按钮
-              style: ElevatedButton.styleFrom(
-                backgroundColor: (widget.user.username != '')
-                    ? Colors.blue // 按钮颜色
-                    : Colors.grey, // 禁用时的颜色
-              ),
               child: Text('Finish'),
             ),
           ],

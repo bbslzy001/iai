@@ -96,11 +96,11 @@ class _HomePageContentState extends State<HomePageContent> {
             Container(
               // 排除手机顶部状态栏
               padding: EdgeInsets.only(top: statusBarHeight),
-              height: screenHeight * 0.2,
+              height: screenHeight * 0.25,
               child: buildTopLayout(),
             ),
             Container(
-              height: screenHeight * 0.65,
+              height: screenHeight * 0.6,
               child: buildCenterLayout(),
             ),
             Container(
@@ -116,65 +116,49 @@ class _HomePageContentState extends State<HomePageContent> {
   }
 
   Widget buildTopLayout() {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        double totalHeight = constraints.maxHeight;
-
-        return Stack(
-          children: [
-            Container(
-              height: totalHeight,
-              child: Center(
-                child: Text(
-                  'Character',
-                  style: TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Pacifico',
-                  ),
-                ),
+    return Stack(
+      children: [
+        Container(
+          child: Center(
+            child: Text(
+              'Character',
+              style: TextStyle(
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Pacifico',
               ),
             ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: SizedBox(
-                width: 48, // 调整宽度以适应按钮
-                height: 48, // 调整高度以适应按钮
-                child: IconButton(
-                  onPressed: () {
-                    // 跳转到管理页面，返回该页面是判断是否返回true，如返回则代表数据发生了变化，需要callback
-                    Navigator.of(context).pushNamed("/management").then((result) {
-                      if (result != null && result is bool && result) {
-                        widget.updateStateCallback();
-                      }
-                    });
-                  },
-                  icon: Icon(
-                    Icons.settings,
-                    color: Colors.black, // 调整按钮颜色
-                    size: 32,
-                  ),
-                  alignment: Alignment.center, // 设置图标居中
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+          ),
+        ),
+        Positioned(
+          top: 10,
+          right: 10,
+          child: IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            selectedIcon: const Icon(Icons.settings),
+            onPressed: () {
+              // 跳转到管理页面，返回该页面是判断是否返回true，如返回则代表数据发生了变化，需要callback
+              Navigator.of(context).pushNamed("/management").then((result) {
+                if (result != null && result is bool && result) {
+                  widget.updateStateCallback();
+                }
+              });
+            },
+          ),
+        ),
+      ],
     );
   }
 
   Widget buildCenterLayout() {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        double totalWidth = constraints.maxWidth;
         double totalHeight = constraints.maxHeight;
 
         return CarouselSlider(
             carouselController: _carouselController,
             options: CarouselOptions(
-                height: totalHeight * 0.85,
+                height: totalHeight * 0.9,
                 aspectRatio: 16 / 9,
                 viewportFraction: 0.70,
                 enlargeCenterPage: true,
@@ -198,17 +182,37 @@ class _HomePageContentState extends State<HomePageContent> {
                         }
                       });
                     },
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 300),
-                      width: totalWidth,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: _selectedScene == scene ? Border.all(color: Colors.blue.shade500, width: 3) : null,
-                          boxShadow: _selectedScene == scene
-                              ? [BoxShadow(color: Colors.blue.shade100, blurRadius: 30, offset: Offset(0, 10))]
-                              : [BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 20, offset: Offset(0, 5))]),
-                      child: buildCardLayout(scene),
+                    child: Card(
+                      elevation: _selectedScene == scene ? 12 : 3,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            flex: 8,
+                            child: Container(
+                                margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+                                clipBehavior: Clip.hardEdge,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Image.asset(
+                                  scene.backgroundPath.isNotEmpty ? scene.backgroundPath: 'assets/test.png',
+                                  fit: BoxFit.fill,
+                                )),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Center(
+                              child: Text(
+                                scene.sceneName,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -222,62 +226,26 @@ class _HomePageContentState extends State<HomePageContent> {
     return Visibility(
       visible: _selectedScene != null,
       child: Center(
-        child: OutlinedButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed('/chat', arguments: {
-              'user1Id': _selectedScene!.user1Id,
-              'user2Id': _selectedScene!.user2Id,
-            });
-          },
-          style: OutlinedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            side: BorderSide(color: Colors.blue), // 调整边框颜色
-          ),
-          child: Text(
-            'Start',
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.blue, // 调整字体颜色
-              fontFamily: 'Pacifico',
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildCardLayout(Scene scene) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 8,
-          child: Container(
-              margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Image.asset(
-                scene.backgroundPath.isNotEmpty ? scene.backgroundPath: 'assets/test.png',
-                fit: BoxFit.fill,
-              )),
-        ),
-        Expanded(
-          flex: 2,
-          child: Center(
+        child: Container(
+          width: 180.0,
+          height: 60.0,
+          child: FilledButton.tonal(
+            onPressed: () {
+              Navigator.of(context).pushNamed('/chat', arguments: {
+                'user1Id': _selectedScene!.user1Id,
+                'user2Id': _selectedScene!.user2Id,
+              });
+            },
             child: Text(
-              scene.sceneName,
+              'Start',
               style: TextStyle(
                 fontSize: 24,
-                fontWeight: FontWeight.bold,
+                fontFamily: 'Pacifico',
               ),
             ),
           ),
-        ),
-      ],
+        )
+      ),
     );
   }
 }
