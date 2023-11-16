@@ -3,14 +3,14 @@
 class Scene {
   int? id;
   String sceneName;
-  String? backgroundPath;
+  String backgroundPath;
   int user1Id;
   int user2Id;
 
   Scene({
     this.id,
     required this.sceneName,
-    this.backgroundPath,
+    required this.backgroundPath,
     required this.user1Id,
     required this.user2Id,
   });

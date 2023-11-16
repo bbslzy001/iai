@@ -1,42 +1,42 @@
+// pages/home_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 import 'package:conversation_notebook/helpers/database_helper.dart';
 import 'package:conversation_notebook/models/scene.dart';
-import 'package:conversation_notebook/screens/chat_screen.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _HomePageState extends State<HomePage> {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   late Future<List<Scene>> _scenesFuture;
 
+  // 异步获取数据
   Future<List<Scene>> _getScenesFuture() async {
     // 模拟异步操作的延迟
     await Future.delayed(Duration(seconds: 2));
-
     return await _dbHelper.getScenes();
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _scenesFuture = _getScenes();
-  // }
-
-  // 在didChangeDependencies中检查当前页面是否处于栈的顶部
+  // 第一次获取数据
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (ModalRoute.of(context)!.isCurrent) {
-      // 当前页面处于栈的顶部，执行异步数据获取操作
+  void initState() {
+    super.initState();
+    _scenesFuture = _getScenesFuture();
+  }
+
+  // 重新获取数据，定义给子组件使用的回调函数
+  void updateStateCallback() {
+    // Future数据的状态从 completed 到 waiting，不需要手动设置为 null，FutureBuilder 会自动重新触发页面重新绘制
+    setState(() {
       _scenesFuture = _getScenesFuture();
-    }
+    });
   }
 
   @override
@@ -61,7 +61,7 @@ class _MainScreenState extends State<MainScreen> {
           } else {
             // 数据准备好后，构建页面
             List<Scene> scenes = snapshot.data![0];
-            return MainScreenContent(scenes: scenes);
+            return HomePageContent(scenes: scenes, updateStateCallback: updateStateCallback);
           }
         },
       ),
@@ -69,16 +69,17 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-class MainScreenContent extends StatefulWidget {
+class HomePageContent extends StatefulWidget {
   final List<Scene> scenes;
+  final VoidCallback updateStateCallback;
 
-  const MainScreenContent({Key? key, required this.scenes}) : super(key: key);
+  const HomePageContent({Key? key, required this.scenes, required this.updateStateCallback}) : super(key: key);
 
   @override
-  _MainScreenContentState createState() => _MainScreenContentState();
+  _HomePageContentState createState() => _HomePageContentState();
 }
 
-class _MainScreenContentState extends State<MainScreenContent> {
+class _HomePageContentState extends State<HomePageContent> {
   final CarouselController _carouselController = CarouselController();
   Scene? _selectedScene;
 
@@ -142,7 +143,12 @@ class _MainScreenContentState extends State<MainScreenContent> {
                 height: 48, // 调整高度以适应按钮
                 child: IconButton(
                   onPressed: () {
-                    // 点击按钮的操作
+                    // 跳转到管理页面，返回该页面是判断是否返回true，如返回则代表数据发生了变化，需要callback
+                    Navigator.of(context).pushNamed("/management").then((result) {
+                      if (result != null && result is bool && result) {
+                        widget.updateStateCallback();
+                      }
+                    });
                   },
                   icon: Icon(
                     Icons.settings,
@@ -173,6 +179,7 @@ class _MainScreenContentState extends State<MainScreenContent> {
                 viewportFraction: 0.70,
                 enlargeCenterPage: true,
                 pageSnapping: true,
+                enableInfiniteScroll: widget.scenes.length >= 3, // 根据卡片数量决定是否启用无限滚动
                 onPageChanged: (index, reason) {
                   setState(() {
                     // 切换到当前卡片，但并未选择
@@ -212,24 +219,30 @@ class _MainScreenContentState extends State<MainScreenContent> {
   }
 
   Widget buildBottomLayout() {
-    return Center(
-      child: OutlinedButton(
-        onPressed: () {
-          _startChatScreen();
-        },
-        style: OutlinedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
+    return Visibility(
+      visible: _selectedScene != null,
+      child: Center(
+        child: OutlinedButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed('/chat', arguments: {
+              'user1Id': _selectedScene!.user1Id,
+              'user2Id': _selectedScene!.user2Id,
+            });
+          },
+          style: OutlinedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            side: BorderSide(color: Colors.blue), // 调整边框颜色
           ),
-          side: BorderSide(color: Colors.blue), // 调整边框颜色
-        ),
-        child: Text(
-          'Start',
-          style: TextStyle(
-            fontSize: 24,
-            color: Colors.blue, // 调整字体颜色
-            fontFamily: 'Pacifico',
+          child: Text(
+            'Start',
+            style: TextStyle(
+              fontSize: 24,
+              color: Colors.blue, // 调整字体颜色
+              fontFamily: 'Pacifico',
+            ),
           ),
         ),
       ),
@@ -248,7 +261,7 @@ class _MainScreenContentState extends State<MainScreenContent> {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Image.asset(
-                scene.backgroundPath ?? '',
+                scene.backgroundPath.isNotEmpty ? scene.backgroundPath: 'assets/test.png',
                 fit: BoxFit.fill,
               )),
         ),
@@ -265,18 +278,6 @@ class _MainScreenContentState extends State<MainScreenContent> {
           ),
         ),
       ],
-    );
-  }
-
-  void _startChatScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ChatScreen(
-          user1Id: _selectedScene!.user1Id,
-          user2Id: _selectedScene!.user2Id,
-        ),
-      ),
     );
   }
 }

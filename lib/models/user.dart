@@ -3,16 +3,16 @@
 class User {
   int? id;
   String username;
-  String? description;
-  String? avatarPath;
-  String? backgroundPath;
+  String description;
+  String avatarPath;
+  String backgroundPath;
 
   User({
     this.id,
     required this.username,
-    this.description,
-    this.avatarPath,
-    this.backgroundPath,
+    required this.description,
+    required this.avatarPath,
+    required this.backgroundPath,
   });
 
   Map<String, dynamic> toMap() {

@@ -1,17 +1,55 @@
-import 'package:conversation_notebook/screens/main_screen.dart';
+// main.dart
+
 import 'package:flutter/material.dart';
+
+import 'package:conversation_notebook/pages/add_scene_page.dart';
+import 'package:conversation_notebook/pages/add_user_page.dart';
+import 'package:conversation_notebook/pages/chat_page.dart';
+import 'package:conversation_notebook/pages/edit_scene_page.dart';
+import 'package:conversation_notebook/pages/edit_user_page.dart';
+import 'package:conversation_notebook/pages/home_page.dart';
+import 'package:conversation_notebook/pages/management_page.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MainScreen(),
+      title: 'Character',
+      initialRoute: '/',
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/':
+            return MaterialPageRoute(builder: (context) => const HomePage());
+          case '/addScene':
+            return MaterialPageRoute(builder: (context) => const AddScenePage());
+          case '/addUser':
+            return MaterialPageRoute(builder: (context) => const AddUserPage());
+          case '/chat':
+            final Map<String, int> args = settings.arguments as Map<String, int>;
+            return MaterialPageRoute(builder: (context) => ChatPage(user1Id: args['user1Id']!, user2Id: args['user2Id']!));
+          case '/management':
+            return MaterialPageRoute(builder: (context) => const ManagementPage());
+          case '/editScene':
+            final Map<String, int> args = settings.arguments as Map<String, int>;
+            return MaterialPageRoute(builder: (context) => EditScenePage(sceneId: args['sceneId']!));
+          case '/editUser':
+            final Map<String, int> args = settings.arguments as Map<String, int>;
+            return MaterialPageRoute(builder: (context) => EditUserPage(userId: args['userId']!));
+          // case 'scene':
+          //   return MaterialPageRoute(builder: (context) => const ScenePage());
+          // case 'setting':
+          //   return MaterialPageRoute(builder: (context) => const SettingPage());
+          // case 'user':
+          //   return MaterialPageRoute(builder: (context) => const UserPage());
+        }
+        return null;
+      },
     );
   }
 }

@@ -5,16 +5,16 @@ class Message {
   int senderId;
   int receiverId;
   String contentType;
-  String? contentText;
-  String? contentPath;
+  String contentText;
+  String contentPath;
 
   Message({
     this.id,
     required this.senderId,
     required this.receiverId,
     required this.contentType,
-    this.contentText,
-    this.contentPath,
+    required this.contentText,
+    required this.contentPath,
   });
 
   Map<String, dynamic> toMap() {

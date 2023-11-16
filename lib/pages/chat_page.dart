@@ -1,21 +1,23 @@
+// pages/chat_page.dart
+
 import 'package:conversation_notebook/helpers/database_helper.dart';
 import 'package:flutter/material.dart';
 
 import 'package:conversation_notebook/models/message.dart';
 import 'package:conversation_notebook/models/user.dart';
-import 'package:conversation_notebook/screens/setting_screen.dart';
+import 'package:conversation_notebook/pages/setting_page.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatPage extends StatefulWidget {
   final int user1Id;
   final int user2Id;
 
-  const ChatScreen({Key? key, required this.user1Id, required this.user2Id}) : super(key: key);
+  const ChatPage({Key? key, required this.user1Id, required this.user2Id}) : super(key: key);
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatPageState extends State<ChatPage> {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   TextEditingController _messageController = TextEditingController();
   List<Message> _messages = [];
@@ -28,6 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
       receiverId: _oppositeUser!.id!,
       contentType: 'text',
       contentText: text,
+      contentPath: '',
     );
     message.id = await _dbHelper.insertMessage(message);
     setState(() {
