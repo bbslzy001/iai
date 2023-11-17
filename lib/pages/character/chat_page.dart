@@ -1,4 +1,4 @@
-// pages/chat_page.dart
+// pages/character/chat_page.dart
 
 import 'package:conversation_notebook/helpers/database_helper.dart';
 import 'package:flutter/material.dart';
@@ -49,28 +49,31 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.wait([_messagesFuture, _user1Future, _user2Future]),
-      builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-        // 检查异步操作的状态
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // 如果正在加载数据，可以显示加载指示器
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          // 如果发生错误，可以显示错误信息
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
-        } else {
-          // 数据准备好后，构建页面
-          List<Message> messages = snapshot.data![0];
-          User user1 = snapshot.data![1];
-          User user2 = snapshot.data![2];
-          return ChatPageContent(messages: messages, user1: user1, user2: user2);
-        }
-      },
+    return Scaffold(
+      body:
+        FutureBuilder(
+          future: Future.wait([_messagesFuture, _user1Future, _user2Future]),
+          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+            // 检查异步操作的状态
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // 如果正在加载数据，可以显示加载指示器
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              // 如果发生错误，可以显示错误信息
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else {
+              // 数据准备好后，构建页面
+              List<Message> messages = snapshot.data![0];
+              User user1 = snapshot.data![1];
+              User user2 = snapshot.data![2];
+              return ChatPageContent(messages: messages, user1: user1, user2: user2);
+            }
+          },
+        ),
     );
   }
 }
@@ -98,7 +101,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
   @override
   void initState() {
     super.initState();
-    _messages = widget.messages;
+    _messages = widget.messages.reversed.toList();
     _currentUser = widget.user1;
     _oppositeUser = widget.user2;
   }
@@ -121,12 +124,11 @@ class _ChatPageContentState extends State<ChatPageContent> {
   Widget build(BuildContext context) {
     double bottomNavBarHeight = MediaQuery.of(context).padding.bottom;
 
-    // 获取当前主题的颜色方案
     ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(color: Colors.black),
+        leading: BackButton(),
         centerTitle: false,
         titleSpacing: 0,
         title: ListTile(
@@ -141,7 +143,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
           },
           leading: CircleAvatar(
             backgroundImage: AssetImage(
-              _oppositeUser.avatarPath.isNotEmpty ? _oppositeUser.backgroundPath : 'assets/test.png',
+              _oppositeUser.avatarPath.isNotEmpty ? _oppositeUser.avatarPath : 'assets/test.png',
             ),
           ),
           title: Text(
@@ -229,21 +231,11 @@ class _ChatPageContentState extends State<ChatPageContent> {
                       },
                       minLines: 1,
                       maxLines: 5,
-                      cursorColor: Colors.black,
                       decoration: InputDecoration(
-                        contentPadding: EdgeInsets.only(right: 16, left: 20, bottom: 10, top: 10),
-                        hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+                        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16), // 调整垂直和水平内边距
                         hintText: 'Type a message',
-                        border: InputBorder.none,
-                        enabledBorder: OutlineInputBorder(
+                        border:  OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
-                          gapPadding: 0,
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          gapPadding: 0,
-                          borderSide: BorderSide(color: Colors.blue),
                         ),
                       ),
                     ),
@@ -270,13 +262,15 @@ class _ChatPageContentState extends State<ChatPageContent> {
   }
 
   Widget buildMessageWidget(Message message, bool isMe) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Align(
       alignment: isMe ? Alignment.topRight : Alignment.topLeft,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: isMe ? Colors.blue : Colors.grey[300],
+          color: isMe ? colorScheme.primary : colorScheme.secondary,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -284,7 +278,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
           children: [
             Text(
               message.contentText,
-              style: TextStyle(color: isMe ? Colors.white : Colors.black),
+              style: TextStyle(color: isMe ? colorScheme.onPrimary : colorScheme.onSecondary),
             ),
           ],
         ),

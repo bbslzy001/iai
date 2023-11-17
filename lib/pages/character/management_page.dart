@@ -1,4 +1,4 @@
-// screens/management_page.dart
+// pages/character/management_page.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -22,7 +22,7 @@ class _ManagementPageState extends State<ManagementPage> {
   bool isChanged = false;
 
   void isChangedCallback() {
-      isChanged = true;
+    isChanged = true;
   }
 
   @override
@@ -44,7 +44,7 @@ class _ManagementPageState extends State<ManagementPage> {
                   Navigator.of(context).pushNamed('/addScene').then((result) {
                     if (result != null && result is bool && result) {
                       // 通过持有GlobalKey来获取相应的_TabContentState对象，然后调用其方法来刷新数据
-                      isChanged = true;  // 表明数据发生变化
+                      isChanged = true; // 表明数据发生变化
                       _scenesTabWidgetKey.currentState?.updateStateCallback();
                     }
                   });
@@ -52,7 +52,7 @@ class _ManagementPageState extends State<ManagementPage> {
                   Navigator.of(context).pushNamed('/addUser').then((result) {
                     if (result != null && result is bool && result) {
                       // 通过持有GlobalKey来获取相应的_TabContentState对象，然后调用其方法来刷新数据
-                      isChanged = true;  // 表明数据发生变化
+                      isChanged = true; // 表明数据发生变化
                       _usersTabWidgetKey.currentState?.updateStateCallback();
                     }
                   });
@@ -242,12 +242,18 @@ class TabWidgetContent extends StatelessWidget {
             ],
           ),
           child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300), // MD3 uses a neutral color palette
-            ),
             child: ListTile(
+              leading: CircleAvatar(
+                backgroundImage: AssetImage(data[index] is Scene
+                    ? data[index].backgroundPath.isNotEmpty
+                        ? data[index].backgroundPath
+                        : 'assets/test.png'
+                    : data[index].avatarPath.isNotEmpty
+                        ? data[index].avatarPath
+                        : 'assets/test.png'),
+              ),
               title: Text(
-                data is List<Scene> ? data[index].sceneName : data[index].username,
+                data[index] is Scene ? data[index].sceneName : data[index].username,
               ),
               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), // MD3 uses more padding
             ),

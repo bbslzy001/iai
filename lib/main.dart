@@ -3,13 +3,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:conversation_notebook/color_schemes.dart';
-import 'package:conversation_notebook/pages/add_scene_page.dart';
-import 'package:conversation_notebook/pages/add_user_page.dart';
-import 'package:conversation_notebook/pages/chat_page.dart';
-import 'package:conversation_notebook/pages/edit_scene_page.dart';
-import 'package:conversation_notebook/pages/edit_user_page.dart';
-import 'package:conversation_notebook/pages/home_page.dart';
-import 'package:conversation_notebook/pages/management_page.dart';
+import 'package:conversation_notebook/pages/character/add_scene_page.dart';
+import 'package:conversation_notebook/pages/character/add_user_page.dart';
+import 'package:conversation_notebook/pages/character/chat_page.dart';
+import 'package:conversation_notebook/pages/character/edit_scene_page.dart';
+import 'package:conversation_notebook/pages/character/edit_user_page.dart';
+import 'package:conversation_notebook/pages/character/home_page.dart';
+import 'package:conversation_notebook/pages/character/management_page.dart';
 
 void main() {
   runApp(const MyApp());

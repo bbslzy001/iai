@@ -1,4 +1,4 @@
-// pages/home_page.dart
+// pages/character/home_page.dart
 
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';

@@ -1,4 +1,4 @@
-// pages/add_scene_page.dart
+// pages/character/add_scene_page.dart
 
 import 'package:flutter/material.dart';
 
