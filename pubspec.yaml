@@ -11,15 +11,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
-  sqflite: ^2.0.0
+  cupertino_icons: ^1.0.3
+  image_picker: ^1.0.4
+  sqflite: ^2.0.1
   path: ^1.8.3
-  path_provider: ^2.0.5
-  encrypt: ^5.0.0
-  pointycastle: ^3.1.1
+  path_provider: ^2.0.7
+  encrypt: ^5.0.1
+  pointycastle: ^3.3.4
   carousel_slider: ^4.2.1
   flutter_slidable: ^3.0.1
-  flutter_secure_storage: ^4.2.0
+  flutter_secure_storage: ^4.2.1
 
 dev_dependencies:
   flutter_test:

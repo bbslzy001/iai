@@ -26,7 +26,7 @@ class _EditUserPageState extends State<EditUserPage> {
   }
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     _userFuture = _getUserFuture();
   }
