@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:encrypt/encrypt.dart';
 import 'package:pointycastle/random/fortuna_random.dart';
 
-import 'package:conversation_notebook/helpers/database_helper.dart';
-import 'package:conversation_notebook/models/encryption_key.dart';
+import 'package:iai/helpers/database_helper.dart';
+import 'package:iai/models/encryption_key.dart';
 
 
 class EncryptHelper {

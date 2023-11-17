@@ -1,5 +1,5 @@
-name: conversation_notebook
-description: Build a conversation-like effect notebook
+name: iai
+description: A private app.
 
 publish_to: 'none'
 

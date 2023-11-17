@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-import 'package:conversation_notebook/helpers/database_helper.dart';
-import 'package:conversation_notebook/models/scene.dart';
+import 'package:iai/helpers/database_helper.dart';
+import 'package:iai/models/scene.dart';
 
 class CharacterPage extends StatefulWidget {
   const CharacterPage({Key? key}) : super(key: key);

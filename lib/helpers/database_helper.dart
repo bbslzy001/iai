@@ -6,11 +6,11 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:conversation_notebook/models/encryption_key.dart';
-import 'package:conversation_notebook/models/message.dart';
-import 'package:conversation_notebook/models/note.dart';
-import 'package:conversation_notebook/models/scene.dart';
-import 'package:conversation_notebook/models/user.dart';
+import 'package:iai/models/encryption_key.dart';
+import 'package:iai/models/message.dart';
+import 'package:iai/models/note.dart';
+import 'package:iai/models/scene.dart';
+import 'package:iai/models/user.dart';
 
 class DatabaseHelper {
   static const _databaseName = "character.db";

@@ -2,16 +2,16 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:conversation_notebook/color_schemes.dart';
-import 'package:conversation_notebook/pages/home_page.dart';
-import 'package:conversation_notebook/pages/character/add_scene_page.dart';
-import 'package:conversation_notebook/pages/character/add_user_page.dart';
-import 'package:conversation_notebook/pages/character/character_page.dart';
-import 'package:conversation_notebook/pages/character/chat_page.dart';
-import 'package:conversation_notebook/pages/character/edit_scene_page.dart';
-import 'package:conversation_notebook/pages/character/edit_user_page.dart';
-import 'package:conversation_notebook/pages/character/management_page.dart';
-import 'package:conversation_notebook/pages/notebook/notebook_page.dart';
+import 'package:iai/color_schemes.dart';
+import 'package:iai/pages/home_page.dart';
+import 'package:iai/pages/character/add_scene_page.dart';
+import 'package:iai/pages/character/add_user_page.dart';
+import 'package:iai/pages/character/character_page.dart';
+import 'package:iai/pages/character/chat_page.dart';
+import 'package:iai/pages/character/edit_scene_page.dart';
+import 'package:iai/pages/character/edit_user_page.dart';
+import 'package:iai/pages/character/management_page.dart';
+import 'package:iai/pages/notebook/notebook_page.dart';
 
 void main() {
   runApp(const MyApp());

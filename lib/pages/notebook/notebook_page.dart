@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:conversation_notebook/helpers/database_helper.dart';
-import 'package:conversation_notebook/models/note.dart';
+import 'package:iai/helpers/database_helper.dart';
+import 'package:iai/models/note.dart';
 
 class NotebookPage extends StatefulWidget {
   const NotebookPage({Key? key}) : super(key: key);

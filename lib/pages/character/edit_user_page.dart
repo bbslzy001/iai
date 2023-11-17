@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:conversation_notebook/models/user.dart';
-import 'package:conversation_notebook/helpers/database_helper.dart';
+import 'package:iai/models/user.dart';
+import 'package:iai/helpers/database_helper.dart';
 
 class EditUserPage extends StatefulWidget {
   final int userId;

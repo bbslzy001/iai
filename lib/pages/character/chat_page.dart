@@ -1,10 +1,10 @@
 // pages/character/chat_page.dart
 
-import 'package:conversation_notebook/helpers/database_helper.dart';
 import 'package:flutter/material.dart';
 
-import 'package:conversation_notebook/models/message.dart';
-import 'package:conversation_notebook/models/user.dart';
+import 'package:iai/helpers/database_helper.dart';
+import 'package:iai/models/message.dart';
+import 'package:iai/models/user.dart';
 
 class ChatPage extends StatefulWidget {
   final int user1Id;

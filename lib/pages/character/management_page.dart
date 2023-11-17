@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-import 'package:conversation_notebook/helpers/database_helper.dart';
-import 'package:conversation_notebook/models/user.dart';
-import 'package:conversation_notebook/models/scene.dart';
+import 'package:iai/helpers/database_helper.dart';
+import 'package:iai/models/user.dart';
+import 'package:iai/models/scene.dart';
 
 class ManagementPage extends StatefulWidget {
   const ManagementPage({Key? key}) : super(key: key);

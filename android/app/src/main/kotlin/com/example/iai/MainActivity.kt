@@ -1,4 +1,4 @@
-package com.example.conversation_notebook
+package com.example.iai
 
 import io.flutter.embedding.android.FlutterActivity
 

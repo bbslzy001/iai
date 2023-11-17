@@ -1,6 +1,6 @@
-# conversation_notebook
+# iai
 
-Build a conversation-like effect notebook
+A private app.
 
 ## Getting Started
 
