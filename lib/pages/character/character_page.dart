@@ -1,4 +1,4 @@
-// pages/character/home_page.dart
+// pages/character/character_page.dart
 
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -6,14 +6,14 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:conversation_notebook/helpers/database_helper.dart';
 import 'package:conversation_notebook/models/scene.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class CharacterPage extends StatefulWidget {
+  const CharacterPage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _CharacterPageState createState() => _CharacterPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _CharacterPageState extends State<CharacterPage> {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   late Future<List<Scene>> _scenesFuture;
 
@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
           } else {
             // 数据准备好后，构建页面
             List<Scene> scenes = snapshot.data![0];
-            return HomePageContent(scenes: scenes, updateStateCallback: updateStateCallback);
+            return CharacterPageContent(scenes: scenes, updateStateCallback: updateStateCallback);
           }
         },
       ),
@@ -69,17 +69,17 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class HomePageContent extends StatefulWidget {
+class CharacterPageContent extends StatefulWidget {
   final List<Scene> scenes;
   final VoidCallback updateStateCallback;
 
-  const HomePageContent({Key? key, required this.scenes, required this.updateStateCallback}) : super(key: key);
+  const CharacterPageContent({Key? key, required this.scenes, required this.updateStateCallback}) : super(key: key);
 
   @override
-  _HomePageContentState createState() => _HomePageContentState();
+  _CharacterPageContentState createState() => _CharacterPageContentState();
 }
 
-class _HomePageContentState extends State<HomePageContent> {
+class _CharacterPageContentState extends State<CharacterPageContent> {
   final CarouselController _carouselController = CarouselController();
   Scene? _selectedScene;
 
@@ -87,35 +87,31 @@ class _HomePageContentState extends State<HomePageContent> {
   Widget build(BuildContext context) {
     double statusBarHeight = MediaQuery.of(context).padding.top;
     double bottomNavBarHeight = MediaQuery.of(context).padding.bottom;
-    double screenHeight = MediaQuery.of(context).size.height - statusBarHeight - bottomNavBarHeight;
+    double screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            Container(
-              // 排除手机顶部状态栏
-              padding: EdgeInsets.only(top: statusBarHeight),
-              height: screenHeight * 0.25,
-              child: buildTopLayout(),
-            ),
-            Container(
-              height: screenHeight * 0.6,
-              child: buildCenterLayout(),
-            ),
-            Container(
-              // 排除手机底部导航栏
-              padding: EdgeInsets.only(bottom: bottomNavBarHeight),
-              height: screenHeight * 0.15,
-              child: buildBottomLayout(),
-            ),
-          ],
+    return Column(
+      children: [
+        Container(
+          // 排除手机顶部状态栏
+          padding: EdgeInsets.only(top: statusBarHeight),
+          height: screenHeight * 0.25,
+          child: buildTopLayout(context),
         ),
-      ),
+        Container(
+          height: screenHeight * 0.6,
+          child: buildCenterLayout(),
+        ),
+        Container(
+          // 排除手机底部导航栏
+          padding: EdgeInsets.only(bottom: bottomNavBarHeight),
+          height: screenHeight * 0.15,
+          child: buildBottomLayout(context),
+        ),
+      ],
     );
   }
 
-  Widget buildTopLayout() {
+  Widget buildTopLayout(BuildContext context) {
     return Stack(
       children: [
         Container(
@@ -135,7 +131,6 @@ class _HomePageContentState extends State<HomePageContent> {
           right: 10,
           child: IconButton(
             icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings),
             onPressed: () {
               // 跳转到管理页面，返回该页面是判断是否返回true，如返回则代表数据发生了变化，需要callback
               Navigator.of(context).pushNamed("/management").then((result) {
@@ -195,7 +190,7 @@ class _HomePageContentState extends State<HomePageContent> {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Image.asset(
-                                  scene.backgroundPath.isNotEmpty ? scene.backgroundPath: 'assets/test.png',
+                                  scene.backgroundPath.isNotEmpty ? scene.backgroundPath: 'assets/images/scene.png',
                                   fit: BoxFit.fill,
                                 )),
                           ),
@@ -222,7 +217,7 @@ class _HomePageContentState extends State<HomePageContent> {
     );
   }
 
-  Widget buildBottomLayout() {
+  Widget buildBottomLayout(BuildContext context) {
     return Visibility(
       visible: _selectedScene != null,
       child: Center(

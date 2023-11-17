@@ -3,13 +3,15 @@
 import 'package:flutter/material.dart';
 
 import 'package:conversation_notebook/color_schemes.dart';
+import 'package:conversation_notebook/pages/home_page.dart';
 import 'package:conversation_notebook/pages/character/add_scene_page.dart';
 import 'package:conversation_notebook/pages/character/add_user_page.dart';
+import 'package:conversation_notebook/pages/character/character_page.dart';
 import 'package:conversation_notebook/pages/character/chat_page.dart';
 import 'package:conversation_notebook/pages/character/edit_scene_page.dart';
 import 'package:conversation_notebook/pages/character/edit_user_page.dart';
-import 'package:conversation_notebook/pages/character/home_page.dart';
 import 'package:conversation_notebook/pages/character/management_page.dart';
+import 'package:conversation_notebook/pages/notebook/notebook_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +31,10 @@ class MyApp extends StatelessWidget {
         switch (settings.name) {
           case '/':
             return MaterialPageRoute(builder: (context) => const HomePage());
+          case '/character':
+            return MaterialPageRoute(builder: (context) => const CharacterPage());
+          case '/notebook':
+            return MaterialPageRoute(builder: (context) => const NotebookPage());
           case '/addScene':
             return MaterialPageRoute(builder: (context) => const AddScenePage());
           case '/addUser':

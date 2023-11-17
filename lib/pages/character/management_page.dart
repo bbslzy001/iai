@@ -247,10 +247,10 @@ class TabWidgetContent extends StatelessWidget {
                 backgroundImage: AssetImage(data[index] is Scene
                     ? data[index].backgroundPath.isNotEmpty
                         ? data[index].backgroundPath
-                        : 'assets/test.png'
+                        : 'assets/images/scene.png'
                     : data[index].avatarPath.isNotEmpty
                         ? data[index].avatarPath
-                        : 'assets/test.png'),
+                        : 'assets/images/useravatar.png'),
               ),
               title: Text(
                 data[index] is Scene ? data[index].sceneName : data[index].username,

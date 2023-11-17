@@ -143,7 +143,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
           },
           leading: CircleAvatar(
             backgroundImage: AssetImage(
-              _oppositeUser.avatarPath.isNotEmpty ? _oppositeUser.avatarPath : 'assets/test.png',
+              _oppositeUser.avatarPath.isNotEmpty ? _oppositeUser.avatarPath : 'assets/images/useravatar.png',
             ),
           ),
           title: Text(

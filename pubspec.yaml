@@ -29,7 +29,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/test.png
+    - assets/images/character.png
+    - assets/images/notebook.png
+    - assets/images/scene.png
+    - assets/images/useravatar.png
+    - assets/images/userbackground.png
   fonts:
     - family: Pacifico
       fonts:

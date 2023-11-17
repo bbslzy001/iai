@@ -7,9 +7,10 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:conversation_notebook/models/encryption_key.dart';
-import 'package:conversation_notebook/models/user.dart';
 import 'package:conversation_notebook/models/message.dart';
+import 'package:conversation_notebook/models/note.dart';
 import 'package:conversation_notebook/models/scene.dart';
+import 'package:conversation_notebook/models/user.dart';
 
 class DatabaseHelper {
   static const _databaseName = "character.db";
@@ -50,8 +51,8 @@ class DatabaseHelper {
         senderId INTEGER NOT NULL,
         receiverId INTEGER NOT NULL,
         contentType TEXT NOT NULL,
-        contentText TEXT,
-        contentPath TEXT
+        contentText TEXT NOT NULL,
+        contentPath TEXT NOT NULL
       )
     ''');
 
@@ -60,7 +61,7 @@ class DatabaseHelper {
       CREATE TABLE scene (
         id INTEGER PRIMARY KEY,
         sceneName TEXT NOT NULL,
-        backgroundPath TEXT,
+        backgroundPath TEXT NOT NULL,
         user1Id INTEGER NOT NULL,
         user2Id INTEGER NOT NULL
       )
@@ -71,9 +72,21 @@ class DatabaseHelper {
       CREATE TABLE user (
         id INTEGER PRIMARY KEY,
         username TEXT NOT NULL,
-        description TEXT,
-        avatarPath TEXT,
-        backgroundPath TEXT
+        description TEXT NOT NULL,
+        avatarPath TEXT NOT NULL,
+        backgroundPath TEXT NOT NULL
+      )
+    ''');
+
+    // Create Note table
+    await db.execute('''
+      CREATE TABLE note (
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        isCompleted INTEGER NOT NULL,
+        feedback TEXT NOT NULL,
+        feedbackMediaPaths TEXT NOT NULL
       )
     ''');
 
@@ -168,6 +181,36 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> maps = await db.query('user');
     return List.generate(maps.length, (i) {
       return User.fromMap(maps[i]);
+    });
+  }
+
+  // Note table CRUD
+  Future<int> insertNote(Note note) async {
+    final Database db = await instance.database;
+    return await db.insert('note', note.toMap());
+  }
+
+  Future<int> deleteNote(int noteId) async {
+    final Database db = await instance.database;
+    return await db.delete('note', where: 'id = ?', whereArgs: [noteId]);
+  }
+
+  Future<int> updateNote(Note note) async {
+    final Database db = await instance.database;
+    return await db.update('note', note.toMap(), where: 'id = ?', whereArgs: [note.id]);
+  }
+
+  Future<Note> getNoteById(int noteId) async {
+    final Database db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query('note', where: 'id = ?', whereArgs: [noteId]);
+    return Note.fromMap(maps.first);
+  }
+
+  Future<List<Note>> getNotes() async {
+    final Database db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query('note');
+    return List.generate(maps.length, (i) {
+      return Note.fromMap(maps[i]);
     });
   }
 
