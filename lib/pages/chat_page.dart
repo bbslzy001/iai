@@ -18,38 +18,111 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
-  TextEditingController _messageController = TextEditingController();
-  List<Message> _messages = [];
-  User? _currentUser;
-  User? _oppositeUser;
+  late Future<List<Message>> _messagesFuture;
+  late Future<User> _user1Future;
+  late Future<User> _user2Future;
 
-  void addMessage(String text) async {
-    Message message = Message(
-      senderId: _currentUser!.id!,
-      receiverId: _oppositeUser!.id!,
-      contentType: 'text',
-      contentText: text,
-      contentPath: '',
-    );
-    message.id = await _dbHelper.insertMessage(message);
-    setState(() {
-      _messages.insert(0, message);
-    });
+  // 异步获取数据
+  Future<List<Message>> getMessagesFuture() async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    return await _dbHelper.getMessagesByUserIds(widget.user1Id, widget.user2Id);
+  }
+
+  Future<User> getUser1Future() async {
+    await Future.delayed(Duration(seconds: 2));
+    return await _dbHelper.getUserById(widget.user1Id);
+  }
+
+  Future<User> getUser2Future() async {
+    await Future.delayed(Duration(seconds: 2));
+    return await _dbHelper.getUserById(widget.user2Id);
   }
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    _currentUser = await _dbHelper.getUserById(widget.user1Id);
-    _oppositeUser = await _dbHelper.getUserById(widget.user2Id);
-    _messages = await _dbHelper.getMessagesByUserIds(widget.user1Id, widget.user2Id);
+    _messagesFuture = getMessagesFuture();
+    _user1Future = getUser1Future();
+    _user2Future = getUser2Future();
   }
 
   @override
   Widget build(BuildContext context) {
-    double statusBarHeight = MediaQuery.of(context).padding.top;
+    return FutureBuilder(
+      future: Future.wait([_messagesFuture, _user1Future, _user2Future]),
+      builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+        // 检查异步操作的状态
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // 如果正在加载数据，可以显示加载指示器
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          // 如果发生错误，可以显示错误信息
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else {
+          // 数据准备好后，构建页面
+          List<Message> messages = snapshot.data![0];
+          User user1 = snapshot.data![1];
+          User user2 = snapshot.data![2];
+          return ChatPageContent(messages: messages, user1: user1, user2: user2);
+        }
+      },
+    );
+  }
+}
+
+class ChatPageContent extends StatefulWidget {
+  final List<Message> messages;
+  final User user1;
+  final User user2;
+
+  const ChatPageContent({Key? key, required this.messages, required this.user1, required this.user2}) : super(key: key);
+
+  @override
+  _ChatPageContentState createState() => _ChatPageContentState();
+}
+
+class _ChatPageContentState extends State<ChatPageContent> {
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+
+  final TextEditingController _messageController = TextEditingController();
+
+  late List<Message> _messages;
+  late User _currentUser;
+  late User _oppositeUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _messages = widget.messages;
+    _currentUser = widget.user1;
+    _oppositeUser = widget.user2;
+  }
+
+  void sendMessage(String text) async {
+    Message message = Message(
+      senderId: _currentUser.id!,
+      receiverId: _oppositeUser.id!,
+      contentType: 'text',
+      contentText: text,
+      contentPath: '',
+    );
+    setState(() {
+      _messages.insert(0, message);
+    });
+    _dbHelper.insertMessage(message);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     double bottomNavBarHeight = MediaQuery.of(context).padding.bottom;
-    double screenHeight = MediaQuery.of(context).size.height - statusBarHeight - bottomNavBarHeight;
+
+    // 获取当前主题的颜色方案
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -59,15 +132,20 @@ class _ChatPageState extends State<ChatPage> {
         title: ListTile(
           onTap: () {
             // 点击对方触发的效果
-            // 相互切换角色？
+            // 相互切换角色
+            setState(() {
+              User temp = _currentUser;
+              _currentUser = _oppositeUser;
+              _oppositeUser = temp;
+            });
           },
           leading: CircleAvatar(
             backgroundImage: AssetImage(
-              _oppositeUser!.avatarPath ?? '', // Assuming avatarPath is the image asset path
+              _oppositeUser.avatarPath.isNotEmpty ? _oppositeUser.backgroundPath : 'assets/test.png',
             ),
           ),
           title: Text(
-            _oppositeUser!.username,
+            _oppositeUser.username,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -76,11 +154,7 @@ class _ChatPageState extends State<ChatPage> {
         ),
         actions: [
           IconButton(
-            splashRadius: 20,
-            icon: Icon(
-              Icons.menu,
-              color: Colors.grey.shade700,
-            ),
+            icon: Icon(Icons.menu),
             onPressed: () {
               // 打开菜单
             },
@@ -99,7 +173,7 @@ class _ChatPageState extends State<ChatPage> {
                     itemCount: _messages.length,
                     itemBuilder: (context, index) {
                       Message message = _messages[index];
-                      bool isMe = message.senderId == _currentUser!.id;
+                      bool isMe = message.senderId == _currentUser.id;
                       return buildMessageWidget(message, isMe);
                     },
                   )
@@ -112,7 +186,7 @@ class _ChatPageState extends State<ChatPage> {
                           Icon(
                             Icons.chat,
                             size: 80,
-                            color: Colors.grey.shade400,
+                            color: colorScheme.outline,
                           ),
                           SizedBox(
                             height: 20,
@@ -121,7 +195,7 @@ class _ChatPageState extends State<ChatPage> {
                             'No messages yet',
                             style: TextStyle(
                               fontSize: 16,
-                              color: Colors.grey.shade400,
+                              color: colorScheme.outline,
                             ),
                           ),
                         ],
@@ -139,8 +213,7 @@ class _ChatPageState extends State<ChatPage> {
             child: Row(
               children: [
                 IconButton(
-                  splashRadius: 20,
-                  icon: Icon(Icons.add, color: Colors.grey.shade700),
+                  icon: const Icon(Icons.add),
                   onPressed: () {
                     // 发送媒体文件
                   },
@@ -177,17 +250,16 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                 ),
                 IconButton(
-                  splashRadius: 20,
                   icon: Icon(
                     Icons.send,
-                    color: _messageController.text.isNotEmpty ? Colors.blue : Colors.grey.shade700,
+                    color: _messageController.text.isNotEmpty ? colorScheme.primary : colorScheme.outline,
                   ),
-                  onPressed: () {
-                    if (_messageController.text.isNotEmpty) {
-                      addToMessages(_messageController.text);
-                      _messageController.clear();
-                    }
-                  },
+                  onPressed: _messageController.text.isNotEmpty
+                      ? () {
+                          sendMessage(_messageController.text);
+                          _messageController.clear();
+                        }
+                      : null,
                 ),
               ],
             ),
@@ -211,7 +283,7 @@ class _ChatPageState extends State<ChatPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              message.contentType,
+              message.contentText,
               style: TextStyle(color: isMe ? Colors.white : Colors.black),
             ),
           ],
@@ -219,6 +291,4 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
-
-  void addToMessages(String text) {}
 }
