@@ -1,10 +1,16 @@
 // pages/character/edit_scene_page.dart
 
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'package:iai/utils/saving_dialog.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/helpers/database_helper.dart';
+import 'package:iai/helpers/file_helper.dart';
+import 'package:iai/widgets/image_picker.dart';
 
 class EditScenePage extends StatefulWidget {
   final int sceneId;
@@ -16,59 +22,38 @@ class EditScenePage extends StatefulWidget {
 }
 
 class _EditScenePageState extends State<EditScenePage> {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
-  late Future<List<User>> _usersFuture;
-  late Future<Scene> _sceneFuture;
-
-  // 异步获取数据
-  Future<List<User>> _getUsersFuture() async {
-    // 模拟异步操作的延迟
-    await Future.delayed(Duration(seconds: 2));
-    return await _dbHelper.getUsers();
-  }
-
-  Future<Scene> _getSceneFuture() async {
-    // 模拟异步操作的延迟
-    await Future.delayed(Duration(seconds: 2));
-    return await _dbHelper.getSceneById(widget.sceneId);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _usersFuture = _getUsersFuture();
-    _sceneFuture = _getSceneFuture();
-  }
+  final DatabaseHelper _dbHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(),
         title: Text('Edit Scene'),
       ),
       body: FutureBuilder(
         // 传入Future列表
-        future: Future.wait([_usersFuture, _sceneFuture]),
+        future: Future.wait([
+          _dbHelper.getUsers(),
+          _dbHelper.getSceneById(widget.sceneId),
+        ]),
         // 构建页面的回调
         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
           // 检查异步操作的状态
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // 如果正在加载数据，可以显示加载指示器
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+          if (snapshot.hasData) {
+            // 数据准备完成，构建页面
+            List<User> users = snapshot.data![0];
+            Scene scene = snapshot.data![1];
+            return EditScenePageContent(users: users, scene: scene);
           } else if (snapshot.hasError) {
-            // 如果发生错误，可以显示错误信息
+            // 如果发生错误，显示错误信息
             return Center(
               child: Text('Error: ${snapshot.error}'),
             );
           } else {
-            // 如果没有错误，显示数据列表
-            // 从snapshot中取出数据
-            List<User> users = snapshot.data![0];
-            Scene scene = snapshot.data![1];
-            return EditScenePageContent(users: users, scene: scene);
+            // 如果正在加载数据，显示加载指示器
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
         },
       ),
@@ -87,7 +72,9 @@ class EditScenePageContent extends StatefulWidget {
 }
 
 class _EditScenePageContentState extends State<EditScenePageContent> {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final FileHelper _fileHelper = FileHelper();
+  late File _backgroundImage;
 
   @override
   Widget build(BuildContext context) {
@@ -105,19 +92,6 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
               onChanged: (value) {
                 setState(() {
                   widget.scene.sceneName = value;
-                });
-              },
-            ),
-            SizedBox(height: 16),
-            TextFormField(
-              initialValue: widget.scene.backgroundPath,
-              decoration: InputDecoration(
-                labelText: 'Background Path',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  widget.scene.backgroundPath = value;
                 });
               },
             ),
@@ -165,13 +139,44 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
               },
               icon: const Icon(Icons.arrow_drop_down),
             ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ImagePickerWidget(
+                    labelText: 'Background',
+                    getImage: () async {
+                      _backgroundImage = await _fileHelper.getMedia(widget.scene.backgroundImage);
+                      return _backgroundImage;
+                    },
+                    onTap: () async {
+                      XFile? pickedFile = await _fileHelper.pickMediaFromGallery();
+                      if (pickedFile != null) {
+                        _backgroundImage = File(pickedFile.path);
+                        return _backgroundImage;
+                      } else {
+                        return null;
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: 32),
             FilledButton.tonal(
               onPressed: (widget.scene.sceneName != '')
                   ? () async {
+                      SavingDialog.show(context);
+
+                      if (_backgroundImage.existsSync()) {
+                        widget.scene.backgroundImage = await _fileHelper.saveMedia(_backgroundImage);
+                      }
+
                       await _dbHelper.updateScene(widget.scene);
-                      // 返回管理页面，数据发生变化
-                      Navigator.pop(context, true);
+
+                      SavingDialog.hide(context);
+
+                      Navigator.pop(context, true);  // 返回管理页面，数据发生变化
                     }
                   : null, // 设置为null禁用按钮
               child: Text('Finish'),

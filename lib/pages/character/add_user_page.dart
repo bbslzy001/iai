@@ -1,9 +1,15 @@
 // pages/character/add_user_page.dart
 
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'package:iai/utils/saving_dialog.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/helpers/database_helper.dart';
+import 'package:iai/helpers/file_helper.dart';
+import 'package:iai/widgets/image_picker.dart';
 
 class AddUserPage extends StatefulWidget {
   const AddUserPage({Key? key}) : super(key: key);
@@ -17,7 +23,6 @@ class _AddUserPageState extends State<AddUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(),
         title: Text('Add User'),
       ),
       body: AddUserPageContent(),
@@ -33,8 +38,11 @@ class AddUserPageContent extends StatefulWidget {
 }
 
 class _AddUserPageContentState extends State<AddUserPageContent> {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
-  final User _user = User(username: '', description: '', avatarPath: '', backgroundPath: '');
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final FileHelper _fileHelper = FileHelper();
+  final User _user = User(username: '', description: '', avatarImage: '', backgroundImage: '');
+  late File _avatarImage;
+  late File _backgroundImage;
 
   @override
   Widget build(BuildContext context) {
@@ -68,38 +76,57 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
             },
           ),
           SizedBox(height: 16),
-          TextFormField(
-            initialValue: _user.avatarPath,
-            decoration: InputDecoration(
-              labelText: 'Avatar Path',
-              border: OutlineInputBorder(),
-            ),
-            onChanged: (value) {
-              setState(() {
-                _user.avatarPath = value;
-              });
-            },
-          ),
-          SizedBox(height: 16),
-          TextFormField(
-            initialValue: _user.backgroundPath,
-            decoration: InputDecoration(
-              labelText: 'Background Path',
-              border: OutlineInputBorder(),
-            ),
-            onChanged: (value) {
-              setState(() {
-                _user.backgroundPath = value;
-              });
-            },
+          Row(
+            children: [
+              Expanded(
+                child: ImagePickerWidget(
+                  labelText: 'Avatar',
+                  onTap: () async {
+                    XFile? pickedFile = await _fileHelper.pickMediaFromGallery();
+                    if (pickedFile != null) {
+                      _avatarImage = File(pickedFile.path);
+                      return _avatarImage;
+                    } else {
+                      return null;
+                    }
+                  },
+                ),
+              ),
+              SizedBox(width: 8), // 可以根据需要调整间距
+              Expanded(
+                child: ImagePickerWidget(
+                  labelText: 'Background',
+                  onTap: () async {
+                    XFile? pickedFile = await _fileHelper.pickMediaFromGallery();
+                    if (pickedFile != null) {
+                      _backgroundImage = File(pickedFile.path);
+                      return _backgroundImage;
+                    } else {
+                      return null;
+                    }
+                  },
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 32),
           FilledButton.tonal(
             onPressed: (_user.username != '')
                 ? () async {
+                    SavingDialog.show(context);
+
+                    if (_avatarImage.existsSync()) {
+                      _user.avatarImage = await _fileHelper.saveMedia(_avatarImage);
+                    }
+                    if (_backgroundImage.existsSync()) {
+                      _user.backgroundImage = await _fileHelper.saveMedia(_backgroundImage);
+                    }
+
                     await _dbHelper.insertUser(_user);
-                    // 返回管理页面，数据发生变化
-                    Navigator.pop(context, true);
+
+                    SavingDialog.hide(context);
+
+                    Navigator.pop(context, true);  // 返回管理页面，数据发生变化
                   }
                 : null, // 设置为null禁用按钮
             child: Text('Finish'),

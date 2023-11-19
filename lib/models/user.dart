@@ -4,15 +4,15 @@ class User {
   int? id;
   String username;
   String description;
-  String avatarPath;
-  String backgroundPath;
+  String avatarImage;
+  String backgroundImage;
 
   User({
     this.id,
     required this.username,
     required this.description,
-    required this.avatarPath,
-    required this.backgroundPath,
+    required this.avatarImage,
+    required this.backgroundImage,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,8 +20,8 @@ class User {
       'id': id,
       'username': username,
       'description': description,
-      'avatarPath': avatarPath,
-      'backgroundPath': backgroundPath,
+      'avatarImage': avatarImage,
+      'backgroundImage': backgroundImage,
     };
   }
 
@@ -30,8 +30,8 @@ class User {
       id: map['id'],
       username: map['username'],
       description: map['description'],
-      avatarPath: map['avatarPath'],
-      backgroundPath: map['backgroundPath'],
+      avatarImage: map['avatarImage'],
+      backgroundImage: map['backgroundImage'],
     );
   }
 }

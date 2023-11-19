@@ -14,13 +14,11 @@ class CharacterPage extends StatefulWidget {
 }
 
 class _CharacterPageState extends State<CharacterPage> {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final DatabaseHelper _dbHelper = DatabaseHelper();
   late Future<List<Scene>> _scenesFuture;
 
   // 异步获取数据
   Future<List<Scene>> _getScenesFuture() async {
-    // 模拟异步操作的延迟
-    await Future.delayed(Duration(seconds: 2));
     return await _dbHelper.getScenes();
   }
 
@@ -48,20 +46,20 @@ class _CharacterPageState extends State<CharacterPage> {
         // 构建页面的回调
         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
           // 检查异步操作的状态
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // 如果正在加载数据，可以显示加载指示器
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+          if (snapshot.hasData) {
+            // 数据准备完成，构建页面
+            List<Scene> scenes = snapshot.data![0];
+            return CharacterPageContent(scenes: scenes, updateStateCallback: updateStateCallback);
           } else if (snapshot.hasError) {
-            // 如果发生错误，可以显示错误信息
+            // 如果发生错误，显示错误信息
             return Center(
               child: Text('Error: ${snapshot.error}'),
             );
           } else {
-            // 数据准备好后，构建页面
-            List<Scene> scenes = snapshot.data![0];
-            return CharacterPageContent(scenes: scenes, updateStateCallback: updateStateCallback);
+            // 如果正在加载数据，显示加载指示器
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
         },
       ),
@@ -190,7 +188,7 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Image.asset(
-                                  scene.backgroundPath.isNotEmpty ? scene.backgroundPath: 'assets/images/scene.png',
+                                  scene.backgroundImage.isNotEmpty ? scene.backgroundImage: 'assets/images/scene.png',
                                   fit: BoxFit.fill,
                                 )),
                           ),

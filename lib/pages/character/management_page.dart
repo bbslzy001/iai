@@ -106,18 +106,14 @@ class TabWidget extends StatefulWidget {
 }
 
 class _TabWidgetState extends State<TabWidget> with AutomaticKeepAliveClientMixin {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final DatabaseHelper _dbHelper = DatabaseHelper();
   late Future<List<dynamic>> _dataFuture;
 
   Future<List<Scene>> _getScenesFuture() async {
-    // 模拟异步操作的延迟
-    await Future.delayed(Duration(seconds: 2));
     return await _dbHelper.getScenes();
   }
 
   Future<List<User>> _getUsersFuture() async {
-    // 模拟异步操作的延迟
-    await Future.delayed(Duration(seconds: 2));
     return await _dbHelper.getUsers();
   }
 
@@ -181,7 +177,7 @@ class _TabWidgetState extends State<TabWidget> with AutomaticKeepAliveClientMixi
 }
 
 class TabWidgetContent extends StatelessWidget {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final DatabaseHelper _dbHelper = DatabaseHelper();
   final List<dynamic> data;
   final VoidCallback updateStateCallback;
   final VoidCallback isChangedCallback;
@@ -190,6 +186,8 @@ class TabWidgetContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return ListView.builder(
       itemCount: data.length,
       itemBuilder: (context, index) {
@@ -219,8 +217,8 @@ class TabWidgetContent extends StatelessWidget {
                     });
                   }
                 },
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
+                backgroundColor: colorScheme.primary,
+                foregroundColor: colorScheme.primaryContainer,
                 icon: Icons.edit,
                 label: 'Edit',
               ),
@@ -234,8 +232,8 @@ class TabWidgetContent extends StatelessWidget {
                   isChangedCallback();
                   updateStateCallback();
                 },
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
+                backgroundColor: colorScheme.error,
+                foregroundColor: colorScheme.errorContainer,
                 icon: Icons.delete,
                 label: 'Delete',
               ),
@@ -245,11 +243,11 @@ class TabWidgetContent extends StatelessWidget {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundImage: AssetImage(data[index] is Scene
-                    ? data[index].backgroundPath.isNotEmpty
-                        ? data[index].backgroundPath
+                    ? data[index].backgroundImage.isNotEmpty
+                        ? data[index].backgroundImage
                         : 'assets/images/scene.png'
-                    : data[index].avatarPath.isNotEmpty
-                        ? data[index].avatarPath
+                    : data[index].avatarImage.isNotEmpty
+                        ? data[index].avatarImage
                         : 'assets/images/useravatar.png'),
               ),
               title: Text(

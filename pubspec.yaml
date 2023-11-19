@@ -16,11 +16,12 @@ dependencies:
   sqflite: ^2.0.1
   path: ^1.8.3
   path_provider: ^2.0.7
-  encrypt: ^5.0.1
+  encrypt: ^5.0.3
   pointycastle: ^3.3.4
   carousel_slider: ^4.2.1
   flutter_slidable: ^3.0.1
   flutter_secure_storage: ^4.2.1
+  flutter_cache_manager: ^3.3.1
 
 dev_dependencies:
   flutter_test:

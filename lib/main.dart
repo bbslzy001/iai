@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iai/color_schemes.dart';
 import 'package:iai/pages/home_page.dart';
+import 'package:iai/pages/setting_page.dart';
 import 'package:iai/pages/character/add_scene_page.dart';
 import 'package:iai/pages/character/add_user_page.dart';
 import 'package:iai/pages/character/character_page.dart';
@@ -31,6 +32,8 @@ class MyApp extends StatelessWidget {
         switch (settings.name) {
           case '/':
             return MaterialPageRoute(builder: (context) => const HomePage());
+          case '/setting':
+            return MaterialPageRoute(builder: (context) => const SettingPage());
           case '/character':
             return MaterialPageRoute(builder: (context) => const CharacterPage());
           case '/notebook':
@@ -52,8 +55,6 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(builder: (context) => EditUserPage(userId: args['userId']!));
           // case 'scene':
           //   return MaterialPageRoute(builder: (context) => const ScenePage());
-          // case 'setting':
-          //   return MaterialPageRoute(builder: (context) => const SettingPage());
           // case 'user':
           //   return MaterialPageRoute(builder: (context) => const UserPage());
         }

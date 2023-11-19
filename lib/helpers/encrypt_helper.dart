@@ -1,24 +1,40 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
+
 import 'package:encrypt/encrypt.dart';
+import 'package:pointycastle/pointycastle.dart';
 import 'package:pointycastle/random/fortuna_random.dart';
 
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/encryption_key.dart';
 
-
 class EncryptHelper {
-  // 将其设计为单例类
+  // 私有构造函数
   EncryptHelper._privateConstructor();
 
   // 创建 EncryptHelper 的单例实例
-  static final EncryptHelper instance = EncryptHelper._privateConstructor();
+  static final EncryptHelper _instance = EncryptHelper._privateConstructor();
+
+  // 获取单例实例
+  factory EncryptHelper() {
+    return _instance;
+  }
 
   // 只允许一个加密密钥
   static String? _encryptionKey;
 
   // 只允许一个加密器对象
   static Encrypter? _encrypter;
+
+  static String generateRandomKey() {
+    const keyLengthBytes = 32;  // 设置密钥长度为32字节，即256喂
+    final random = FortunaRandom();  // 创建安全随机数生成器实例
+    final sGen = Random.secure();  // 生成随机种子（密钥参数）
+    random.seed(KeyParameter(Uint8List.fromList(List.generate(32, (_) => sGen.nextInt(255)))));  // 初始化安全随机数生成器
+    final keyBytes = Uint8List.fromList(List.generate(keyLengthBytes, (index) => random.nextUint8()));  // 生成随机字节码
+    return base64.encode(keyBytes);  // 将字节码转换为base64字符串并返回
+  }
 
   // 获取加密器对象的异步方法
   Future<Encrypter> get encrypter async {
@@ -27,27 +43,18 @@ class EncryptHelper {
       return _encrypter!;
     }
 
-    // 创建加密器对象
-    _encrypter = Encrypter(AES(Key.fromUtf8(_encryptionKey!), mode: AESMode.ecb));
-    return _encrypter!;
-  }
-
-  // 获取加密密钥的异步方法
-  Future<String> get encryptionKey async {
-    // 如果加密密钥已设置，直接返回
-    if (_encryptionKey != null) {
-      return _encryptionKey!;
-    }
-
     // 如果加密密钥未设置，从数据库初始化
-    _encryptionKey = await _initEncryptionKey();
-    return _encryptionKey!;
+    _encryptionKey ??= await _initEncryptionKey();
+
+    // 创建加密器对象
+    _encrypter = Encrypter(AES(Key.fromBase64(_encryptionKey!), mode: AESMode.ecb));
+    return _encrypter!;
   }
 
   // 从数据库初始化加密密钥
   Future<String> _initEncryptionKey() async {
-    DatabaseHelper dbHelper = DatabaseHelper.instance;
-    String? storedKey = await dbHelper.getEncryptionKey();
+    final DatabaseHelper dbHelper = DatabaseHelper();
+    final String? storedKey = await dbHelper.getEncryptionKey();
 
     // 如果数据库中存在密钥，直接返回
     if (storedKey != null) {
@@ -55,37 +62,26 @@ class EncryptHelper {
     }
 
     // 如果数据库中不存在密钥，生成随机密钥
-    String newKey = generateRandomKey();
+    final String newKey = generateRandomKey();
     await dbHelper.addEncryptionKey(EncryptionKey(key: newKey));
     return newKey;
   }
 
-  static String generateRandomKey() {
-    const keyLength = 32; // 256 bits
-    final random = FortunaRandom(); // 使用密码学安全的随机数生成器
-    final keyBytes = Uint8List.fromList(List.generate(keyLength, (index) => random.nextUint8()));
-    return base64Url.encode(keyBytes);
-  }
-
   // 加密数据
-  Uint8List encryptData(Uint8List data) {
-    Encrypted encrypted = _encrypter!.encryptBytes(data);
+  Future<Uint8List> encryptData(Uint8List data) async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Encrypter encrypter = await _instance.encrypter;
+    final Encrypted encrypted = encrypter.encryptBytes(data);
     return Uint8List.fromList(encrypted.bytes);
   }
 
   // 解密媒体文件数据
-  Uint8List decryptData(Uint8List data) {
-    String decrypted = _encrypter!.decrypt(Encrypted(data));
+  Future<Uint8List> decryptData(Uint8List data) async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Encrypter encrypter = await _instance.encrypter;
+    final String decrypted = encrypter.decrypt(Encrypted(data));
     return Uint8List.fromList(decrypted.codeUnits);
   }
 }
-
-
-// EncryptHelper encryptHelper = EncryptHelper.instance;
-// Uint8List originalData = ...; // 要加密的数据
-//
-// // 加密
-// Uint8List encryptedData = encryptHelper.encryptData(originalData);
-//
-// // 解密
-// Uint8List decryptedData = encryptHelper.decryptData(encryptedData);

@@ -17,60 +17,36 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
-  late Future<List<Message>> _messagesFuture;
-  late Future<User> _user1Future;
-  late Future<User> _user2Future;
-
-  // 异步获取数据
-  Future<List<Message>> getMessagesFuture() async {
-    // 模拟异步操作的延迟
-    await Future.delayed(Duration(seconds: 2));
-    return await _dbHelper.getMessagesByUserIds(widget.user1Id, widget.user2Id);
-  }
-
-  Future<User> getUser1Future() async {
-    await Future.delayed(Duration(seconds: 2));
-    return await _dbHelper.getUserById(widget.user1Id);
-  }
-
-  Future<User> getUser2Future() async {
-    await Future.delayed(Duration(seconds: 2));
-    return await _dbHelper.getUserById(widget.user2Id);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _messagesFuture = getMessagesFuture();
-    _user1Future = getUser1Future();
-    _user2Future = getUser2Future();
-  }
+  final DatabaseHelper _dbHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body:
         FutureBuilder(
-          future: Future.wait([_messagesFuture, _user1Future, _user2Future]),
+          future: Future.wait([
+            _dbHelper.getMessagesByUserIds(widget.user1Id, widget.user2Id),
+            _dbHelper.getUserById(widget.user1Id),
+            _dbHelper.getUserById(widget.user2Id),
+          ]),
           builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
             // 检查异步操作的状态
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // 如果正在加载数据，可以显示加载指示器
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasError) {
-              // 如果发生错误，可以显示错误信息
-              return Center(
-                child: Text('Error: ${snapshot.error}'),
-              );
-            } else {
-              // 数据准备好后，构建页面
+            if (snapshot.hasData) {
+              // 数据准备完成，构建页面
               List<Message> messages = snapshot.data![0];
               User user1 = snapshot.data![1];
               User user2 = snapshot.data![2];
               return ChatPageContent(messages: messages, user1: user1, user2: user2);
+            } else if (snapshot.hasError) {
+              // 如果发生错误，显示错误信息
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else {
+              // 如果正在加载数据，显示加载指示器
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }
           },
         ),
@@ -90,7 +66,7 @@ class ChatPageContent extends StatefulWidget {
 }
 
 class _ChatPageContentState extends State<ChatPageContent> {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final DatabaseHelper _dbHelper = DatabaseHelper();
 
   final TextEditingController _messageController = TextEditingController();
 
@@ -128,7 +104,6 @@ class _ChatPageContentState extends State<ChatPageContent> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(),
         centerTitle: false,
         titleSpacing: 0,
         title: ListTile(
@@ -143,7 +118,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
           },
           leading: CircleAvatar(
             backgroundImage: AssetImage(
-              _oppositeUser.avatarPath.isNotEmpty ? _oppositeUser.avatarPath : 'assets/images/useravatar.png',
+              _oppositeUser.avatarImage.isNotEmpty ? _oppositeUser.avatarImage : 'assets/images/useravatar.png',
             ),
           ),
           title: Text(

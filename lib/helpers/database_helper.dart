@@ -13,14 +13,19 @@ import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
 
 class DatabaseHelper {
-  static const _databaseName = "character.db";
+  static const _databaseName = "iai.db";
   static const _databaseVersion = 1;
 
-  // 将其设计为单例类
+  // 私有构造函数
   DatabaseHelper._privateConstructor();
 
   // 创建 DatabaseHelper 的单例实例
-  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+  static final DatabaseHelper _instance = DatabaseHelper._privateConstructor();
+
+  // 获取单例实例
+  factory DatabaseHelper() {
+    return _instance;
+  }
 
   // 只允许一个打开的连接
   static Database? _database;
@@ -61,7 +66,7 @@ class DatabaseHelper {
       CREATE TABLE scene (
         id INTEGER PRIMARY KEY,
         sceneName TEXT NOT NULL,
-        backgroundPath TEXT NOT NULL,
+        backgroundImage TEXT NOT NULL,
         user1Id INTEGER NOT NULL,
         user2Id INTEGER NOT NULL
       )
@@ -73,8 +78,8 @@ class DatabaseHelper {
         id INTEGER PRIMARY KEY,
         username TEXT NOT NULL,
         description TEXT NOT NULL,
-        avatarPath TEXT NOT NULL,
-        backgroundPath TEXT NOT NULL
+        avatarImage TEXT NOT NULL,
+        backgroundImage TEXT NOT NULL
       )
     ''');
 
@@ -101,22 +106,30 @@ class DatabaseHelper {
 
   // Message table CRUD
   Future<int> insertMessage(Message message) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     return await db.insert('message', message.toMap());
   }
 
   Future<int> deleteMessage(int messageId) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     return await db.delete('message', where: 'id = ?', whereArgs: [messageId]);
   }
 
   Future<int> updateMessage(Message message) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     return await db.update('message', message.toMap(), where: 'id = ?', whereArgs: [message.id]);
   }
 
   Future<List<Message>> getMessagesByUserIds(int user1Id, int user2Id) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     final List<Map<String, dynamic>> maps =
         await db.query('message', where: 'senderId = ? AND receiverId = ? OR senderId = ? AND receiverId = ?', whereArgs: [user1Id, user2Id, user2Id, user1Id]);
     return List.generate(maps.length, (i) {
@@ -126,28 +139,38 @@ class DatabaseHelper {
 
   // Scene table CRUD
   Future<int> insertScene(Scene scene) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     return await db.insert('scene', scene.toMap());
   }
 
   Future<int> deleteScene(int sceneId) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     return await db.delete('scene', where: 'id = ?', whereArgs: [sceneId]);
   }
 
   Future<int> updateScene(Scene scene) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     return await db.update('scene', scene.toMap(), where: 'id = ?', whereArgs: [scene.id]);
   }
 
   Future<Scene> getSceneById(int sceneId) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     final List<Map<String, dynamic>> maps = await db.query('scene', where: 'id = ?', whereArgs: [sceneId]);
     return Scene.fromMap(maps.first);
   }
 
   Future<List<Scene>> getScenes() async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     final List<Map<String, dynamic>> maps = await db.query('scene');
     return List.generate(maps.length, (i) {
       return Scene.fromMap(maps[i]);
@@ -156,28 +179,38 @@ class DatabaseHelper {
 
   // User table CRUD
   Future<int> insertUser(User user) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     return await db.insert('user', user.toMap());
   }
 
   Future<int> deleteUser(int userId) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     return await db.delete('user', where: 'id = ?', whereArgs: [userId]);
   }
 
   Future<int> updateUser(User user) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     return await db.update('user', user.toMap(), where: 'id = ?', whereArgs: [user.id]);
   }
 
   Future<User> getUserById(int userId) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     final List<Map<String, dynamic>> maps = await db.query('user', where: 'id = ?', whereArgs: [userId]);
     return User.fromMap(maps.first);
   }
 
   Future<List<User>> getUsers() async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     final List<Map<String, dynamic>> maps = await db.query('user');
     return List.generate(maps.length, (i) {
       return User.fromMap(maps[i]);
@@ -186,28 +219,38 @@ class DatabaseHelper {
 
   // Note table CRUD
   Future<int> insertNote(Note note) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     return await db.insert('note', note.toMap());
   }
 
   Future<int> deleteNote(int noteId) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     return await db.delete('note', where: 'id = ?', whereArgs: [noteId]);
   }
 
   Future<int> updateNote(Note note) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     return await db.update('note', note.toMap(), where: 'id = ?', whereArgs: [note.id]);
   }
 
   Future<Note> getNoteById(int noteId) async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     final List<Map<String, dynamic>> maps = await db.query('note', where: 'id = ?', whereArgs: [noteId]);
     return Note.fromMap(maps.first);
   }
 
   Future<List<Note>> getNotes() async {
-    final Database db = await instance.database;
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
     final List<Map<String, dynamic>> maps = await db.query('note');
     return List.generate(maps.length, (i) {
       return Note.fromMap(maps[i]);
@@ -216,15 +259,19 @@ class DatabaseHelper {
 
   // EncryptionKey table CRUD
   Future<int> addEncryptionKey(EncryptionKey key) async {
-    final Database db = await database;
-    return await db.insert('EncryptionKeys', key.toMap());
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
+    return await db.insert('encryptionkey', key.toMap());
   }
 
   Future<String?> getEncryptionKey() async {
-    final Database db = await database;
-    final List<Map<String, dynamic>> result = await db.query('EncryptionKeys');
-    if (result.isNotEmpty) {
-      return result.first['key'];
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
+    final List<Map<String, dynamic>> maps = await db.query('encryptionkey');
+    if (maps.isNotEmpty) {
+      return maps.first['key'];
     }
     return null;
   }

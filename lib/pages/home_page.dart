@@ -61,10 +61,7 @@ class HomePage extends StatelessWidget {
           child: IconButton(
             icon: const Icon(Icons.settings_outlined),
             onPressed: () {
-              // Navigator.of(context).pushNamed("/setting").then((result) {
-              //   if (result != null && result is bool && result) {
-              //   }
-              // });
+              Navigator.of(context).pushNamed("/setting");
             },
           ),
         ),
@@ -74,8 +71,8 @@ class HomePage extends StatelessWidget {
 
   Widget buildContentLayout(BuildContext context) {
     final List<Section> sections = [
-      Section(name: 'character', backgroundPath: ''),
-      Section(name: 'notebook', backgroundPath: ''),
+      Section(name: 'character', backgroundImage: ''),
+      Section(name: 'notebook', backgroundImage: ''),
     ];
 
     return Padding(
@@ -123,10 +120,10 @@ class HomePage extends StatelessWidget {
 
 class Section {
   String name;
-  String backgroundPath;
+  String backgroundImage;
 
   Section({
     required this.name,
-    required this.backgroundPath,
+    required this.backgroundImage,
   });
 }

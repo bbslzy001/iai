@@ -13,7 +13,7 @@ class NotebookPage extends StatefulWidget {
 }
 
 class _NotebookPageState extends State<NotebookPage> {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final DatabaseHelper _dbHelper = DatabaseHelper();
   late Future<List<Note>> _notesFuture;
 
   // 异步获取数据
@@ -79,7 +79,7 @@ class NotebookPageContent extends StatefulWidget {
 }
 
 class _NotebookPageContentState extends State<NotebookPageContent> {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final DatabaseHelper _dbHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {

@@ -1,10 +1,16 @@
 // pages/character/add_scene_page.dart
 
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'package:iai/utils/saving_dialog.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/helpers/database_helper.dart';
+import 'package:iai/helpers/file_helper.dart';
+import 'package:iai/widgets/image_picker.dart';
 
 class AddScenePage extends StatefulWidget {
   const AddScenePage({Key? key}) : super(key: key);
@@ -14,50 +20,36 @@ class AddScenePage extends StatefulWidget {
 }
 
 class _AddScenePageState extends State<AddScenePage> {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
-  late Future<List<User>> _usersFuture;
-
-  // 异步获取数据
-  Future<List<User>> _getUsersFuture() async {
-    // 模拟异步操作的延迟
-    await Future.delayed(Duration(seconds: 2));
-    return await _dbHelper.getUsers();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _usersFuture = _getUsersFuture();
-  }
+  final DatabaseHelper _dbHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          leading: BackButton(),
           title: Text('Add Scene'),
         ),
         body: FutureBuilder(
           // 传入Future列表
-          future: Future.wait([_usersFuture]),
+          future: Future.wait([
+            _dbHelper.getUsers(),
+          ]),
           // 构建页面的回调
           builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
             // 检查异步操作的状态
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // 如果正在加载数据，可以显示加载指示器
-              return Center(
-                child: CircularProgressIndicator(),
-              );
+            if (snapshot.hasData) {
+              // 数据准备完成，构建页面
+              List<User> users = snapshot.data![0];
+              return AddScenePageContent(users: users);
             } else if (snapshot.hasError) {
-              // 如果发生错误，可以显示错误信息
+              // 如果发生错误，显示错误信息
               return Center(
                 child: Text('Error: ${snapshot.error}'),
               );
             } else {
-              // 如果没有错误，显示数据列表
-              // 从snapshot中取出数据
-              List<User> users = snapshot.data![0];
-              return AddScenePageContent(users: users);
+              // 如果正在加载数据，显示加载指示器
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }
           },
         ));
@@ -74,8 +66,10 @@ class AddScenePageContent extends StatefulWidget {
 }
 
 class _AddScenePageContentState extends State<AddScenePageContent> {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
-  final Scene _scene = Scene(sceneName: '', backgroundPath: '', user1Id: -1, user2Id: -1);
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final FileHelper _fileHelper = FileHelper();
+  final Scene _scene = Scene(sceneName: '', backgroundImage: '', user1Id: -1, user2Id: -1);
+  late File _backgroundImage;
 
   @override
   Widget build(BuildContext context) {
@@ -92,19 +86,6 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
             onChanged: (value) {
               setState(() {
                 _scene.sceneName = value;
-              });
-            },
-          ),
-          SizedBox(height: 16),
-          TextFormField(
-            initialValue: _scene.backgroundPath,
-            decoration: InputDecoration(
-              labelText: 'Background Path',
-              border: OutlineInputBorder(),
-            ),
-            onChanged: (value) {
-              setState(() {
-                _scene.backgroundPath = value;
               });
             },
           ),
@@ -152,13 +133,40 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
             },
             icon: const Icon(Icons.arrow_drop_down),
           ),
+          SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: ImagePickerWidget(
+                  labelText: 'Background',
+                  onTap: () async {
+                    XFile? pickedFile = await _fileHelper.pickMediaFromGallery();
+                    if (pickedFile != null) {
+                      _backgroundImage = File(pickedFile.path);
+                      return _backgroundImage;
+                    } else {
+                      return null;
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
           SizedBox(height: 32),
           FilledButton.tonal(
             onPressed: (_scene.sceneName != '' && _scene.user1Id != -1 && _scene.user2Id != -1)
                 ? () async {
+                    SavingDialog.show(context);
+
+                    if (_backgroundImage.existsSync()) {
+                      _scene.backgroundImage = await _fileHelper.saveMedia(_backgroundImage);
+                    }
+
                     await _dbHelper.insertScene(_scene);
-                    // 返回管理页面，数据发生变化
-                    Navigator.pop(context, true);
+
+                    SavingDialog.hide(context);
+
+                    Navigator.pop(context, true);  // 返回管理页面，数据发生变化
                   }
                 : null, // 设置为null禁用按钮
             child: Text('Finish'),

@@ -3,14 +3,14 @@
 class Scene {
   int? id;
   String sceneName;
-  String backgroundPath;
+  String backgroundImage;
   int user1Id;
   int user2Id;
 
   Scene({
     this.id,
     required this.sceneName,
-    required this.backgroundPath,
+    required this.backgroundImage,
     required this.user1Id,
     required this.user2Id,
   });
@@ -19,7 +19,7 @@ class Scene {
     return {
       'id': id,
       'sceneName': sceneName,
-      'backgroundPath': backgroundPath,
+      'backgroundImage': backgroundImage,
       'user1Id': user1Id,
       'user2Id': user2Id,
     };
@@ -29,7 +29,7 @@ class Scene {
     return Scene(
       id: map['id'],
       sceneName: map['sceneName'],
-      backgroundPath: map['backgroundPath'],
+      backgroundImage: map['backgroundImage'],
       user1Id: map['user1Id'],
       user2Id: map['user2Id'],
     );
