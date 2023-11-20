@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SettingPage extends StatefulWidget {
@@ -11,75 +12,31 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  int _clearingUnusedCache = -1;
-
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Setting'),
+        title: const Text('Setting'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  Text(
-                    'Clear Unused Cache',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Visibility(
-                    visible: _clearingUnusedCache == -1,
-                    child: Spacer(),
-                  ),
-                  Visibility(
-                    visible: _clearingUnusedCache == 0,
-                    child: Expanded(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  ),
-                  Visibility(
-                    visible: _clearingUnusedCache == 1,
-                    child: Expanded(
-                      child: Center(
-                        child: Icon(Icons.check, color: colorScheme.primary),
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: _clearingUnusedCache == -1
-                        ? () async {
-                            setState(() {
-                              _clearingUnusedCache = 0;
-                            });
-
-                            // 模拟操作延时
-                            await Future.delayed(Duration(seconds: 3));
-
-                            await _clearUnusedCache();
-
-                            setState(() {
-                              _clearingUnusedCache = 1;
-                            });
-                          }
-                        : null,
-                    child: Text('Clear'),
-                  ),
-                ],
-              ),
+            ClearItem(
+              buttonText: 'Clear Unused Cache',
+              clearFunction: _clearUnusedCache,
             ),
-            Divider(),
+            const Divider(),
+            ClearItem(
+              buttonText: 'Clear Data Cache',
+              clearFunction: _clearDataCache,
+            ),
+            const Divider(),
+            ClearItem(
+              buttonText: 'Clear App Data',
+              clearFunction: _clearAppData,
+            )
           ],
         ),
       ),
@@ -105,5 +62,87 @@ class _SettingPageState extends State<SettingPage> {
         entity.deleteSync(recursive: true); // 递归删除子目录和子文件
       }
     }
+  }
+
+  Future<void> _clearDataCache() async {
+    DefaultCacheManager().emptyCache();
+  }
+
+  Future<void> _clearAppData() async {
+  }
+}
+
+class ClearItem extends StatefulWidget {
+  final String buttonText;
+  final Future<void> Function() clearFunction;
+
+  const ClearItem({
+    Key? key,
+    required this.buttonText,
+    required this.clearFunction,
+  }) : super(key: key);
+
+  @override
+  _ClearItemState createState() => _ClearItemState();
+}
+
+class _ClearItemState extends State<ClearItem> {
+  int _clearing = -1;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        children: [
+          Text(
+            widget.buttonText,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Visibility(
+            visible: _clearing == -1,
+            child: const Spacer(),
+          ),
+          Visibility(
+            visible: _clearing == 0,
+            child: const Expanded(
+              child: Center(
+                child: CircularProgressIndicator(strokeWidth: 2.0),
+              ),
+            ),
+          ),
+          Visibility(
+            visible: _clearing == 1,
+            child: Expanded(
+              child: Center(
+                child: Icon(Icons.check, color: Theme.of(context).colorScheme.primary),
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: _clearing == -1
+                ? () async {
+              setState(() {
+                _clearing = 0;
+              });
+
+              // Simulate operation delay
+              await Future.delayed(Duration(seconds: 3));
+
+              await widget.clearFunction();
+
+              setState(() {
+                _clearing = 1;
+              });
+            }
+                : null,
+            child: const Text('Clear'),
+          ),
+        ],
+      ),
+    );
   }
 }

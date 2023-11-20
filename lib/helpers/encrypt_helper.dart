@@ -69,8 +69,6 @@ class EncryptHelper {
 
   // 加密数据
   Future<Uint8List> encryptData(Uint8List data) async {
-    // 模拟异步操作的延迟
-    await Future.delayed(Duration(seconds: 2));
     final Encrypter encrypter = await _instance.encrypter;
     final Encrypted encrypted = encrypter.encryptBytes(data);
     return Uint8List.fromList(encrypted.bytes);
@@ -78,8 +76,6 @@ class EncryptHelper {
 
   // 解密媒体文件数据
   Future<Uint8List> decryptData(Uint8List data) async {
-    // 模拟异步操作的延迟
-    await Future.delayed(Duration(seconds: 2));
     final Encrypter encrypter = await _instance.encrypter;
     final String decrypted = encrypter.decrypt(Encrypted(data));
     return Uint8List.fromList(decrypted.codeUnits);

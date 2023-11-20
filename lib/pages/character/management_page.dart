@@ -6,7 +6,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/models/scene.dart';
-import 'package:iai/widgets/image_provider.dart';
+import 'package:iai/widgets/avatar_provider.dart';
 
 class ManagementPage extends StatefulWidget {
   const ManagementPage({Key? key}) : super(key: key);
@@ -246,10 +246,10 @@ class TabWidgetContent extends StatelessWidget {
               leading: CircleAvatar(
                 foregroundImage: isScene
                   ? data[index].backgroundImage.isNotEmpty
-                    ? CustomImageProvider(data[index].backgroundImage)
+                    ? AvatarImageProvider(data[index].backgroundImage)
                     : null
                   : data[index].avatarImage.isNotEmpty
-                    ? CustomImageProvider(data[index].avatarImage)
+                    ? AvatarImageProvider(data[index].avatarImage)
                     : null,
                 backgroundColor: colorScheme.primaryContainer,
                 child: Text(

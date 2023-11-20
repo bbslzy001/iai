@@ -34,8 +34,7 @@ flutter:
     - assets/images/character.png
     - assets/images/notebook.png
     - assets/images/scene.png
-    - assets/images/useravatar.png
-    - assets/images/userbackground.png
+    - assets/images/user.png
   fonts:
     - family: Pacifico
       fonts:

@@ -5,21 +5,21 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:iai/helpers/file_helper.dart';
 
-// 这是一个自定义的ImageProvider类，它接受一个图像名称作为参数
-class CustomImageProvider extends ImageProvider<CustomImageProvider> {
+// 自定义ImageProvider类，它接受一个图像名称作为参数
+class AvatarImageProvider extends ImageProvider<AvatarImageProvider> {
   final String imageName;
 
-  CustomImageProvider(this.imageName);
+  AvatarImageProvider(this.imageName);
 
   // 这个方法用于获取图像的唯一键，用于缓存和比较
   @override
-  Future<CustomImageProvider> obtainKey(ImageConfiguration configuration) {
-    return SynchronousFuture<CustomImageProvider>(this);
+  Future<AvatarImageProvider> obtainKey(ImageConfiguration configuration) {
+    return SynchronousFuture<AvatarImageProvider>(this);
   }
 
   // 这个方法用于加载图像数据，并返回一个ImageStreamCompleter对象
   @override
-  ImageStreamCompleter load(CustomImageProvider key, DecoderCallback decode) {
+  ImageStreamCompleter load(AvatarImageProvider key, DecoderCallback decode) {
     return OneFrameImageStreamCompleter(
         _loadAsync(key.imageName)
     );
@@ -36,7 +36,7 @@ class CustomImageProvider extends ImageProvider<CustomImageProvider> {
       final ui.Image image = frameInfo.image; // 用于获取图像对象
       return ImageInfo(image: image); // 用于创建并返回ImageInfo对象
     } else {
-      // 如果文件不存在
+      // 如果文件不存在，抛出异常
       throw StateError('File not found: $image');
     }
   }
@@ -45,7 +45,7 @@ class CustomImageProvider extends ImageProvider<CustomImageProvider> {
   @override
   bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) return false;
-    return other is CustomImageProvider && other.imageName == imageName;
+    return other is AvatarImageProvider && other.imageName == imageName;
   }
 
   // 这个方法用于获取ImageProvider的哈希码

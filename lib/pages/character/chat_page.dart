@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/message.dart';
 import 'package:iai/models/user.dart';
+import 'package:iai/widgets/avatar_provider.dart';
 
 class ChatPage extends StatefulWidget {
   final int user1Id;
@@ -117,9 +118,11 @@ class _ChatPageContentState extends State<ChatPageContent> {
             });
           },
           leading: CircleAvatar(
-            backgroundImage: AssetImage(
-              _oppositeUser.avatarImage.isNotEmpty ? _oppositeUser.avatarImage : 'assets/images/useravatar.png',
-            ),
+            foregroundImage: _oppositeUser.avatarImage.isNotEmpty
+                ? AvatarImageProvider(_oppositeUser.avatarImage)
+                : null,
+            backgroundColor: colorScheme.primaryContainer,
+            child: Text(_oppositeUser.username),
           ),
           title: Text(
             _oppositeUser.username,

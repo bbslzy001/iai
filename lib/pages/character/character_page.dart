@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/scene.dart';
+import 'package:iai/widgets/image_shower.dart';
 
 class CharacterPage extends StatefulWidget {
   const CharacterPage({Key? key}) : super(key: key);
@@ -187,10 +188,11 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: Image.asset(
-                                  scene.backgroundImage.isNotEmpty ? scene.backgroundImage: 'assets/images/scene.png',
-                                  fit: BoxFit.fill,
-                                )),
+                                child: ImageShowerWidget(
+                                  image: scene.backgroundImage,
+                                  defaultImage: 'assets/images/scene.png',
+                                ),
+                            ),
                           ),
                           Expanded(
                             flex: 2,
