@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:iai/utils/saving_dialog.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/helpers/file_helper.dart';
@@ -72,6 +71,8 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
   final FileHelper _fileHelper = FileHelper();
   late File _avatarImage;
   late File _backgroundImage;
+
+  bool _isSaving = false;
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +152,9 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
             FilledButton.tonal(
               onPressed: (widget.user.username != '')
                   ? () async {
-                      SavingDialog.show(context);
+                      setState(() {
+                        _isSaving = true;
+                      });
 
                       if (_avatarImage.existsSync()) {
                         widget.user.avatarImage = await _fileHelper.saveMedia(_avatarImage);
@@ -162,12 +165,23 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
 
                       await _dbHelper.updateUser(widget.user);
 
-                      SavingDialog.hide(context);
-
                       Navigator.pop(context, true); // 返回管理页面，数据发生变化
                     }
                   : null, // 设置为null禁用按钮
-              child: Text('Finish'),
+              child: Container(
+                width: 96,
+                height: 48,
+                alignment: Alignment.center,
+                child: _isSaving
+                    ? SizedBox(
+                        width: 24.0, // 设置宽度
+                        height: 24.0, // 设置高度
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.0, // 设置线条粗细
+                        ),
+                      )
+                    : Text('Finish'),
+              ),
             ),
           ],
         ),
