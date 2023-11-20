@@ -73,7 +73,7 @@ class EditScenePageContent extends StatefulWidget {
 class _EditScenePageContentState extends State<EditScenePageContent> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final FileHelper _fileHelper = FileHelper();
-  late File _backgroundImage;
+  File? _backgroundImage;
 
   bool _isSaving = false;
 
@@ -171,8 +171,8 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                         _isSaving = true;
                       });
 
-                      if (_backgroundImage.existsSync()) {
-                        widget.scene.backgroundImage = await _fileHelper.saveMedia(_backgroundImage);
+                      if (_backgroundImage?.existsSync() == true) {
+                        widget.scene.backgroundImage = await _fileHelper.saveMedia(_backgroundImage!);
                       }
 
                       await _dbHelper.updateScene(widget.scene);

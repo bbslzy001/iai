@@ -68,7 +68,7 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final FileHelper _fileHelper = FileHelper();
   final Scene _scene = Scene(sceneName: '', backgroundImage: '', user1Id: -1, user2Id: -1);
-  late File _backgroundImage;
+  File? _backgroundImage;
 
   bool _isSaving = false;
 
@@ -161,8 +161,8 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
                       _isSaving = true;
                     });
 
-                    if (_backgroundImage.existsSync()) {
-                      _scene.backgroundImage = await _fileHelper.saveMedia(_backgroundImage);
+                    if (_backgroundImage?.existsSync() == true) {
+                      _scene.backgroundImage = await _fileHelper.saveMedia(_backgroundImage!);
                     }
 
                     await _dbHelper.insertScene(_scene);

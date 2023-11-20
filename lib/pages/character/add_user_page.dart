@@ -40,8 +40,8 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final FileHelper _fileHelper = FileHelper();
   final User _user = User(username: '', description: '', avatarImage: '', backgroundImage: '');
-  late File _avatarImage;
-  late File _backgroundImage;
+  File? _avatarImage;
+  File? _backgroundImage;
 
   bool _isSaving = false;
 
@@ -118,11 +118,11 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
                       _isSaving = true;
                     });
 
-                    if (_avatarImage.existsSync()) {
-                      _user.avatarImage = await _fileHelper.saveMedia(_avatarImage);
+                    if (_avatarImage?.existsSync() == true) {
+                      _user.avatarImage = await _fileHelper.saveMedia(_avatarImage!);
                     }
-                    if (_backgroundImage.existsSync()) {
-                      _user.backgroundImage = await _fileHelper.saveMedia(_backgroundImage);
+                    if (_backgroundImage?.existsSync() == true) {
+                      _user.backgroundImage = await _fileHelper.saveMedia(_backgroundImage!);
                     }
 
                     await _dbHelper.insertUser(_user);

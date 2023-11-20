@@ -69,8 +69,8 @@ class EditUserPageContent extends StatefulWidget {
 class _EditUserPageContentState extends State<EditUserPageContent> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final FileHelper _fileHelper = FileHelper();
-  late File _avatarImage;
-  late File _backgroundImage;
+  File? _avatarImage;
+  File? _backgroundImage;
 
   bool _isSaving = false;
 
@@ -156,11 +156,11 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
                         _isSaving = true;
                       });
 
-                      if (_avatarImage.existsSync()) {
-                        widget.user.avatarImage = await _fileHelper.saveMedia(_avatarImage);
+                      if (_avatarImage?.existsSync() == true) {
+                        widget.user.avatarImage = await _fileHelper.saveMedia(_avatarImage!);
                       }
-                      if (_backgroundImage.existsSync()) {
-                        widget.user.backgroundImage = await _fileHelper.saveMedia(_backgroundImage);
+                      if (_backgroundImage?.existsSync() == true) {
+                        widget.user.backgroundImage = await _fileHelper.saveMedia(_backgroundImage!);
                       }
 
                       await _dbHelper.updateUser(widget.user);

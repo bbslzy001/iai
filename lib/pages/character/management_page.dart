@@ -6,6 +6,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/models/scene.dart';
+import 'package:iai/widgets/image_provider.dart';
 
 class ManagementPage extends StatefulWidget {
   const ManagementPage({Key? key}) : super(key: key);
@@ -187,6 +188,7 @@ class TabWidgetContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
+    bool isScene = data is List<Scene>;
 
     return ListView.builder(
       itemCount: data.length,
@@ -224,7 +226,7 @@ class TabWidgetContent extends StatelessWidget {
               ),
               SlidableAction(
                 onPressed: (BuildContext context) async {
-                  if (data[index] is Scene) {
+                  if (isScene) {
                     await _dbHelper.deleteScene(data[index].id!);
                   } else {
                     await _dbHelper.deleteUser(data[index].id!);
@@ -242,16 +244,20 @@ class TabWidgetContent extends StatelessWidget {
           child: Container(
             child: ListTile(
               leading: CircleAvatar(
-                backgroundImage: AssetImage(data[index] is Scene
-                    ? data[index].backgroundImage.isNotEmpty
-                        ? data[index].backgroundImage
-                        : 'assets/images/scene.png'
-                    : data[index].avatarImage.isNotEmpty
-                        ? data[index].avatarImage
-                        : 'assets/images/useravatar.png'),
+                foregroundImage: isScene
+                  ? data[index].backgroundImage.isNotEmpty
+                    ? CustomImageProvider(data[index].backgroundImage)
+                    : null
+                  : data[index].avatarImage.isNotEmpty
+                    ? CustomImageProvider(data[index].avatarImage)
+                    : null,
+                backgroundColor: colorScheme.primaryContainer,
+                child: Text(
+                  isScene ? data[index].sceneName[0] : data[index].username[0],
+                )
               ),
               title: Text(
-                data[index] is Scene ? data[index].sceneName : data[index].username,
+                isScene ? data[index].sceneName : data[index].username,
               ),
               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), // MD3 uses more padding
             ),

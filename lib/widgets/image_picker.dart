@@ -29,7 +29,6 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   @override
   Widget build(BuildContext context) {
     if (!isGotten && widget.getImage != null) {
-      print(widget.labelText);
       return FutureBuilder(
         future: widget.getImage!(),
         builder: (context, snapshot) {
