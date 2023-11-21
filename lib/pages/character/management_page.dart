@@ -241,7 +241,14 @@ class TabWidgetContent extends StatelessWidget {
               ),
             ],
           ),
-          child: Container(
+          child: GestureDetector(
+            onTap: () {
+              if (isScene) {
+                Navigator.of(context).pushNamed('/scene', arguments: {'scene': data[index] as Scene});
+              } else {
+                Navigator.of(context).pushNamed('/user', arguments: {'user': data[index] as User});
+              }
+            },
             child: ListTile(
               leading: CircleAvatar(
                 foregroundImage: isScene

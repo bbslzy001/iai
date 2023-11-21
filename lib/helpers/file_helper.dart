@@ -27,8 +27,6 @@ class FileHelper {
   }
 
   Future<String> saveMedia(File file) async {
-    // 模拟异步操作的延迟
-    await Future.delayed(Duration(seconds: 2));
     final fileBytes = await file.readAsBytes();
     final fileName = '${DateTime.now().millisecondsSinceEpoch}.enc';
 
@@ -44,10 +42,7 @@ class FileHelper {
     return fileName;
   }
 
-  // TODO：调试文件不存在于缓存中的情况
   Future<File> getMedia(String fileName) async {
-    // 模拟异步操作的延迟
-    await Future.delayed(Duration(seconds: 2));
     // 文件存在于缓存中，直接返回原始文件
     final FileInfo? fileInfo = await DefaultCacheManager().getFileFromCache(fileName);
     if (fileInfo != null) {
@@ -62,7 +57,9 @@ class FileHelper {
       final Uint8List fileBytes = await encryptHelper.decryptData(encryptedFileBytes);  // 解密文件
       final cachePath = await getTemporaryDirectory();  // 获取应用缓存目录
       await DefaultCacheManager().putFile(cachePath.path, fileBytes, key: fileName);  // 保存原始文件到缓存目录
-      return File('${cachePath.path}/$fileName');  // 返回原始文件
+      return DefaultCacheManager().getFileFromCache(fileName).then((fileInfo) {
+        return fileInfo!.file;
+      });  // 返回原始文件
     }
 
     // 如果文件不存在于文档目录中，返回空文件

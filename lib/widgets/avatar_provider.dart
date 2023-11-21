@@ -29,6 +29,8 @@ class MyAvatarProvider extends ImageProvider<MyAvatarProvider> {
     final FileHelper fileHelper = FileHelper();
     final File file = await fileHelper.getMedia(image);
 
+    print(file.path);
+
     if (file.existsSync()) {
       final Uint8List bytes = await file.readAsBytes(); // 用于将文件对象转换为字节列表
       final ui.Codec codec = await PaintingBinding.instance.instantiateImageCodec(bytes); // 用于创建一个图像编解码器，用于解码图像数据

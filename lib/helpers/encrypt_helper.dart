@@ -77,7 +77,7 @@ class EncryptHelper {
   // 解密媒体文件数据
   Future<Uint8List> decryptData(Uint8List data) async {
     final Encrypter encrypter = await _instance.encrypter;
-    final String decrypted = encrypter.decrypt(Encrypted(data));
-    return Uint8List.fromList(decrypted.codeUnits);
+    final List<int> decrypted = encrypter.decryptBytes(Encrypted(data));
+    return Uint8List.fromList(decrypted);
   }
 }
