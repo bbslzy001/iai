@@ -19,9 +19,6 @@ class _MyImageShowerState extends State<MyImageShower> {
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    print('image: ${widget.image}');
-    print('defaultImage: ${widget.defaultImage}');
-
     if (widget.image.isNotEmpty) {
       return FutureBuilder(
         future: _fileHelper.getMedia(widget.image),
