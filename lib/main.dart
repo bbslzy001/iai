@@ -6,6 +6,7 @@ import 'package:iai/color_schemes.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/pages/character/scene_page.dart';
+import 'package:iai/pages/character/user_page.dart';
 import 'package:iai/pages/home_page.dart';
 import 'package:iai/pages/setting_page.dart';
 import 'package:iai/pages/character/add_scene_page.dart';
@@ -59,9 +60,9 @@ class MyApp extends StatelessWidget {
           case '/scene':
             final Map<String, Scene> args = settings.arguments as Map<String, Scene>;
             return MaterialPageRoute(builder: (context) => ScenePage(scene: args['scene']!));
-          // case 'user':
-          //   final Map<String, User> args = settings.arguments as Map<String, User>;
-          //   return MaterialPageRoute(builder: (context) => const UserPage(user: args['user']!));
+          case '/user':
+            final Map<String, User> args = settings.arguments as Map<String, User>;
+            return MaterialPageRoute(builder: (context) => UserPage(user: args['user']!));
         }
         return null;
       },

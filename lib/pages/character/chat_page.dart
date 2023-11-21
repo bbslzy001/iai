@@ -105,7 +105,6 @@ class _ChatPageContentState extends State<ChatPageContent> {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: false,
         titleSpacing: 0,
         title: ListTile(
           onTap: () {

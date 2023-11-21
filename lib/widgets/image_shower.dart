@@ -27,9 +27,11 @@ class _MyImageShowerState extends State<MyImageShower> {
           if (snapshot.hasData) {
             // 数据准备完成，构建页面
             if (snapshot.data!.existsSync()) {
-              return Image.file(
-                snapshot.data!,
-                fit: BoxFit.fill,
+              return SizedBox.expand(
+                child: Image.file(
+                  snapshot.data!,
+                  fit: BoxFit.cover,
+                ),
               );
             } else {
               return Container(
@@ -54,7 +56,12 @@ class _MyImageShowerState extends State<MyImageShower> {
         },
       );
     } else {
-      return Image.asset(widget.defaultImage);
+      return SizedBox.expand(
+        child: Image.asset(
+          widget.defaultImage,
+          fit: BoxFit.cover,
+        ),
+      );
     }
   }
 }

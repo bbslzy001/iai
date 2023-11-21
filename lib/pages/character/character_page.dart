@@ -186,7 +186,7 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
                                 margin: EdgeInsets.only(top: 10, left: 10, right: 10),
                                 clipBehavior: Clip.hardEdge,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
                                 child: MyImageShower(
                                   image: scene.backgroundImage,
