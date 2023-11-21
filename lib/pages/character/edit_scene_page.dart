@@ -144,7 +144,7 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
             Row(
               children: [
                 Expanded(
-                  child: ImagePickerWidget(
+                  child: MyImagePicker(
                     labelText: 'Background',
                     getImage: () async {
                       _backgroundImage = await _fileHelper.getMedia(widget.scene.backgroundImage);
@@ -164,6 +164,7 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
               ],
             ),
             SizedBox(height: 32),
+            // TODO：圆形指示器卡顿问题
             FilledButton.tonal(
               onPressed: (widget.scene.sceneName != '')
                   ? () async {

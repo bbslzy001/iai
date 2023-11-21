@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-class ImagePickerWidget extends StatefulWidget {
+class MyImagePicker extends StatefulWidget {
   final Future<dynamic> Function() onTap;
   final Future<dynamic> Function()? getImage;
   final double width;
   final double height;
   final String labelText;
 
-  const ImagePickerWidget({
+  const MyImagePicker({
     Key? key,
     required this.onTap,
     this.getImage,
@@ -19,10 +19,10 @@ class ImagePickerWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ImagePickerWidgetState createState() => _ImagePickerWidgetState();
+  _MyImagePickerState createState() => _MyImagePickerState();
 }
 
-class _ImagePickerWidgetState extends State<ImagePickerWidget> {
+class _MyImagePickerState extends State<MyImagePicker> {
   File? _file;
   bool isGotten = false;  // 避免编辑图片时切换图片后再次执行getImage导致循环
 
@@ -46,7 +46,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
             );
           } else {
             print('snapshot: $snapshot');
-            return SizedBox();
+            return const SizedBox();
           }
         },
       );

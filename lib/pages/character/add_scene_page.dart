@@ -138,7 +138,7 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
           Row(
             children: [
               Expanded(
-                child: ImagePickerWidget(
+                child: MyImagePicker(
                   labelText: 'Background',
                   onTap: () async {
                     XFile? pickedFile = await _fileHelper.pickMediaFromGallery();
@@ -154,6 +154,7 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
             ],
           ),
           SizedBox(height: 32),
+          // TODO：圆形指示器卡顿问题
           FilledButton.tonal(
             onPressed: (_scene.sceneName != '' && _scene.user1Id != -1 && _scene.user2Id != -1)
                 ? () async {

@@ -80,7 +80,7 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
           Row(
             children: [
               Expanded(
-                child: ImagePickerWidget(
+                child: MyImagePicker(
                   labelText: 'Avatar',
                   onTap: () async {
                     XFile? pickedFile = await _fileHelper.pickMediaFromGallery();
@@ -95,7 +95,7 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
               ),
               SizedBox(width: 8), // 可以根据需要调整间距
               Expanded(
-                child: ImagePickerWidget(
+                child: MyImagePicker(
                   labelText: 'Background',
                   onTap: () async {
                     XFile? pickedFile = await _fileHelper.pickMediaFromGallery();
@@ -111,6 +111,7 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
             ],
           ),
           SizedBox(height: 32),
+          // TODO：圆形指示器卡顿问题
           FilledButton.tonal(
             onPressed: (_user.username != '')
                 ? () async {

@@ -6,20 +6,20 @@ import 'package:flutter/painting.dart';
 import 'package:iai/helpers/file_helper.dart';
 
 // 自定义ImageProvider类，它接受一个图像名称作为参数
-class AvatarImageProvider extends ImageProvider<AvatarImageProvider> {
+class MyAvatarProvider extends ImageProvider<MyAvatarProvider> {
   final String imageName;
 
-  AvatarImageProvider(this.imageName);
+  MyAvatarProvider(this.imageName);
 
   // 这个方法用于获取图像的唯一键，用于缓存和比较
   @override
-  Future<AvatarImageProvider> obtainKey(ImageConfiguration configuration) {
-    return SynchronousFuture<AvatarImageProvider>(this);
+  Future<MyAvatarProvider> obtainKey(ImageConfiguration configuration) {
+    return SynchronousFuture<MyAvatarProvider>(this);
   }
 
   // 这个方法用于加载图像数据，并返回一个ImageStreamCompleter对象
   @override
-  ImageStreamCompleter load(AvatarImageProvider key, DecoderCallback decode) {
+  ImageStreamCompleter load(MyAvatarProvider key, DecoderCallback decode) {
     return OneFrameImageStreamCompleter(
         _loadAsync(key.imageName)
     );
@@ -45,7 +45,7 @@ class AvatarImageProvider extends ImageProvider<AvatarImageProvider> {
   @override
   bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) return false;
-    return other is AvatarImageProvider && other.imageName == imageName;
+    return other is MyAvatarProvider && other.imageName == imageName;
   }
 
   // 这个方法用于获取ImageProvider的哈希码

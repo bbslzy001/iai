@@ -246,10 +246,10 @@ class TabWidgetContent extends StatelessWidget {
               leading: CircleAvatar(
                 foregroundImage: isScene
                   ? data[index].backgroundImage.isNotEmpty
-                    ? AvatarImageProvider(data[index].backgroundImage)
+                    ? MyAvatarProvider(data[index].backgroundImage)
                     : null
                   : data[index].avatarImage.isNotEmpty
-                    ? AvatarImageProvider(data[index].avatarImage)
+                    ? MyAvatarProvider(data[index].avatarImage)
                     : null,
                 backgroundColor: colorScheme.primaryContainer,
                 child: Text(

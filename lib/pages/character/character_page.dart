@@ -188,7 +188,7 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: ImageShowerWidget(
+                                child: MyImageShower(
                                   image: scene.backgroundImage,
                                   defaultImage: 'assets/images/scene.png',
                                 ),

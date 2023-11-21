@@ -110,7 +110,7 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
             Row(
               children: [
                 Expanded(
-                  child: ImagePickerWidget(
+                  child: MyImagePicker(
                     labelText: 'Avatar',
                     getImage: () async {
                       _avatarImage = await _fileHelper.getMedia(widget.user.avatarImage);
@@ -129,7 +129,7 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
                 ),
                 SizedBox(width: 8), // 可以根据需要调整间距
                 Expanded(
-                  child: ImagePickerWidget(
+                  child: MyImagePicker(
                     labelText: 'Background',
                     getImage: () async {
                       _backgroundImage = await _fileHelper.getMedia(widget.user.backgroundImage);
@@ -149,6 +149,7 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
               ],
             ),
             SizedBox(height: 32),
+            // TODO：圆形指示器卡顿问题
             FilledButton.tonal(
               onPressed: (widget.user.username != '')
                   ? () async {

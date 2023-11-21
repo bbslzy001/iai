@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'package:iai/helpers/file_helper.dart';
 
-class ImageShowerWidget extends StatefulWidget {
+class MyImageShower extends StatefulWidget {
   final String image;
   final String defaultImage;
 
-  const ImageShowerWidget({Key? key, required this.image, required this.defaultImage}) : super(key: key);
+  const MyImageShower({Key? key, required this.image, required this.defaultImage}) : super(key: key);
 
   @override
-  _ImageShowerWidgetState createState() => _ImageShowerWidgetState();
+  _MyImageShowerState createState() => _MyImageShowerState();
 }
 
-class _ImageShowerWidgetState extends State<ImageShowerWidget> {
+class _MyImageShowerState extends State<MyImageShower> {
   final FileHelper _fileHelper = FileHelper();
 
   @override

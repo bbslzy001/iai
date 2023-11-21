@@ -119,7 +119,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
           },
           leading: CircleAvatar(
             foregroundImage: _oppositeUser.avatarImage.isNotEmpty
-                ? AvatarImageProvider(_oppositeUser.avatarImage)
+                ? MyAvatarProvider(_oppositeUser.avatarImage)
                 : null,
             backgroundColor: colorScheme.primaryContainer,
             child: Text(_oppositeUser.username),
