@@ -111,11 +111,8 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                   child: Text(user.username),
                 );
               }).toList(),
-              onChanged: (int? newValue) {
-                setState(() {
-                  widget.scene.user1Id = newValue ?? widget.scene.user1Id;
-                });
-              },
+              // scene中的message取决于user1和user2，禁止修改
+              onChanged: null,
               icon: const Icon(Icons.arrow_drop_down),
             ),
             SizedBox(height: 16),
@@ -133,11 +130,8 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                   child: Text(user.username),
                 );
               }).toList(),
-              onChanged: (int? newValue) {
-                setState(() {
-                  widget.scene.user2Id = newValue ?? widget.scene.user2Id;
-                });
-              },
+              // scene中的message取决于user1和user2，禁止修改
+              onChanged: null,
               icon: const Icon(Icons.arrow_drop_down),
             ),
             SizedBox(height: 16),
