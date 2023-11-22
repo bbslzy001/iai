@@ -181,7 +181,7 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
                       child: Column(
                         children: [
                           Expanded(
-                            flex: 8,
+                            flex: 4,
                             child: Container(
                                 margin: EdgeInsets.only(top: 10, left: 10, right: 10),
                                 clipBehavior: Clip.hardEdge,
@@ -195,7 +195,7 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
                             ),
                           ),
                           Expanded(
-                            flex: 2,
+                            flex: 1,
                             child: Center(
                               child: Text(
                                 scene.sceneName,
