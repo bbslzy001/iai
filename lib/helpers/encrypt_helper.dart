@@ -62,6 +62,9 @@ class EncryptData {
   EncryptData(this.data, this.encrypter);
 }
 
+// 当执行耗时较长耗资源较多的任务时，使用 async/await 异步处理仍会阻塞UI刷新，造成动画卡顿
+// 因为该任务仍处于UI线程，异步只是允许先执行其他代码，等异步结果返回后再继续执行异步代码（异步只是在同一个线程的并发操作）
+// 需要通过创建新的线程来执行该类任务
 class EncryptHelper {
   // 加密数据
   static Future<Uint8List> encryptData(EncryptData encryptData) async {
