@@ -39,7 +39,6 @@ class AddUserPageContent extends StatefulWidget {
 
 class _AddUserPageContentState extends State<AddUserPageContent> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  final FileHelper _fileHelper = FileHelper();
   final User _user = User(username: '', description: '', avatarImage: '', backgroundImage: '');
   File? _avatarImage;
   File? _backgroundImage;
@@ -84,7 +83,7 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
                 child: MyImagePicker(
                   labelText: 'Avatar',
                   onTap: () async {
-                    XFile? pickedFile = await _fileHelper.pickImageFromGallery();
+                    XFile? pickedFile = await FileHelper.pickImageFromGallery();
                     if (pickedFile != null) {
                       _avatarImage = File(pickedFile.path);
                       return _avatarImage;
@@ -99,7 +98,7 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
                 child: MyImagePicker(
                   labelText: 'Background',
                   onTap: () async {
-                    XFile? pickedFile = await _fileHelper.pickImageFromGallery();
+                    XFile? pickedFile = await FileHelper.pickImageFromGallery();
                     if (pickedFile != null) {
                       _backgroundImage = File(pickedFile.path);
                       return _backgroundImage;
@@ -121,15 +120,15 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
                     });
 
                     if (_avatarImage?.existsSync() == true) {
-                      _user.avatarImage = await _fileHelper.saveMedia(_avatarImage!);
+                      _user.avatarImage = await FileHelper.saveMedia(_avatarImage!);
                     }
                     if (_backgroundImage?.existsSync() == true) {
-                      _user.backgroundImage = await _fileHelper.saveMedia(_backgroundImage!);
+                      _user.backgroundImage = await FileHelper.saveMedia(_backgroundImage!);
                     }
 
                     await _dbHelper.insertUser(_user);
 
-                    Navigator.pop(context, true);  // 返回管理页面，数据发生变化
+                    Navigator.pop(context, true); // 返回管理页面，数据发生变化
                   }
                 : null, // 设置为null禁用按钮
             child: Container(
@@ -138,12 +137,12 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
               alignment: Alignment.center,
               child: _isSaving
                   ? SizedBox(
-                width: 24.0, // 设置宽度
-                height: 24.0, // 设置高度
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.0, // 设置线条粗细
-                ),
-              )
+                      width: 24.0, // 设置宽度
+                      height: 24.0, // 设置高度
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.0, // 设置线条粗细
+                      ),
+                    )
                   : Text('Finish'),
             ),
           ),

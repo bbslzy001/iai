@@ -67,7 +67,6 @@ class AddScenePageContent extends StatefulWidget {
 
 class _AddScenePageContentState extends State<AddScenePageContent> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  final FileHelper _fileHelper = FileHelper();
   final Scene _scene = Scene(sceneName: '', backgroundImage: '', user1Id: -1, user2Id: -1);
   File? _backgroundImage;
 
@@ -142,7 +141,7 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
                 child: MyImagePicker(
                   labelText: 'Background',
                   onTap: () async {
-                    XFile? pickedFile = await _fileHelper.pickImageFromGallery();
+                    XFile? pickedFile = await FileHelper.pickImageFromGallery();
                     if (pickedFile != null) {
                       _backgroundImage = File(pickedFile.path);
                       return _backgroundImage;
@@ -164,12 +163,12 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
                     });
 
                     if (_backgroundImage?.existsSync() == true) {
-                      _scene.backgroundImage = await _fileHelper.saveMedia(_backgroundImage!);
+                      _scene.backgroundImage = await FileHelper.saveMedia(_backgroundImage!);
                     }
 
                     await _dbHelper.insertScene(_scene);
 
-                    Navigator.pop(context, true);  // 返回管理页面，数据发生变化
+                    Navigator.pop(context, true); // 返回管理页面，数据发生变化
                   }
                 : null, // 设置为null禁用按钮
             child: Container(
@@ -178,12 +177,12 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
               alignment: Alignment.center,
               child: _isSaving
                   ? SizedBox(
-                width: 24.0, // 设置宽度
-                height: 24.0, // 设置高度
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.0, // 设置线条粗细
-                ),
-              )
+                      width: 24.0, // 设置宽度
+                      height: 24.0, // 设置高度
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.0, // 设置线条粗细
+                      ),
+                    )
                   : Text('Finish'),
             ),
           ),

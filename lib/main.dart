@@ -17,8 +17,15 @@ import 'package:iai/pages/character/edit_scene_page.dart';
 import 'package:iai/pages/character/edit_user_page.dart';
 import 'package:iai/pages/character/management_page.dart';
 import 'package:iai/pages/notebook/notebook_page.dart';
+import 'package:iai/helpers/encrypt_helper.dart';
 
-void main() {
+void main() async {
+  // Ensure widgets are initialized before runApp is called.
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化 KeyManager
+  await EncryptManager().initialize();
+
   runApp(const MyApp());
 }
 

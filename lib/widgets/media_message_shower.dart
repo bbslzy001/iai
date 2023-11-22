@@ -12,14 +12,12 @@ class MyMediaMessageShower extends StatefulWidget {
 }
 
 class _MyMediaMessageShowerState extends State<MyMediaMessageShower> {
-  final FileHelper _fileHelper = FileHelper();
-
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return FutureBuilder(
-      future: _fileHelper.getMedia(widget.image),
+      future: FileHelper.getMedia(widget.image),
       builder: (context, snapshot) {
         // 检查异步操作的状态
         if (snapshot.hasData) {

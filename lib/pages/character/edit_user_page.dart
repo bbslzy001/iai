@@ -69,7 +69,6 @@ class EditUserPageContent extends StatefulWidget {
 
 class _EditUserPageContentState extends State<EditUserPageContent> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  final FileHelper _fileHelper = FileHelper();
   File? _avatarImage;
   File? _backgroundImage;
 
@@ -114,11 +113,11 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
                   child: MyImagePicker(
                     labelText: 'Avatar',
                     getImage: () async {
-                      _avatarImage = await _fileHelper.getMedia(widget.user.avatarImage);
+                      _avatarImage = await FileHelper.getMedia(widget.user.avatarImage);
                       return _avatarImage;
                     },
                     onTap: () async {
-                      XFile? pickedFile = await _fileHelper.pickImageFromGallery();
+                      XFile? pickedFile = await FileHelper.pickImageFromGallery();
                       if (pickedFile != null) {
                         _avatarImage = File(pickedFile.path);
                         return _avatarImage;
@@ -133,11 +132,11 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
                   child: MyImagePicker(
                     labelText: 'Background',
                     getImage: () async {
-                      _backgroundImage = await _fileHelper.getMedia(widget.user.backgroundImage);
+                      _backgroundImage = await FileHelper.getMedia(widget.user.backgroundImage);
                       return _backgroundImage;
                     },
                     onTap: () async {
-                      XFile? pickedFile = await _fileHelper.pickImageFromGallery();
+                      XFile? pickedFile = await FileHelper.pickImageFromGallery();
                       if (pickedFile != null) {
                         _backgroundImage = File(pickedFile.path);
                         return _backgroundImage;
@@ -159,10 +158,10 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
                       });
 
                       if (_avatarImage?.existsSync() == true) {
-                        widget.user.avatarImage = await _fileHelper.saveMedia(_avatarImage!);
+                        widget.user.avatarImage = await FileHelper.saveMedia(_avatarImage!);
                       }
                       if (_backgroundImage?.existsSync() == true) {
-                        widget.user.backgroundImage = await _fileHelper.saveMedia(_backgroundImage!);
+                        widget.user.backgroundImage = await FileHelper.saveMedia(_backgroundImage!);
                       }
 
                       await _dbHelper.updateUser(widget.user);

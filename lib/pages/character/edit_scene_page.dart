@@ -73,7 +73,6 @@ class EditScenePageContent extends StatefulWidget {
 
 class _EditScenePageContentState extends State<EditScenePageContent> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  final FileHelper _fileHelper = FileHelper();
   File? _backgroundImage;
 
   bool _isSaving = false;
@@ -148,11 +147,11 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                   child: MyImagePicker(
                     labelText: 'Background',
                     getImage: () async {
-                      _backgroundImage = await _fileHelper.getMedia(widget.scene.backgroundImage);
+                      _backgroundImage = await FileHelper.getMedia(widget.scene.backgroundImage);
                       return _backgroundImage;
                     },
                     onTap: () async {
-                      XFile? pickedFile = await _fileHelper.pickImageFromGallery();
+                      XFile? pickedFile = await FileHelper.pickImageFromGallery();
                       if (pickedFile != null) {
                         _backgroundImage = File(pickedFile.path);
                         return _backgroundImage;
@@ -174,12 +173,12 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                       });
 
                       if (_backgroundImage?.existsSync() == true) {
-                        widget.scene.backgroundImage = await _fileHelper.saveMedia(_backgroundImage!);
+                        widget.scene.backgroundImage = await FileHelper.saveMedia(_backgroundImage!);
                       }
 
                       await _dbHelper.updateScene(widget.scene);
 
-                      Navigator.pop(context, true);  // 返回管理页面，数据发生变化
+                      Navigator.pop(context, true); // 返回管理页面，数据发生变化
                     }
                   : null, // 设置为null禁用按钮
               child: Container(
@@ -188,12 +187,12 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                 alignment: Alignment.center,
                 child: _isSaving
                     ? SizedBox(
-                  width: 24.0, // 设置宽度
-                  height: 24.0, // 设置高度
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.0, // 设置线条粗细
-                  ),
-                )
+                        width: 24.0, // 设置宽度
+                        height: 24.0, // 设置高度
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.0, // 设置线条粗细
+                        ),
+                      )
                     : Text('Finish'),
               ),
             ),

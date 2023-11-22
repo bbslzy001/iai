@@ -13,7 +13,6 @@ import 'package:iai/models/user.dart';
 
 // TODO: 提供级联删除
 // TODO: 更新Scene时不应该提供改变用户
-// TODO: Message添加sceneId外键
 class DatabaseHelper {
   static const _databaseName = "iai.db";
   static const _databaseVersion = 1;

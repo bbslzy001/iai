@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
+
 import 'package:iai/helpers/file_helper.dart';
 
 // 自定义ImageProvider类，它接受一个图像名称作为参数
@@ -26,8 +28,7 @@ class MyAvatarProvider extends ImageProvider<MyAvatarProvider> {
   }
 
   Future<ImageInfo> _loadAsync(String image) async {
-    final FileHelper fileHelper = FileHelper();
-    final File file = await fileHelper.getMedia(image);
+    final File file = await FileHelper.getMedia(image);
 
     if (file.existsSync()) {
       final Uint8List bytes = await file.readAsBytes(); // 用于将文件对象转换为字节列表

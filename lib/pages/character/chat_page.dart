@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/scene.dart';
@@ -12,7 +13,6 @@ import 'package:iai/models/user.dart';
 import 'package:iai/widgets/avatar_provider.dart';
 import 'package:iai/helpers/file_helper.dart';
 import 'package:iai/widgets/media_message_shower.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ChatPage extends StatefulWidget {
   final Scene scene;
@@ -74,11 +74,8 @@ class ChatPageContent extends StatefulWidget {
 
 class _ChatPageContentState extends State<ChatPageContent> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  final FileHelper _fileHelper = FileHelper();
 
   final TextEditingController _textInputController = TextEditingController();
-
-  // final ScrollController _scrollController = ScrollController();
 
   late List<Message> _messages;
   late User _currentUser;
@@ -126,11 +123,14 @@ class _ChatPageContentState extends State<ChatPageContent> {
     setState(() {
       _messages.insert(0, message);
     });
-    final fileName = await _fileHelper.saveMedia(imageFile);
+    final fileName = await FileHelper.saveMedia(imageFile);
     message.contentImage = fileName;
     await _dbHelper.insertMessage(message);
   }
 
+  // 当执行耗时较长耗资源较多的任务时，使用 async/await 异步处理仍会阻塞UI刷新，造成动画卡顿
+  // 因为该任务仍处于UI线程，异步只是允许先执行其他代码，等异步结果返回后再继续执行异步代码（异步只是在同一个线程的并发操作）
+  // 需要通过创建新的线程来执行该类任务
   void _sendVideoMessage(File videoFile, Uint8List? thumbnailBytes) async {
     final message = Message(
       sceneId: widget.sceneId,
@@ -144,11 +144,11 @@ class _ChatPageContentState extends State<ChatPageContent> {
     setState(() {
       _messages.insert(0, message);
     });
-    final thumbnailName = await _fileHelper.saveThumbnail(thumbnailBytes);
+    final thumbnailName = await FileHelper.saveThumbnail(thumbnailBytes);
     message.contentImage = thumbnailName;
-    final videoName = await _fileHelper.saveMedia(videoFile);
+    final videoName = await FileHelper.saveMedia(videoFile);
     message.contentVideo = videoName;
-    await _dbHelper.insertMessage(message);
+    _dbHelper.insertMessage(message);
   }
 
   @override
@@ -199,7 +199,6 @@ class _ChatPageContentState extends State<ChatPageContent> {
                 ? ListView.builder(
                     reverse: true,
                     shrinkWrap: true,
-                    // controller: _scrollController,
                     padding: EdgeInsets.symmetric(vertical: 8),
                     itemCount: _messages.length,
                     itemBuilder: (context, index) {
@@ -301,7 +300,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
                       IconButton(
                         icon: const Icon(Icons.camera),
                         onPressed: () async {
-                          XFile? pickedFile = await _fileHelper.pickImageFromCamera();
+                          XFile? pickedFile = await FileHelper.pickImageFromCamera();
                           if (pickedFile != null) {
                             File imageFile = File(pickedFile.path);
                             _imageFileIterator.addFile(imageFile);
@@ -312,7 +311,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
                       IconButton(
                         icon: const Icon(Icons.photo),
                         onPressed: () async {
-                          XFile? pickedFile = await _fileHelper.pickImageFromGallery();
+                          XFile? pickedFile = await FileHelper.pickImageFromGallery();
                           if (pickedFile != null) {
                             File imageFile = File(pickedFile.path);
                             _imageFileIterator.addFile(imageFile);
@@ -323,10 +322,10 @@ class _ChatPageContentState extends State<ChatPageContent> {
                       IconButton(
                         icon: const Icon(Icons.videocam),
                         onPressed: () async {
-                          XFile? pickedFile = await _fileHelper.pickVideoFromGallery();
+                          XFile? pickedFile = await FileHelper.pickVideoFromGallery();
                           if (pickedFile != null) {
                             File videoFile = File(pickedFile.path);
-                            Uint8List? thumbnailBytes = await _fileHelper.getThumbnailBytes(videoFile);
+                            Uint8List? thumbnailBytes = await FileHelper.getThumbnailBytes(videoFile);
                             _videoFileIterator.addFile(thumbnailBytes);
                             _sendVideoMessage(videoFile, thumbnailBytes);
                           }

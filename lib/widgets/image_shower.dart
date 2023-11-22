@@ -13,15 +13,13 @@ class MyImageShower extends StatefulWidget {
 }
 
 class _MyImageShowerState extends State<MyImageShower> {
-  final FileHelper _fileHelper = FileHelper();
-
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     if (widget.image.isNotEmpty) {
       return FutureBuilder(
-        future: _fileHelper.getMedia(widget.image),
+        future: FileHelper.getMedia(widget.image),
         builder: (context, snapshot) {
           // 检查异步操作的状态
           if (snapshot.hasData) {
