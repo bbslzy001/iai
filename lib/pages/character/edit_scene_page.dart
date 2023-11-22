@@ -29,6 +29,7 @@ class _EditScenePageState extends State<EditScenePage> {
       appBar: AppBar(
         title: Text('Edit Scene'),
       ),
+      resizeToAvoidBottomInset: false, // 设置为false，禁止调整界面以避免底部被软键盘顶起
       body: FutureBuilder(
         // 传入Future列表
         future: Future.wait([

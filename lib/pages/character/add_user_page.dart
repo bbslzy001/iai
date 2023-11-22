@@ -24,6 +24,7 @@ class _AddUserPageState extends State<AddUserPage> {
       appBar: AppBar(
         title: Text('Add User'),
       ),
+      resizeToAvoidBottomInset: false, // 设置为false，禁止调整界面以避免底部被软键盘顶起
       body: AddUserPageContent(),
     );
   }
