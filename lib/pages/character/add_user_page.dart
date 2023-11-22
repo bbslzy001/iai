@@ -83,7 +83,7 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
                 child: MyImagePicker(
                   labelText: 'Avatar',
                   onTap: () async {
-                    XFile? pickedFile = await _fileHelper.pickMediaFromGallery();
+                    XFile? pickedFile = await _fileHelper.pickImageFromGallery();
                     if (pickedFile != null) {
                       _avatarImage = File(pickedFile.path);
                       return _avatarImage;
@@ -98,7 +98,7 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
                 child: MyImagePicker(
                   labelText: 'Background',
                   onTap: () async {
-                    XFile? pickedFile = await _fileHelper.pickMediaFromGallery();
+                    XFile? pickedFile = await _fileHelper.pickImageFromGallery();
                     if (pickedFile != null) {
                       _backgroundImage = File(pickedFile.path);
                       return _backgroundImage;

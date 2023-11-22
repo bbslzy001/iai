@@ -151,7 +151,7 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                       return _backgroundImage;
                     },
                     onTap: () async {
-                      XFile? pickedFile = await _fileHelper.pickMediaFromGallery();
+                      XFile? pickedFile = await _fileHelper.pickImageFromGallery();
                       if (pickedFile != null) {
                         _backgroundImage = File(pickedFile.path);
                         return _backgroundImage;

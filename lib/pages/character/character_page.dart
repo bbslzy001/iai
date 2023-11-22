@@ -227,8 +227,7 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
           child: FilledButton.tonal(
             onPressed: () {
               Navigator.of(context).pushNamed('/chat', arguments: {
-                'user1Id': _selectedScene!.user1Id,
-                'user2Id': _selectedScene!.user2Id,
+                'scene': _selectedScene!,
               });
             },
             child: Text(

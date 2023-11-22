@@ -11,17 +11,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.3
-  image_picker: ^1.0.4
-  sqflite: ^2.0.1
-  path: ^1.8.3
-  path_provider: ^2.0.7
-  encrypt: ^5.0.3
-  pointycastle: ^3.3.4
-  carousel_slider: ^4.2.1
-  flutter_slidable: ^3.0.1
-  flutter_secure_storage: ^4.2.1
-  flutter_cache_manager: ^3.3.1
+  cupertino_icons: ^1.0.2
+  carousel_slider: ^4.2.1  # 轮播图
+  flutter_slidable: ^3.0.1  # 可滑动组件（列表项滑动）
+  path_provider: ^2.0.7  # 提供应用的各种目录
+  image_picker: ^1.0.4  # 从相册选择媒体文件
+  photo_view: ^0.14.0  # 查看图片
+  video_player: ^2.8.1  # 播放视频
+  video_thumbnail: ^0.5.3  # 生成视频缩略图
+  encrypt: ^5.0.3  # 加密解密库
+  pointycastle: ^3.3.4  # 密码学库
+  sqflite: ^2.0.1  # 提供sqlite数据库
+  flutter_cache_manager: ^3.3.1  # 管理缓存
 
 dev_dependencies:
   flutter_test:

@@ -47,8 +47,8 @@ class MyApp extends StatelessWidget {
           case '/addUser':
             return MaterialPageRoute(builder: (context) => const AddUserPage());
           case '/chat':
-            final Map<String, int> args = settings.arguments as Map<String, int>;
-            return MaterialPageRoute(builder: (context) => ChatPage(user1Id: args['user1Id']!, user2Id: args['user2Id']!));
+            final Map<String, Scene> args = settings.arguments as Map<String, Scene>;
+            return MaterialPageRoute(builder: (context) => ChatPage(scene: args['scene']!));
           case '/management':
             return MaterialPageRoute(builder: (context) => const ManagementPage());
           case '/editScene':

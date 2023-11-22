@@ -3,7 +3,6 @@
 import 'dart:io';
 
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:iai/models/encryption_key.dart';
@@ -12,6 +11,9 @@ import 'package:iai/models/note.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
 
+// TODO: 提供级联删除
+// TODO: 更新Scene时不应该提供改变用户
+// TODO: Message添加sceneId外键
 class DatabaseHelper {
   static const _databaseName = "iai.db";
   static const _databaseVersion = 1;
@@ -43,7 +45,7 @@ class DatabaseHelper {
   // Open the database, creating the tables if necessary
   _initDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, _databaseName);
+    String path = '${documentsDirectory.path}/$_databaseName';
     return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
   }
 
@@ -53,11 +55,13 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE message (
         id INTEGER PRIMARY KEY,
+        sceneId INTEGER NOT NULL,
         senderId INTEGER NOT NULL,
         receiverId INTEGER NOT NULL,
         contentType TEXT NOT NULL,
         contentText TEXT NOT NULL,
-        contentPath TEXT NOT NULL
+        contentImage TEXT NOT NULL,
+        contentVideo TEXT NOT NULL
       )
     ''');
 
@@ -126,12 +130,11 @@ class DatabaseHelper {
     return await db.update('message', message.toMap(), where: 'id = ?', whereArgs: [message.id]);
   }
 
-  Future<List<Message>> getMessagesByUserIds(int user1Id, int user2Id) async {
+  Future<List<Message>> getMessagesBySceneId(int sceneId) async {
     // 模拟异步操作的延迟
     await Future.delayed(Duration(seconds: 2));
     final Database db = await _instance.database;
-    final List<Map<String, dynamic>> maps =
-        await db.query('message', where: 'senderId = ? AND receiverId = ? OR senderId = ? AND receiverId = ?', whereArgs: [user1Id, user2Id, user2Id, user1Id]);
+    final List<Map<String, dynamic>> maps = await db.query('message', where: 'sceneId = ?', whereArgs: [sceneId]);
     return List.generate(maps.length, (i) {
       return Message.fromMap(maps[i]);
     });
