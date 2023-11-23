@@ -116,21 +116,6 @@ class _ChatPageContentState extends State<ChatPageContent> {
     );
     setState(() {
       _cacheMessages.insert(0, CacheMessage(message, imageFile: imageFile));
-      for(int i = 0; i < _cacheMessages.length; i++) {
-        print('Index $i');
-        print(_cacheMessages[i].message.id);
-        print(_cacheMessages[i].message.sceneId);
-        print(_cacheMessages[i].message.senderId);
-        print(_cacheMessages[i].message.receiverId);
-        print(_cacheMessages[i].message.contentText);
-        print(_cacheMessages[i].message.contentType);
-        print(_cacheMessages[i].message.contentImage);
-        print(_cacheMessages[i].message.contentVideo);
-        print(_cacheMessages[i].imageFile);
-        print(_cacheMessages[i].videoThumbnailFile);
-        print(_cacheMessages[i].videoFile);
-        print('-------------------');
-      }
     });
     final fileName = await FileHelper.saveMedia(imageFile);
     message.contentImage = fileName;
@@ -378,20 +363,6 @@ class _ChatPageContentState extends State<ChatPageContent> {
     Message message = cacheMessage.message;
 
     if (message.contentType == 'image') {
-      print('###############################################');
-      print(cacheMessage.message.id);
-      print(cacheMessage.message.sceneId);
-      print(cacheMessage.message.senderId);
-      print(cacheMessage.message.receiverId);
-      print(cacheMessage.message.contentText);
-      print(cacheMessage.message.contentType);
-      print(cacheMessage.message.contentImage);
-      print(cacheMessage.message.contentVideo);
-      print(cacheMessage.imageFile);
-      print(cacheMessage.videoThumbnailFile);
-      print(cacheMessage.videoFile);
-      print('###############################################');
-
       if (message.contentImage.isNotEmpty) {
         return MyMediaMessageShower(image: message.contentImage);
       } else {

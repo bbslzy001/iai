@@ -109,8 +109,6 @@ class _MyMediaMessageShowerState extends State<MyMediaMessageShower> {
   }
 
   Widget _buildImage(BuildContext context, File imageFile) {
-    print(imageFile);
-
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed("/fullImage", arguments: {
