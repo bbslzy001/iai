@@ -45,13 +45,13 @@ class _SettingPageState extends State<SettingPage> {
 
   Future<void> _clearUnusedCache() async {
     // 获取应用程序的本地缓存目录
-    Directory appCacheDir = await getTemporaryDirectory();
+    final appCacheDir = await getTemporaryDirectory();
 
     // 获取缓存目录中的所有文件和子目录（不递归）
-    List<FileSystemEntity> entities = appCacheDir.listSync(followLinks: false);
+    final entities = appCacheDir.listSync(followLinks: false);
 
     // 遍历所有文件和子目录
-    for (FileSystemEntity entity in entities) {
+    for (final entity in entities) {
       // 删除文件或目录
       if (entity is File) {
         entity.deleteSync();
@@ -68,8 +68,7 @@ class _SettingPageState extends State<SettingPage> {
     DefaultCacheManager().emptyCache();
   }
 
-  Future<void> _clearAppData() async {
-  }
+  Future<void> _clearAppData() async {}
 }
 
 class ClearItem extends StatefulWidget {
@@ -125,19 +124,16 @@ class _ClearItemState extends State<ClearItem> {
           ElevatedButton(
             onPressed: _clearing == -1
                 ? () async {
-              setState(() {
-                _clearing = 0;
-              });
+                    setState(() {
+                      _clearing = 0;
+                    });
 
-              // Simulate operation delay
-              await Future.delayed(Duration(seconds: 3));
+                    await widget.clearFunction();
 
-              await widget.clearFunction();
-
-              setState(() {
-                _clearing = 1;
-              });
-            }
+                    setState(() {
+                      _clearing = 1;
+                    });
+                  }
                 : null,
             child: const Text('Clear'),
           ),

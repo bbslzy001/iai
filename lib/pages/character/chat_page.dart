@@ -50,7 +50,7 @@ class _ChatPageState extends State<ChatPage> {
             );
           } else {
             // 如果正在加载数据，显示加载指示器
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -74,14 +74,12 @@ class ChatPageContent extends StatefulWidget {
 
 class _ChatPageContentState extends State<ChatPageContent> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
-
-  final TextEditingController _textInputController = TextEditingController();
+  final _textInputController = TextEditingController();
 
   late List<CacheMessage> _cacheMessages;
   late User _currentUser;
   late User _oppositeUser;
-
-  bool showExtraButtons = false;
+  bool _showExtraButtons = false;
 
   @override
   void initState() {
@@ -147,16 +145,14 @@ class _ChatPageContentState extends State<ChatPageContent> {
 
   @override
   Widget build(BuildContext context) {
-    double bottomNavBarHeight = MediaQuery.of(context).padding.bottom;
-
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final bottomNavBarHeight = MediaQuery.of(context).padding.bottom;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
         title: ListTile(
           onTap: () {
-            // 点击对方触发的效果
             // 相互切换角色
             setState(() {
               User temp = _currentUser;
@@ -171,7 +167,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
           ),
           title: Text(
             _oppositeUser.username,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -179,7 +175,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.menu),
+            icon: const Icon(Icons.menu),
             onPressed: () {
               // 打开菜单
             },
@@ -193,7 +189,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
                 ? ListView.builder(
                     reverse: true,
                     shrinkWrap: true,
-                    padding: EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     itemCount: _cacheMessages.length,
                     itemBuilder: (context, index) {
                       CacheMessage cacheMessage = _cacheMessages[index];
@@ -202,7 +198,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
                     },
                   )
                 : Container(
-                    padding: EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -212,9 +208,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
                             size: 80,
                             color: colorScheme.outline,
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
+                          const SizedBox(height: 20),
                           Text(
                             'No messages yet',
                             style: TextStyle(
@@ -242,13 +236,13 @@ class _ChatPageContentState extends State<ChatPageContent> {
                       icon: const Icon(Icons.add),
                       onPressed: () {
                         setState(() {
-                          showExtraButtons = !showExtraButtons;
+                          _showExtraButtons = !_showExtraButtons;
                         });
                       },
                     ),
                     Expanded(
                       child: Container(
-                        margin: EdgeInsets.all(8),
+                        margin: const EdgeInsets.all(8),
                         child: TextField(
                           controller: _textInputController,
                           // 监听输入框的变化，更新UI组件
@@ -258,7 +252,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
                           minLines: 1,
                           maxLines: 5,
                           decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16), // 调整垂直和水平内边距
+                            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16), // 调整垂直和水平内边距
                             hintText: 'Type a message',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -281,7 +275,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
                     ),
                   ],
                 ),
-                if (showExtraButtons)
+                if (_showExtraButtons)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -340,7 +334,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
     return Align(
       alignment: isMe ? Alignment.topRight : Alignment.topLeft,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         padding: EdgeInsets.all(isText ? 10 : 5),
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
@@ -368,23 +362,16 @@ class _ChatPageContentState extends State<ChatPageContent> {
 
     if (message.contentType == 'image') {
       if (message.contentImage.isNotEmpty) {
-        // TODO: 修改成MyMediaMessageShower
         return MyMediaMessageShower(image: message.contentImage);
       } else {
-        return Image.file(
-          cacheMessage.imageFile!,
-          fit: BoxFit.cover,
-        );
+        return MyMediaMessageShower(imageFile: cacheMessage.imageFile!);
       }
     } else {
       if (message.contentVideo.isNotEmpty) {
-        // TODO: 修改成MyMediaMessageShower，在内部判断是否有缩略图
-        return MyMediaMessageShower(image: message.contentImage);
+        return MyMediaMessageShower(video: message.contentVideo, videoThumbnail: message.contentImage);
       } else {
-        return Image.memory(
-          cacheMessage.videoThumbnailBytes!,
-          fit: BoxFit.cover,
-        );
+        final tempVideoThumbnailFile = File.fromRawPath(cacheMessage.videoThumbnailBytes!);
+        return MyMediaMessageShower(videoThumbnailFile: tempVideoThumbnailFile, videoFile: cacheMessage.videoFile);
       }
     }
   }

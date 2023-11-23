@@ -7,18 +7,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double statusBarHeight = MediaQuery
-        .of(context)
-        .padding
-        .top;
-    double bottomNavBarHeight = MediaQuery
-        .of(context)
-        .padding
-        .bottom;
-    double screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height; // screenHeight中不包括状态栏和底部导航栏的高度
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+    final bottomNavBarHeight = MediaQuery.of(context).padding.bottom;
+    final screenHeight = MediaQuery.of(context).size.height; // screenHeight中不包括状态栏和底部导航栏的高度
 
     return Scaffold(
       body: Column(
@@ -70,7 +61,7 @@ class HomePage extends StatelessWidget {
   }
 
   Widget buildContentLayout(BuildContext context) {
-    final List<Section> sections = [
+    final sections = [
       Section(name: 'character', backgroundImage: ''),
       Section(name: 'notebook', backgroundImage: ''),
     ];
@@ -78,7 +69,7 @@ class HomePage extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.0),
       child: GridView.builder(
-        padding: EdgeInsets.zero,  // 去除 GridView 内边距
+        padding: EdgeInsets.zero, // 去除 GridView 内边距
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 5 / 6, // 设置宽高比
@@ -119,8 +110,8 @@ class HomePage extends StatelessWidget {
 }
 
 class Section {
-  String name;
-  String backgroundImage;
+  final String name;
+  final String backgroundImage;
 
   Section({
     required this.name,

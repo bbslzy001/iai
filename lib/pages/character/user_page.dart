@@ -6,7 +6,7 @@ import 'package:iai/widgets/image_shower.dart';
 class UserPage extends StatefulWidget {
   final User user;
 
-  UserPage({Key? key, required this.user}) : super(key: key);
+  const UserPage({Key? key, required this.user}) : super(key: key);
 
   @override
   _UserPageState createState() => _UserPageState();
@@ -15,9 +15,8 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -31,7 +30,7 @@ class _UserPageState extends State<UserPage> {
             height: screenHeight * 0.1,
             decoration: BoxDecoration(
               color: colorScheme.primaryContainer,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(20.0),
                 bottomRight: Radius.circular(20.0),
               ),
@@ -42,7 +41,7 @@ class _UserPageState extends State<UserPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
+                SizedBox(
                   height: screenHeight * 0.2,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20.0), // Adjust the value as needed
@@ -52,19 +51,19 @@ class _UserPageState extends State<UserPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 32),
+                const SizedBox(height: 32),
                 Container(
                   alignment: Alignment.center,
                   child: Text(
                     widget.user.description,
-                    style: TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 20),
                   ),
-                )
+                ),
               ],
             ),
           ),
         ],
-      )
+      ),
     );
   }
 }

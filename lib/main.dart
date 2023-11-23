@@ -1,5 +1,7 @@
 // main.dart
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:iai/color_schemes.dart';
@@ -7,6 +9,7 @@ import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/pages/character/scene_page.dart';
 import 'package:iai/pages/character/user_page.dart';
+import 'package:iai/pages/full_image_page.dart';
 import 'package:iai/pages/home_page.dart';
 import 'package:iai/pages/setting_page.dart';
 import 'package:iai/pages/character/add_scene_page.dart';
@@ -70,6 +73,9 @@ class MyApp extends StatelessWidget {
           case '/user':
             final Map<String, User> args = settings.arguments as Map<String, User>;
             return MaterialPageRoute(builder: (context) => UserPage(user: args['user']!));
+          case '/fullImage':
+            final Map<String, File> args = settings.arguments as Map<String, File>;
+            return MaterialPageRoute(builder: (context) => FullImagePage(imageFile: args['imageFile']!));
         }
         return null;
       },

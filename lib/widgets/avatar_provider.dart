@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
@@ -28,13 +26,13 @@ class MyAvatarProvider extends ImageProvider<MyAvatarProvider> {
   }
 
   Future<ImageInfo> _loadAsync(String image) async {
-    final File file = await FileHelper.getMedia(image);
+    final file = await FileHelper.getMedia(image);
 
     if (file.existsSync()) {
-      final Uint8List bytes = await file.readAsBytes(); // 用于将文件对象转换为字节列表
-      final ui.Codec codec = await PaintingBinding.instance.instantiateImageCodec(bytes); // 用于创建一个图像编解码器，用于解码图像数据
-      final ui.FrameInfo frameInfo = await codec.getNextFrame(); // 用于获取图像的第一帧，如果是静态图像，就是整个图像
-      final ui.Image image = frameInfo.image; // 用于获取图像对象
+      final bytes = await file.readAsBytes(); // 用于将文件对象转换为字节列表
+      final codec = await PaintingBinding.instance.instantiateImageCodec(bytes); // 用于创建一个图像编解码器，用于解码图像数据
+      final frameInfo = await codec.getNextFrame(); // 用于获取图像的第一帧，如果是静态图像，就是整个图像
+      final image = frameInfo.image; // 用于获取图像对象
       return ImageInfo(image: image); // 用于创建并返回ImageInfo对象
     } else {
       // 如果文件不存在，抛出异常

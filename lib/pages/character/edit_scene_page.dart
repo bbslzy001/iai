@@ -21,13 +21,13 @@ class EditScenePage extends StatefulWidget {
 }
 
 class _EditScenePageState extends State<EditScenePage> {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final _dbHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Scene'),
+        title: const Text('Edit Scene'),
       ),
       resizeToAvoidBottomInset: false, // 设置为false，禁止调整界面以避免底部被软键盘顶起
       body: FutureBuilder(
@@ -51,7 +51,7 @@ class _EditScenePageState extends State<EditScenePage> {
             );
           } else {
             // 如果正在加载数据，显示加载指示器
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -72,9 +72,9 @@ class EditScenePageContent extends StatefulWidget {
 }
 
 class _EditScenePageContentState extends State<EditScenePageContent> {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
-  File? _backgroundImage;
+  final _dbHelper = DatabaseHelper();
 
+  File? _backgroundImage;
   bool _isSaving = false;
 
   @override
@@ -86,7 +86,7 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
           children: [
             TextFormField(
               initialValue: widget.scene.sceneName,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Scene Name',
                 border: OutlineInputBorder(),
               ),
@@ -96,7 +96,7 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                 });
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             DropdownButtonFormField<int>(
               decoration: InputDecoration(
                 labelText: 'Select User 1',
@@ -115,7 +115,7 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
               onChanged: null,
               icon: const Icon(Icons.arrow_drop_down),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             DropdownButtonFormField<int>(
               decoration: InputDecoration(
                 labelText: 'Select User 2',
@@ -134,7 +134,7 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
               onChanged: null,
               icon: const Icon(Icons.arrow_drop_down),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -157,8 +157,7 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                 ),
               ],
             ),
-            SizedBox(height: 32),
-            // TODO：圆形指示器卡顿问题
+            const SizedBox(height: 32),
             FilledButton.tonal(
               onPressed: (widget.scene.sceneName != '')
                   ? () async {
@@ -180,14 +179,14 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                 height: 48,
                 alignment: Alignment.center,
                 child: _isSaving
-                    ? SizedBox(
+                    ? const SizedBox(
                         width: 24.0, // 设置宽度
                         height: 24.0, // 设置高度
                         child: CircularProgressIndicator(
                           strokeWidth: 2.0, // 设置线条粗细
                         ),
                       )
-                    : Text('Finish'),
+                    : const Text('Finish'),
               ),
             ),
           ],

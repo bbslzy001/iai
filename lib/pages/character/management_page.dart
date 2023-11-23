@@ -17,13 +17,13 @@ class ManagementPage extends StatefulWidget {
 
 class _ManagementPageState extends State<ManagementPage> {
   // 通过持有GlobalKey来获取相应的_TabContentState对象，然后调用其方法来刷新数据
-  final GlobalKey<_TabWidgetState> _scenesTabWidgetKey = GlobalKey<_TabWidgetState>();
-  final GlobalKey<_TabWidgetState> _usersTabWidgetKey = GlobalKey<_TabWidgetState>();
+  final _scenesTabWidgetKey = GlobalKey<_TabWidgetState>();
+  final _usersTabWidgetKey = GlobalKey<_TabWidgetState>();
 
-  bool isChanged = false;
+  bool _isChanged = false;
 
   void isChangedCallback() {
-    isChanged = true;
+    _isChanged = true;
   }
 
   @override
@@ -34,10 +34,10 @@ class _ManagementPageState extends State<ManagementPage> {
         appBar: AppBar(
           leading: BackButton(
             onPressed: () {
-              Navigator.pop(context, isChanged);
+              Navigator.pop(context, _isChanged);
             },
           ),
-          title: Text('Management'),
+          title: const Text('Management'),
           actions: [
             PopupMenuButton<String>(
               onSelected: (value) {
@@ -45,7 +45,7 @@ class _ManagementPageState extends State<ManagementPage> {
                   Navigator.of(context).pushNamed('/addScene').then((result) {
                     if (result != null && result is bool && result) {
                       // 通过持有GlobalKey来获取相应的_TabContentState对象，然后调用其方法来刷新数据
-                      isChanged = true; // 表明数据发生变化
+                      _isChanged = true; // 表明数据发生变化
                       _scenesTabWidgetKey.currentState?.updateStateCallback();
                     }
                   });
@@ -53,7 +53,7 @@ class _ManagementPageState extends State<ManagementPage> {
                   Navigator.of(context).pushNamed('/addUser').then((result) {
                     if (result != null && result is bool && result) {
                       // 通过持有GlobalKey来获取相应的_TabContentState对象，然后调用其方法来刷新数据
-                      isChanged = true; // 表明数据发生变化
+                      _isChanged = true; // 表明数据发生变化
                       _usersTabWidgetKey.currentState?.updateStateCallback();
                     }
                   });
@@ -71,7 +71,7 @@ class _ManagementPageState extends State<ManagementPage> {
               ],
             ),
           ],
-          bottom: TabBar(
+          bottom: const TabBar(
             tabs: [
               Tab(text: 'Scenes'),
               Tab(text: 'Users'),
@@ -81,7 +81,7 @@ class _ManagementPageState extends State<ManagementPage> {
         body: WillPopScope(
           // 拦截返回按钮，返回时传递数据
           onWillPop: () async {
-            Navigator.pop(context, isChanged);
+            Navigator.pop(context, _isChanged);
             return false;
           },
           child: TabBarView(
@@ -107,7 +107,8 @@ class TabWidget extends StatefulWidget {
 }
 
 class _TabWidgetState extends State<TabWidget> with AutomaticKeepAliveClientMixin {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final _dbHelper = DatabaseHelper();
+
   late Future<List<dynamic>> _dataFuture;
 
   Future<List<Scene>> _getScenesFuture() async {
@@ -155,7 +156,7 @@ class _TabWidgetState extends State<TabWidget> with AutomaticKeepAliveClientMixi
           // 检查异步操作的状态
           if (snapshot.connectionState == ConnectionState.waiting) {
             // 如果正在加载数据，可以显示加载指示器
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
@@ -165,7 +166,7 @@ class _TabWidgetState extends State<TabWidget> with AutomaticKeepAliveClientMixi
             );
           } else {
             // 数据准备好后，构建页面
-            List<dynamic> data = snapshot.data![0];
+            final data = snapshot.data![0];
             return TabWidgetContent(data: data, updateStateCallback: updateStateCallback, isChangedCallback: widget.isChangedCallback);
           }
         },
@@ -178,7 +179,8 @@ class _TabWidgetState extends State<TabWidget> with AutomaticKeepAliveClientMixi
 }
 
 class TabWidgetContent extends StatelessWidget {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final _dbHelper = DatabaseHelper();
+
   final List<dynamic> data;
   final VoidCallback updateStateCallback;
   final VoidCallback isChangedCallback;
@@ -187,15 +189,15 @@ class TabWidgetContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
-    bool isScene = data is List<Scene>;
+    final colorScheme = Theme.of(context).colorScheme;
+    final isScene = data is List<Scene>;
 
     return ListView.builder(
       itemCount: data.length,
       itemBuilder: (context, index) {
         return Slidable(
           endActionPane: ActionPane(
-            motion: ScrollMotion(),
+            motion: const ScrollMotion(),
             children: [
               SlidableAction(
                 onPressed: (BuildContext context) {
@@ -252,21 +254,17 @@ class TabWidgetContent extends StatelessWidget {
             child: ListTile(
               leading: CircleAvatar(
                 foregroundImage: isScene
-                  ? data[index].backgroundImage.isNotEmpty
-                    ? MyAvatarProvider(data[index].backgroundImage)
-                    : null
-                  : data[index].avatarImage.isNotEmpty
-                    ? MyAvatarProvider(data[index].avatarImage)
-                    : null,
+                    ? data[index].backgroundImage.isNotEmpty
+                        ? MyAvatarProvider(data[index].backgroundImage)
+                        : null
+                    : data[index].avatarImage.isNotEmpty
+                        ? MyAvatarProvider(data[index].avatarImage)
+                        : null,
                 backgroundColor: colorScheme.primaryContainer,
-                child: Text(
-                  isScene ? data[index].sceneName[0] : data[index].username[0],
-                )
+                child: Text(isScene ? data[index].sceneName[0] : data[index].username[0]),
               ),
-              title: Text(
-                isScene ? data[index].sceneName : data[index].username,
-              ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), // MD3 uses more padding
+              title: Text(isScene ? data[index].sceneName : data[index].username),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), // MD3 uses more padding
             ),
           ),
         );

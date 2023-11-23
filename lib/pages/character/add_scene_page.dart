@@ -19,13 +19,13 @@ class AddScenePage extends StatefulWidget {
 }
 
 class _AddScenePageState extends State<AddScenePage> {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final _dbHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Add Scene'),
+          title: const Text('Add Scene'),
         ),
         resizeToAvoidBottomInset: false, // 设置为false，禁止调整界面以避免底部被软键盘顶起
         body: FutureBuilder(
@@ -47,7 +47,7 @@ class _AddScenePageState extends State<AddScenePage> {
               );
             } else {
               // 如果正在加载数据，显示加载指示器
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             }
@@ -66,10 +66,10 @@ class AddScenePageContent extends StatefulWidget {
 }
 
 class _AddScenePageContentState extends State<AddScenePageContent> {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
-  final Scene _scene = Scene(sceneName: '', backgroundImage: '', user1Id: -1, user2Id: -1);
-  File? _backgroundImage;
+  final _dbHelper = DatabaseHelper();
 
+  final _scene = Scene(sceneName: '', backgroundImage: '', user1Id: -1, user2Id: -1);
+  File? _backgroundImage;
   bool _isSaving = false;
 
   @override
@@ -80,7 +80,7 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
         children: [
           TextFormField(
             initialValue: _scene.sceneName,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Scene Name',
               border: OutlineInputBorder(),
             ),
@@ -90,7 +90,7 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
               });
             },
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           DropdownButtonFormField<int>(
             decoration: InputDecoration(
               labelText: 'Select User 1',
@@ -112,7 +112,7 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
             },
             icon: const Icon(Icons.arrow_drop_down),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           DropdownButtonFormField<int>(
             decoration: InputDecoration(
               labelText: 'Select User 2',
@@ -134,7 +134,7 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
             },
             icon: const Icon(Icons.arrow_drop_down),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -153,8 +153,7 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
               ),
             ],
           ),
-          SizedBox(height: 32),
-          // TODO：圆形指示器卡顿问题
+          const SizedBox(height: 32),
           FilledButton.tonal(
             onPressed: (_scene.sceneName != '' && _scene.user1Id != -1 && _scene.user2Id != -1)
                 ? () async {
@@ -176,14 +175,14 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
               height: 48,
               alignment: Alignment.center,
               child: _isSaving
-                  ? SizedBox(
+                  ? const SizedBox(
                       width: 24.0, // 设置宽度
                       height: 24.0, // 设置高度
                       child: CircularProgressIndicator(
                         strokeWidth: 2.0, // 设置线条粗细
                       ),
                     )
-                  : Text('Finish'),
+                  : const Text('Finish'),
             ),
           ),
         ],

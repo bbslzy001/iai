@@ -22,10 +22,10 @@ class _AddUserPageState extends State<AddUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add User'),
+        title: const Text('Add User'),
       ),
       resizeToAvoidBottomInset: false, // 设置为false，禁止调整界面以避免底部被软键盘顶起
-      body: AddUserPageContent(),
+      body: const AddUserPageContent(),
     );
   }
 }
@@ -38,11 +38,11 @@ class AddUserPageContent extends StatefulWidget {
 }
 
 class _AddUserPageContentState extends State<AddUserPageContent> {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
-  final User _user = User(username: '', description: '', avatarImage: '', backgroundImage: '');
+  final _dbHelper = DatabaseHelper();
+
+  final _user = User(username: '', description: '', avatarImage: '', backgroundImage: '');
   File? _avatarImage;
   File? _backgroundImage;
-
   bool _isSaving = false;
 
   @override
@@ -53,7 +53,7 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
         children: [
           TextFormField(
             initialValue: _user.username,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Username',
               border: OutlineInputBorder(),
             ),
@@ -63,10 +63,10 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
               });
             },
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           TextFormField(
             initialValue: _user.description,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Description',
               border: OutlineInputBorder(),
             ),
@@ -76,7 +76,7 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
               });
             },
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -93,7 +93,7 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
                   },
                 ),
               ),
-              SizedBox(width: 8), // 可以根据需要调整间距
+              const SizedBox(width: 8), // 可以根据需要调整间距
               Expanded(
                 child: MyImagePicker(
                   labelText: 'Background',
@@ -110,8 +110,7 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
               ),
             ],
           ),
-          SizedBox(height: 32),
-          // TODO：圆形指示器卡顿问题
+          const SizedBox(height: 32),
           FilledButton.tonal(
             onPressed: (_user.username != '')
                 ? () async {
@@ -136,14 +135,14 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
               height: 48,
               alignment: Alignment.center,
               child: _isSaving
-                  ? SizedBox(
+                  ? const SizedBox(
                       width: 24.0, // 设置宽度
                       height: 24.0, // 设置高度
                       child: CircularProgressIndicator(
                         strokeWidth: 2.0, // 设置线条粗细
                       ),
                     )
-                  : Text('Finish'),
+                  : const Text('Finish'),
             ),
           ),
         ],

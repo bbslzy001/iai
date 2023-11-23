@@ -20,13 +20,13 @@ class EditUserPage extends StatefulWidget {
 }
 
 class _EditUserPageState extends State<EditUserPage> {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final _dbHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit User'),
+        title: const Text('Edit User'),
       ),
       resizeToAvoidBottomInset: false, // 设置为false，禁止调整界面以避免底部被软键盘顶起
       body: FutureBuilder(
@@ -48,7 +48,7 @@ class _EditUserPageState extends State<EditUserPage> {
             );
           } else {
             // 如果正在加载数据，显示加载指示器
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -68,10 +68,10 @@ class EditUserPageContent extends StatefulWidget {
 }
 
 class _EditUserPageContentState extends State<EditUserPageContent> {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final _dbHelper = DatabaseHelper();
+
   File? _avatarImage;
   File? _backgroundImage;
-
   bool _isSaving = false;
 
   @override
@@ -83,7 +83,7 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
           children: [
             TextFormField(
               initialValue: widget.user.username,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Username',
                 border: OutlineInputBorder(),
               ),
@@ -93,10 +93,10 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
                 });
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextFormField(
               initialValue: widget.user.description,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Description',
                 border: OutlineInputBorder(),
               ),
@@ -106,7 +106,7 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
                 });
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -127,7 +127,7 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
                     },
                   ),
                 ),
-                SizedBox(width: 8), // 可以根据需要调整间距
+                const SizedBox(width: 8), // 可以根据需要调整间距
                 Expanded(
                   child: MyImagePicker(
                     labelText: 'Background',
@@ -148,8 +148,7 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
                 ),
               ],
             ),
-            SizedBox(height: 32),
-            // TODO：圆形指示器卡顿问题
+            const SizedBox(height: 32),
             FilledButton.tonal(
               onPressed: (widget.user.username != '')
                   ? () async {
@@ -174,14 +173,14 @@ class _EditUserPageContentState extends State<EditUserPageContent> {
                 height: 48,
                 alignment: Alignment.center,
                 child: _isSaving
-                    ? SizedBox(
+                    ? const SizedBox(
                         width: 24.0, // 设置宽度
                         height: 24.0, // 设置高度
                         child: CircularProgressIndicator(
                           strokeWidth: 2.0, // 设置线条粗细
                         ),
                       )
-                    : Text('Finish'),
+                    : const Text('Finish'),
               ),
             ),
           ],

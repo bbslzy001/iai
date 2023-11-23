@@ -15,7 +15,8 @@ class CharacterPage extends StatefulWidget {
 }
 
 class _CharacterPageState extends State<CharacterPage> {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final _dbHelper = DatabaseHelper();
+
   late Future<List<Scene>> _scenesFuture;
 
   // 异步获取数据
@@ -58,7 +59,7 @@ class _CharacterPageState extends State<CharacterPage> {
             );
           } else {
             // 如果正在加载数据，显示加载指示器
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -79,31 +80,32 @@ class CharacterPageContent extends StatefulWidget {
 }
 
 class _CharacterPageContentState extends State<CharacterPageContent> {
-  final CarouselController _carouselController = CarouselController();
+  final _carouselController = CarouselController();
+
   Scene? _selectedScene;
 
   @override
   Widget build(BuildContext context) {
-    double statusBarHeight = MediaQuery.of(context).padding.top;
-    double bottomNavBarHeight = MediaQuery.of(context).padding.bottom;
-    double screenHeight = MediaQuery.of(context).size.height;
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+    final bottomNavBarHeight = MediaQuery.of(context).padding.bottom;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Column(
       children: [
         Container(
           // 排除手机顶部状态栏
           padding: EdgeInsets.only(top: statusBarHeight),
-          height: screenHeight * 0.25,
+          height: screenHeight * 0.2,
           child: buildTopLayout(context),
         ),
-        Container(
+        SizedBox(
           height: screenHeight * 0.6,
           child: buildCenterLayout(),
         ),
         Container(
           // 排除手机底部导航栏
           padding: EdgeInsets.only(bottom: bottomNavBarHeight),
-          height: screenHeight * 0.15,
+          height: screenHeight * 0.2,
           child: buildBottomLayout(context),
         ),
       ],
@@ -113,15 +115,13 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
   Widget buildTopLayout(BuildContext context) {
     return Stack(
       children: [
-        Container(
-          child: Center(
-            child: Text(
-              'Character',
-              style: TextStyle(
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Pacifico',
-              ),
+        const Center(
+          child: Text(
+            'Character',
+            style: TextStyle(
+              fontSize: 48,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Pacifico',
             ),
           ),
         ),
@@ -147,72 +147,74 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
   Widget buildCenterLayout() {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        double totalHeight = constraints.maxHeight;
+        final totalHeight = constraints.maxHeight;
 
         return CarouselSlider(
-            carouselController: _carouselController,
-            options: CarouselOptions(
-                height: totalHeight * 0.9,
-                aspectRatio: 16 / 9,
-                viewportFraction: 0.70,
-                enlargeCenterPage: true,
-                pageSnapping: true,
-                enableInfiniteScroll: widget.scenes.length >= 3, // 根据卡片数量决定是否启用无限滚动
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    // 切换到当前卡片，但并未选择
-                  });
-                }),
-            items: widget.scenes.map((scene) {
-              return Builder(
-                builder: (BuildContext context) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (_selectedScene == scene) {
-                          _selectedScene = null;
-                        } else {
-                          _selectedScene = scene;
-                        }
-                      });
-                    },
-                    child: Card(
-                      elevation: _selectedScene == scene ? 12 : 3,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            flex: 4,
-                            child: Container(
-                                margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-                                clipBehavior: Clip.hardEdge,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                child: MyImageShower(
-                                  image: scene.backgroundImage,
-                                  defaultImage: 'assets/images/scene.png',
-                                ),
+          carouselController: _carouselController,
+          options: CarouselOptions(
+            height: totalHeight * 0.9,
+            aspectRatio: 16 / 9,
+            viewportFraction: 0.70,
+            enlargeCenterPage: true,
+            pageSnapping: true,
+            enableInfiniteScroll: widget.scenes.length >= 3,
+            // 根据卡片数量决定是否启用无限滚动
+            onPageChanged: (index, reason) {
+              // 切换到当前卡片，但并未选择
+              setState(() {});
+            },
+          ),
+          items: widget.scenes.map((scene) {
+            return Builder(
+              builder: (BuildContext context) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (_selectedScene == scene) {
+                        _selectedScene = null;
+                      } else {
+                        _selectedScene = scene;
+                      }
+                    });
+                  },
+                  child: Card(
+                    elevation: _selectedScene == scene ? 12 : 3,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: MyImageShower(
+                              image: scene.backgroundImage,
+                              defaultImage: 'assets/images/scene.png',
                             ),
                           ),
-                          Expanded(
-                            flex: 1,
-                            child: Center(
-                              child: Text(
-                                scene.sceneName,
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Center(
+                            child: Text(
+                              scene.sceneName,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              );
-            }).toList());
+                  ),
+                );
+              },
+            );
+          }).toList(),
+        );
       },
     );
   }
@@ -221,7 +223,7 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
     return Visibility(
       visible: _selectedScene != null,
       child: Center(
-        child: Container(
+        child: SizedBox(
           width: 180.0,
           height: 60.0,
           child: FilledButton.tonal(
@@ -230,7 +232,7 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
                 'scene': _selectedScene!,
               });
             },
-            child: Text(
+            child: const Text(
               'Start',
               style: TextStyle(
                 fontSize: 24,
@@ -238,7 +240,7 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
               ),
             ),
           ),
-        )
+        ),
       ),
     );
   }

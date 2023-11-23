@@ -59,7 +59,7 @@ class _NotebookPageState extends State<NotebookPage> {
             );
           } else {
             // 数据准备好后，构建页面
-            List<Note> notes = snapshot.data![0];
+            final notes = snapshot.data![0];
             return NotebookPageContent(notes: notes, updateStateCallback: updateStateCallback);
           }
         },
@@ -79,13 +79,13 @@ class NotebookPageContent extends StatefulWidget {
 }
 
 class _NotebookPageContentState extends State<NotebookPageContent> {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final _dbHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
-    double statusBarHeight = MediaQuery.of(context).padding.top;
-    double bottomNavBarHeight = MediaQuery.of(context).padding.bottom;
-    double screenHeight = MediaQuery.of(context).size.height;
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+    final bottomNavBarHeight = MediaQuery.of(context).padding.bottom;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Column(
       children: [

@@ -15,7 +15,7 @@ class MyImageShower extends StatefulWidget {
 class _MyImageShowerState extends State<MyImageShower> {
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     if (widget.image.isNotEmpty) {
       return FutureBuilder(
