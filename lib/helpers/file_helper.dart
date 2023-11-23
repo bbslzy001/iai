@@ -39,14 +39,15 @@ class FileHelper {
   }
 
   // 保存视频缩略图（仅保存到缓存中）
-  static Future<String> saveThumbnail(Uint8List? thumbnailBytes) async {
+  static Future<Map<String, File>> saveThumbnail(File videoFile) async {
+    final thumbnailBytes = await FileHelper.getThumbnailBytes(videoFile);
     if (thumbnailBytes != null) {
       final thumbnailName = '${DateTime.now().millisecondsSinceEpoch}.temp';
       final cachePath = await getTemporaryDirectory(); // 获取应用缓存目录
-      await DefaultCacheManager().putFile(cachePath.path, thumbnailBytes, key: thumbnailName);
-      return thumbnailName;
+      final thumbnailFile = await DefaultCacheManager().putFile(cachePath.path, thumbnailBytes, key: thumbnailName);
+      return {thumbnailName: thumbnailFile};
     } else {
-      return '';
+      return {};
     }
   }
 

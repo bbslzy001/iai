@@ -109,6 +109,8 @@ class _MyMediaMessageShowerState extends State<MyMediaMessageShower> {
   }
 
   Widget _buildImage(BuildContext context, File imageFile) {
+    print(imageFile);
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed("/fullImage", arguments: {
@@ -135,19 +137,24 @@ class _MyMediaMessageShowerState extends State<MyMediaMessageShower> {
           'videoFile': videoFile as File,
         });
       },
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Image.file(
-            videoThumbnailFile,
-            fit: BoxFit.cover,
-          ),
-          Icon(
-            Icons.play_arrow,
-            color: primaryColor,
-            size: 48,
-          ),
-        ],
+      child: Hero(
+        tag: ObjectKey(videoThumbnailFile),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned.fill(
+              child: Image.file(
+                videoThumbnailFile,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Icon(
+              Icons.play_arrow,
+              color: primaryColor,
+              size: 48,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -10,6 +10,7 @@ import 'package:iai/models/user.dart';
 import 'package:iai/pages/character/scene_page.dart';
 import 'package:iai/pages/character/user_page.dart';
 import 'package:iai/pages/full_image_page.dart';
+import 'package:iai/pages/full_video_page.dart';
 import 'package:iai/pages/home_page.dart';
 import 'package:iai/pages/setting_page.dart';
 import 'package:iai/pages/character/add_scene_page.dart';
@@ -76,6 +77,9 @@ class MyApp extends StatelessWidget {
           case '/fullImage':
             final Map<String, File> args = settings.arguments as Map<String, File>;
             return MaterialPageRoute(builder: (context) => FullImagePage(imageFile: args['imageFile']!));
+          case '/fullVideo':
+            final Map<String, File> args = settings.arguments as Map<String, File>;
+            return MaterialPageRoute(builder: (context) => FullVideoPage(videoThumbnailFile: args['videoThumbnailFile']!, videoFile: args['videoFile']!));
         }
         return null;
       },

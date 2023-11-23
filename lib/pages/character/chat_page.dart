@@ -1,7 +1,6 @@
 // pages/character/chat_page.dart
 
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -117,13 +116,28 @@ class _ChatPageContentState extends State<ChatPageContent> {
     );
     setState(() {
       _cacheMessages.insert(0, CacheMessage(message, imageFile: imageFile));
+      for(int i = 0; i < _cacheMessages.length; i++) {
+        print('Index $i');
+        print(_cacheMessages[i].message.id);
+        print(_cacheMessages[i].message.sceneId);
+        print(_cacheMessages[i].message.senderId);
+        print(_cacheMessages[i].message.receiverId);
+        print(_cacheMessages[i].message.contentText);
+        print(_cacheMessages[i].message.contentType);
+        print(_cacheMessages[i].message.contentImage);
+        print(_cacheMessages[i].message.contentVideo);
+        print(_cacheMessages[i].imageFile);
+        print(_cacheMessages[i].videoThumbnailFile);
+        print(_cacheMessages[i].videoFile);
+        print('-------------------');
+      }
     });
     final fileName = await FileHelper.saveMedia(imageFile);
     message.contentImage = fileName;
     await _dbHelper.insertMessage(message);
   }
 
-  void _sendVideoMessage(File videoFile, Uint8List? thumbnailBytes) async {
+  void _sendVideoMessage(File videoFile) async {
     final message = Message(
       sceneId: widget.sceneId,
       senderId: _currentUser.id!,
@@ -133,11 +147,15 @@ class _ChatPageContentState extends State<ChatPageContent> {
       contentImage: '',
       contentVideo: '',
     );
+    late final File thumbnailFile;
+    final thumbnailResult = await FileHelper.saveThumbnail(videoFile);
+    if (thumbnailResult.isNotEmpty) {
+      message.contentImage = thumbnailResult.keys.first;
+      thumbnailFile = thumbnailResult[message.contentImage]!;
+    }
     setState(() {
-      _cacheMessages.insert(0, CacheMessage(message, videoFile: videoFile, videoThumbnailBytes: thumbnailBytes));
+      _cacheMessages.insert(0, CacheMessage(message, videoFile: videoFile, videoThumbnailFile: thumbnailFile));
     });
-    final thumbnailName = await FileHelper.saveThumbnail(thumbnailBytes);
-    message.contentImage = thumbnailName;
     final videoName = await FileHelper.saveMedia(videoFile);
     message.contentVideo = videoName;
     _dbHelper.insertMessage(message);
@@ -311,8 +329,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
                           XFile? pickedFile = await FileHelper.pickVideoFromGallery();
                           if (pickedFile != null) {
                             File videoFile = File(pickedFile.path);
-                            Uint8List? thumbnailBytes = await FileHelper.getThumbnailBytes(videoFile);
-                            _sendVideoMessage(videoFile, thumbnailBytes);
+                            _sendVideoMessage(videoFile);
                           }
                         },
                       ),
@@ -361,6 +378,20 @@ class _ChatPageContentState extends State<ChatPageContent> {
     Message message = cacheMessage.message;
 
     if (message.contentType == 'image') {
+      print('###############################################');
+      print(cacheMessage.message.id);
+      print(cacheMessage.message.sceneId);
+      print(cacheMessage.message.senderId);
+      print(cacheMessage.message.receiverId);
+      print(cacheMessage.message.contentText);
+      print(cacheMessage.message.contentType);
+      print(cacheMessage.message.contentImage);
+      print(cacheMessage.message.contentVideo);
+      print(cacheMessage.imageFile);
+      print(cacheMessage.videoThumbnailFile);
+      print(cacheMessage.videoFile);
+      print('###############################################');
+
       if (message.contentImage.isNotEmpty) {
         return MyMediaMessageShower(image: message.contentImage);
       } else {
@@ -370,8 +401,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
       if (message.contentVideo.isNotEmpty) {
         return MyMediaMessageShower(video: message.contentVideo, videoThumbnail: message.contentImage);
       } else {
-        final tempVideoThumbnailFile = File.fromRawPath(cacheMessage.videoThumbnailBytes!);
-        return MyMediaMessageShower(videoThumbnailFile: tempVideoThumbnailFile, videoFile: cacheMessage.videoFile);
+        return MyMediaMessageShower(videoThumbnailFile: cacheMessage.videoThumbnailFile, videoFile: cacheMessage.videoFile);
       }
     }
   }
@@ -380,8 +410,8 @@ class _ChatPageContentState extends State<ChatPageContent> {
 class CacheMessage {
   final Message message;
   final File? imageFile;
-  final Uint8List? videoThumbnailBytes;
+  final File? videoThumbnailFile;
   final File? videoFile;
 
-  CacheMessage(this.message, {this.imageFile, this.videoThumbnailBytes, this.videoFile});
+  CacheMessage(this.message, {this.imageFile, this.videoThumbnailFile, this.videoFile});
 }
