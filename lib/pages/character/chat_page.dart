@@ -77,19 +77,16 @@ class _ChatPageContentState extends State<ChatPageContent> {
 
   final TextEditingController _textInputController = TextEditingController();
 
-  late List<Message> _messages;
+  late List<CacheMessage> _cacheMessages;
   late User _currentUser;
   late User _oppositeUser;
-
-  final ImageFileIterator _imageFileIterator = ImageFileIterator();
-  final VideoFileIterator _videoFileIterator = VideoFileIterator();
 
   bool showExtraButtons = false;
 
   @override
   void initState() {
     super.initState();
-    _messages = widget.messages.reversed.toList();
+    _cacheMessages = widget.messages.reversed.map((message) => CacheMessage(message)).toList();
     _currentUser = widget.user1;
     _oppositeUser = widget.user2;
   }
@@ -105,7 +102,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
       contentVideo: '',
     );
     setState(() {
-      _messages.insert(0, message);
+      _cacheMessages.insert(0, CacheMessage(message));
     });
     _dbHelper.insertMessage(message);
   }
@@ -121,7 +118,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
       contentVideo: '',
     );
     setState(() {
-      _messages.insert(0, message);
+      _cacheMessages.insert(0, CacheMessage(message, imageFile: imageFile));
     });
     final fileName = await FileHelper.saveMedia(imageFile);
     message.contentImage = fileName;
@@ -139,7 +136,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
       contentVideo: '',
     );
     setState(() {
-      _messages.insert(0, message);
+      _cacheMessages.insert(0, CacheMessage(message, videoFile: videoFile, videoThumbnailBytes: thumbnailBytes));
     });
     final thumbnailName = await FileHelper.saveThumbnail(thumbnailBytes);
     message.contentImage = thumbnailName;
@@ -192,16 +189,16 @@ class _ChatPageContentState extends State<ChatPageContent> {
       body: Column(
         children: [
           Expanded(
-            child: _messages.isNotEmpty
+            child: _cacheMessages.isNotEmpty
                 ? ListView.builder(
                     reverse: true,
                     shrinkWrap: true,
                     padding: EdgeInsets.symmetric(vertical: 8),
-                    itemCount: _messages.length,
+                    itemCount: _cacheMessages.length,
                     itemBuilder: (context, index) {
-                      Message message = _messages[index];
-                      bool isMe = message.senderId == _currentUser.id;
-                      return buildMessageWidget(context, message, isMe);
+                      CacheMessage cacheMessage = _cacheMessages[index];
+                      bool isMe = cacheMessage.message.senderId == _currentUser.id;
+                      return buildMessageWidget(context, cacheMessage, isMe);
                     },
                   )
                 : Container(
@@ -300,7 +297,6 @@ class _ChatPageContentState extends State<ChatPageContent> {
                           XFile? pickedFile = await FileHelper.pickImageFromCamera();
                           if (pickedFile != null) {
                             File imageFile = File(pickedFile.path);
-                            _imageFileIterator.addFile(imageFile);
                             _sendImageMessage(imageFile);
                           }
                         },
@@ -311,7 +307,6 @@ class _ChatPageContentState extends State<ChatPageContent> {
                           XFile? pickedFile = await FileHelper.pickImageFromGallery();
                           if (pickedFile != null) {
                             File imageFile = File(pickedFile.path);
-                            _imageFileIterator.addFile(imageFile);
                             _sendImageMessage(imageFile);
                           }
                         },
@@ -323,7 +318,6 @@ class _ChatPageContentState extends State<ChatPageContent> {
                           if (pickedFile != null) {
                             File videoFile = File(pickedFile.path);
                             Uint8List? thumbnailBytes = await FileHelper.getThumbnailBytes(videoFile);
-                            _videoFileIterator.addFile(thumbnailBytes);
                             _sendVideoMessage(videoFile, thumbnailBytes);
                           }
                         },
@@ -338,10 +332,10 @@ class _ChatPageContentState extends State<ChatPageContent> {
     );
   }
 
-  Widget buildMessageWidget(BuildContext context, Message message, bool isMe) {
+  Widget buildMessageWidget(BuildContext context, CacheMessage cacheMessage, bool isMe) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    final isText = message.contentType == 'text';
+    final isText = cacheMessage.message.contentType == 'text';
 
     return Align(
       alignment: isMe ? Alignment.topRight : Alignment.topLeft,
@@ -355,28 +349,30 @@ class _ChatPageContentState extends State<ChatPageContent> {
         ),
         child: isText
             ? Text(
-                message.contentText,
+                cacheMessage.message.contentText,
                 style: TextStyle(color: isMe ? colorScheme.onPrimary : colorScheme.onSecondary),
               )
             : SizedBox(
                 width: 240,
                 height: 160,
                 child: SizedBox.expand(
-                  child: buildMediaMessageWidget(message),
+                  child: buildMediaMessageWidget(cacheMessage),
                 ),
               ),
       ),
     );
   }
 
-  Widget buildMediaMessageWidget(Message message) {
+  Widget buildMediaMessageWidget(CacheMessage cacheMessage) {
+    Message message = cacheMessage.message;
+
     if (message.contentType == 'image') {
       if (message.contentImage.isNotEmpty) {
         // TODO: 修改成MyMediaMessageShower
         return MyMediaMessageShower(image: message.contentImage);
       } else {
         return Image.file(
-          _imageFileIterator.getNextFile(),
+          cacheMessage.imageFile!,
           fit: BoxFit.cover,
         );
       }
@@ -386,7 +382,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
         return MyMediaMessageShower(image: message.contentImage);
       } else {
         return Image.memory(
-          _videoFileIterator.getNextFile(),
+          cacheMessage.videoThumbnailBytes!,
           fit: BoxFit.cover,
         );
       }
@@ -394,46 +390,11 @@ class _ChatPageContentState extends State<ChatPageContent> {
   }
 }
 
-class ImageFileIterator {
-  final List<File> _imageFileList = [];
-  int _index = 0;
+class CacheMessage {
+  final Message message;
+  final File? imageFile;
+  final Uint8List? videoThumbnailBytes;
+  final File? videoFile;
 
-  ImageFileIterator();
-
-  void addFile(File file) {
-    _imageFileList.add(file); // 添加新媒体文件
-    _index = 0; // 重置索引
-  }
-
-  File getNextFile() {
-    if (_index < _imageFileList.length) {
-      return _imageFileList[_index++];
-    } else {
-      return File('');
-    }
-  }
-}
-
-class VideoFileIterator {
-  final List<Uint8List> _videoFileList = [];
-  int _index = 0;
-
-  VideoFileIterator();
-
-  void addFile(Uint8List? item) {
-    if (item == null) {
-      _videoFileList.add(Uint8List(0));
-    } else {
-      _videoFileList.add(item); // 添加新媒体文件
-    }
-    _index = 0; // 重置索引
-  }
-
-  Uint8List getNextFile() {
-    if (_index < _videoFileList.length) {
-      return _videoFileList[_index++];
-    } else {
-      return Uint8List(0); // 返回空的字节数组
-    }
-  }
+  CacheMessage(this.message, {this.imageFile, this.videoThumbnailBytes, this.videoFile});
 }
