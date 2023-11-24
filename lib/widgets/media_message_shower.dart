@@ -29,9 +29,9 @@ class MyMediaMessageShower extends StatefulWidget {
 class _MyMediaMessageShowerState extends State<MyMediaMessageShower> {
   bool _isImage = true;
 
-  late final Future<File> _imageFuture;
-  late final Future<File> _videoThumbnailFuture;
-  late final Future<File> _videoFuture;
+  late Future<File> _imageFuture;
+  late Future<File> _videoThumbnailFuture;
+  late Future<File> _videoFuture;
 
   // 异步获取数据
   Future<File> _getImageFuture() async {
@@ -47,18 +47,6 @@ class _MyMediaMessageShowerState extends State<MyMediaMessageShower> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    if (widget.image != null) {
-      _imageFuture = _getImageFuture();
-    } else if (widget.videoThumbnail != null && widget.video != null) {
-      _isImage = false;
-      _videoThumbnailFuture = _getVideoThumbnailFuture();
-      _videoFuture = _getVideoFuture();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
 
@@ -66,6 +54,14 @@ class _MyMediaMessageShowerState extends State<MyMediaMessageShower> {
       return _buildImage(context, widget.imageFile!);
     } else if (widget.videoThumbnailFile != null && widget.videoFile != null) {
       return _buildVideo(context, widget.videoThumbnailFile!, widget.videoFile!, colorScheme.primary);
+    }
+
+    if (widget.image != null) {
+      _imageFuture = _getImageFuture();
+    } else if (widget.videoThumbnail != null && widget.video != null) {
+      _isImage = false;
+      _videoThumbnailFuture = _getVideoThumbnailFuture();
+      _videoFuture = _getVideoFuture();
     }
 
     return FutureBuilder(
