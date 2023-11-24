@@ -40,7 +40,7 @@ class EncryptManager {
 
     // 如果数据库中不存在密钥，生成随机密钥
     final String newKey = _generateRandomKey();
-    await dbHelper.addEncryptionKey(EncryptionKey(key: newKey));
+    await dbHelper.insertEncryptionKey(EncryptionKey(key: newKey));
     return newKey;
   }
 

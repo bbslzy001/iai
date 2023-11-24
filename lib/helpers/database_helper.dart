@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:iai/models/identity.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -10,6 +11,7 @@ import 'package:iai/models/message.dart';
 import 'package:iai/models/note.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
+import 'package:iai/models/notefeedback.dart';
 
 // TODO: 提供级联删除
 class DatabaseHelper {
@@ -85,15 +87,35 @@ class DatabaseHelper {
       )
     ''');
 
+    // Create Identity table
+    await db.execute('''
+      CREATE TABLE identity (
+        id INTEGER PRIMARY KEY,
+        identityName TEXT NOT NULL,
+        backgroundImage TEXT NOT NULL
+      )
+    ''');
+
     // Create Note table
     await db.execute('''
       CREATE TABLE note (
         id INTEGER PRIMARY KEY,
+        identityId INTEGER NOT NULL,
         title TEXT NOT NULL,
         content TEXT NOT NULL,
-        isCompleted INTEGER NOT NULL,
-        feedback TEXT NOT NULL,
-        feedbackMediaPaths TEXT NOT NULL
+        isCompleted INTEGER NOT NULL
+      )
+    ''');
+
+    // Create NoteFeedback table
+    await db.execute('''
+      CREATE TABLE notefeedback (
+        id INTEGER PRIMARY KEY,
+        noteId INTEGER NOT NULL,
+        contentType TEXT NOT NULL,
+        contentText TEXT NOT NULL,
+        contentImage TEXT NOT NULL,
+        contentVideo TEXT NOT NULL
       )
     ''');
 
@@ -218,6 +240,46 @@ class DatabaseHelper {
     });
   }
 
+  // Identity table CRUD
+  Future<int> insertIdentity(Identity identity) async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
+    return await db.insert('identity', identity.toMap());
+  }
+
+  Future<int> deleteIdentity(int identityId) async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
+    return await db.delete('identity', where: 'id = ?', whereArgs: [identityId]);
+  }
+
+  Future<int> updateIdentity(Identity identity) async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
+    return await db.update('identity', identity.toMap(), where: 'id = ?', whereArgs: [identity.id]);
+  }
+
+  Future<Identity> getIdentityById(int identityId) async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
+    final List<Map<String, dynamic>> maps = await db.query('identity', where: 'id = ?', whereArgs: [identityId]);
+    return Identity.fromMap(maps.first);
+  }
+
+  Future<List<Identity>> getIdentities() async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
+    final List<Map<String, dynamic>> maps = await db.query('identity');
+    return List.generate(maps.length, (i) {
+      return Identity.fromMap(maps[i]);
+    });
+  }
+
   // Note table CRUD
   Future<int> insertNote(Note note) async {
     // 模拟异步操作的延迟
@@ -248,18 +310,58 @@ class DatabaseHelper {
     return Note.fromMap(maps.first);
   }
 
-  Future<List<Note>> getNotes() async {
+  Future<List<Note>> getNotesByIdentityId(int identityId) async {
     // 模拟异步操作的延迟
     await Future.delayed(Duration(seconds: 2));
     final Database db = await _instance.database;
-    final List<Map<String, dynamic>> maps = await db.query('note');
+    final List<Map<String, dynamic>> maps = await db.query('note', where: 'identityId = ?', whereArgs: [identityId]);
     return List.generate(maps.length, (i) {
       return Note.fromMap(maps[i]);
     });
   }
 
+  // NoteFeedback table CRUD
+  Future<int> insertNoteFeedback(NoteFeedback noteFeedback) async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
+    return await db.insert('notefeedback', noteFeedback.toMap());
+  }
+
+  Future<int> deleteNoteFeedback(int noteFeedbackId) async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
+    return await db.delete('notefeedback', where: 'id = ?', whereArgs: [noteFeedbackId]);
+  }
+
+  Future<int> updateNoteFeedback(NoteFeedback noteFeedback) async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
+    return await db.update('notefeedback', noteFeedback.toMap(), where: 'id = ?', whereArgs: [noteFeedback.id]);
+  }
+
+  Future<NoteFeedback> getNoteFeedbackById(int noteFeedbackId) async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
+    final List<Map<String, dynamic>> maps = await db.query('notefeedback', where: 'id = ?', whereArgs: [noteFeedbackId]);
+    return NoteFeedback.fromMap(maps.first);
+  }
+
+  Future<List<NoteFeedback>> getNoteFeedbacksByNoteId(int noteId) async {
+    // 模拟异步操作的延迟
+    await Future.delayed(Duration(seconds: 2));
+    final Database db = await _instance.database;
+    final List<Map<String, dynamic>> maps = await db.query('notefeedback', where: 'noteId = ?', whereArgs: [noteId]);
+    return List.generate(maps.length, (i) {
+      return NoteFeedback.fromMap(maps[i]);
+    });
+  }
+
   // EncryptionKey table CRUD
-  Future<int> addEncryptionKey(EncryptionKey key) async {
+  Future<int> insertEncryptionKey(EncryptionKey key) async {
     // 模拟异步操作的延迟
     await Future.delayed(Duration(seconds: 2));
     final Database db = await _instance.database;

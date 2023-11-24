@@ -364,15 +364,15 @@ class _ChatPageContentState extends State<ChatPageContent> {
 
     if (message.contentType == 'image') {
       if (message.contentImage.isNotEmpty) {
-        return MyMediaMessageShower(image: message.contentImage);
+        return MyMediaMessageShower(image: message.contentImage, key: ObjectKey(cacheMessage));
       } else {
-        return MyMediaMessageShower(imageFile: cacheMessage.imageFile!);
+        return MyMediaMessageShower(imageFile: cacheMessage.imageFile!, key: ObjectKey(cacheMessage));
       }
     } else {
       if (message.contentVideo.isNotEmpty) {
-        return MyMediaMessageShower(video: message.contentVideo, videoThumbnail: message.contentImage);
+        return MyMediaMessageShower(video: message.contentVideo, videoThumbnail: message.contentImage, key: ObjectKey(cacheMessage));
       } else {
-        return MyMediaMessageShower(videoThumbnailFile: cacheMessage.videoThumbnailFile, videoFile: cacheMessage.videoFile);
+        return MyMediaMessageShower(videoThumbnailFile: cacheMessage.videoThumbnailFile, videoFile: cacheMessage.videoFile, key: ObjectKey(cacheMessage));
       }
     }
   }

@@ -1,4 +1,4 @@
-// pages/character/management_page.dart
+// pages/character/manage_scene_user_page.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -8,14 +8,14 @@ import 'package:iai/models/user.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/widgets/avatar_provider.dart';
 
-class ManagementPage extends StatefulWidget {
-  const ManagementPage({Key? key}) : super(key: key);
+class ManageSceneUserPage extends StatefulWidget {
+  const ManageSceneUserPage({Key? key}) : super(key: key);
 
   @override
-  _ManagementPageState createState() => _ManagementPageState();
+  _ManageSceneUserPageState createState() => _ManageSceneUserPageState();
 }
 
-class _ManagementPageState extends State<ManagementPage> {
+class _ManageSceneUserPageState extends State<ManageSceneUserPage> {
   // 通过持有GlobalKey来获取相应的_TabContentState对象，然后调用其方法来刷新数据
   final _scenesTabWidgetKey = GlobalKey<_TabWidgetState>();
   final _usersTabWidgetKey = GlobalKey<_TabWidgetState>();

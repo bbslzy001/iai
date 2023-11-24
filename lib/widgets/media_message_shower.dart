@@ -29,9 +29,9 @@ class MyMediaMessageShower extends StatefulWidget {
 class _MyMediaMessageShowerState extends State<MyMediaMessageShower> {
   bool _isImage = true;
 
-  late Future<File> _imageFuture;
-  late Future<File> _videoThumbnailFuture;
-  late Future<File> _videoFuture;
+  Future<File>? _imageFuture;
+  Future<File>? _videoThumbnailFuture;
+  Future<File>? _videoFuture;
 
   // 异步获取数据
   Future<File> _getImageFuture() async {
@@ -39,7 +39,7 @@ class _MyMediaMessageShowerState extends State<MyMediaMessageShower> {
   }
 
   Future<File> _getVideoThumbnailFuture() async {
-    return await FileHelper.getMedia(widget.videoThumbnail!);
+    return await FileHelper.getThumbnail(widget.videoThumbnail!, widget.video!);
   }
 
   Future<File> _getVideoFuture() async {
@@ -56,16 +56,16 @@ class _MyMediaMessageShowerState extends State<MyMediaMessageShower> {
       return _buildVideo(context, widget.videoThumbnailFile!, widget.videoFile!, colorScheme.primary);
     }
 
-    if (widget.image != null) {
+    if (_imageFuture == null && widget.image != null) {
       _imageFuture = _getImageFuture();
-    } else if (widget.videoThumbnail != null && widget.video != null) {
+    } else if (_videoThumbnailFuture == null && _videoFuture == null && widget.videoThumbnail != null && widget.video != null) {
       _isImage = false;
       _videoThumbnailFuture = _getVideoThumbnailFuture();
       _videoFuture = _getVideoFuture();
     }
 
     return FutureBuilder(
-      future: _isImage ? Future.wait([_imageFuture]) : Future.wait([_videoThumbnailFuture, _videoFuture]),
+      future: _isImage ? Future.wait([_imageFuture!]) : Future.wait([_videoThumbnailFuture!, _videoFuture!]),
       builder: (context, snapshot) {
         // 检查异步操作的状态
         if (snapshot.hasData) {

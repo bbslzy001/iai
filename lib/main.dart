@@ -12,6 +12,9 @@ import 'package:iai/pages/character/user_page.dart';
 import 'package:iai/pages/full_image_page.dart';
 import 'package:iai/pages/full_video_page.dart';
 import 'package:iai/pages/home_page.dart';
+import 'package:iai/pages/notebook/add_identity_page.dart';
+import 'package:iai/pages/notebook/edit_identity_page.dart';
+import 'package:iai/pages/notebook/manage_identity_page.dart';
 import 'package:iai/pages/setting_page.dart';
 import 'package:iai/pages/character/add_scene_page.dart';
 import 'package:iai/pages/character/add_user_page.dart';
@@ -19,9 +22,10 @@ import 'package:iai/pages/character/character_page.dart';
 import 'package:iai/pages/character/chat_page.dart';
 import 'package:iai/pages/character/edit_scene_page.dart';
 import 'package:iai/pages/character/edit_user_page.dart';
-import 'package:iai/pages/character/management_page.dart';
-import 'package:iai/pages/notebook/notebook_page.dart';
+import 'package:iai/pages/character/manage_scene_user_page.dart';
+import 'package:iai/pages/notebook/identity_page.dart';
 import 'package:iai/helpers/encrypt_helper.dart';
+import 'package:iai/models/identity.dart';
 
 void main() async {
   // Ensure widgets are initialized before runApp is called.
@@ -52,7 +56,7 @@ class MyApp extends StatelessWidget {
           case '/character':
             return MaterialPageRoute(builder: (context) => const CharacterPage());
           case '/notebook':
-            return MaterialPageRoute(builder: (context) => const NotebookPage());
+            return MaterialPageRoute(builder: (context) => const IdentityPage());
           case '/addScene':
             return MaterialPageRoute(builder: (context) => const AddScenePage());
           case '/addUser':
@@ -60,8 +64,15 @@ class MyApp extends StatelessWidget {
           case '/chat':
             final Map<String, Scene> args = settings.arguments as Map<String, Scene>;
             return MaterialPageRoute(builder: (context) => ChatPage(scene: args['scene']!));
-          case '/management':
-            return MaterialPageRoute(builder: (context) => const ManagementPage());
+          case '/manageSceneUser':
+            return MaterialPageRoute(builder: (context) => const ManageSceneUserPage());
+          case '/manageIdentity':
+            return MaterialPageRoute(builder: (context) => const ManageIdentityPage());
+          case '/addIdentity':
+            return MaterialPageRoute(builder: (context) => const AddIdentityPage());
+          case '/editIdentity':
+            final Map<String, Identity> args = settings.arguments as Map<String, Identity>;
+            return MaterialPageRoute(builder: (context) => EditIdentityPage(identity: args['identity']!));
           case '/editScene':
             final Map<String, int> args = settings.arguments as Map<String, int>;
             return MaterialPageRoute(builder: (context) => EditScenePage(sceneId: args['sceneId']!));

@@ -1,41 +1,42 @@
-// pages/character/character_page.dart
+// pages/notebook/identity_page.dart
 
-import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
 
 import 'package:iai/helpers/database_helper.dart';
-import 'package:iai/models/scene.dart';
+import 'package:iai/models/identity.dart';
+
 import 'package:iai/widgets/image_shower.dart';
 
-class CharacterPage extends StatefulWidget {
-  const CharacterPage({Key? key}) : super(key: key);
+class IdentityPage extends StatefulWidget {
+  const IdentityPage({Key? key}) : super(key: key);
 
   @override
-  _CharacterPageState createState() => _CharacterPageState();
+  _IdentityPageState createState() => _IdentityPageState();
 }
 
-class _CharacterPageState extends State<CharacterPage> {
+class _IdentityPageState extends State<IdentityPage> {
   final _dbHelper = DatabaseHelper();
 
-  late Future<List<Scene>> _scenesFuture;
+  late Future<List<Identity>> _identitiesFuture;
 
   // 异步获取数据
-  Future<List<Scene>> _getScenesFuture() async {
-    return await _dbHelper.getScenes();
+  Future<List<Identity>> _getIdentitiesFuture() async {
+    return await _dbHelper.getIdentities();
   }
 
   // 第一次获取数据
   @override
   void initState() {
     super.initState();
-    _scenesFuture = _getScenesFuture();
+    _identitiesFuture = _getIdentitiesFuture();
   }
 
   // 重新获取数据，定义给子组件使用的回调函数
   void updateStateCallback() {
     // Future数据的状态从 completed 到 waiting，不需要手动设置为 null，FutureBuilder 会自动重新触发页面重新绘制
     setState(() {
-      _scenesFuture = _getScenesFuture();
+      _identitiesFuture = _getIdentitiesFuture();
     });
   }
 
@@ -44,14 +45,14 @@ class _CharacterPageState extends State<CharacterPage> {
     return Scaffold(
       body: FutureBuilder(
         // 传入Future列表
-        future: Future.wait([_scenesFuture]),
+        future: Future.wait([_identitiesFuture]),
         // 构建页面的回调
         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
           // 检查异步操作的状态
           if (snapshot.hasData) {
             // 数据准备完成，构建页面
-            List<Scene> scenes = snapshot.data![0];
-            return CharacterPageContent(scenes: scenes, updateStateCallback: updateStateCallback);
+            List<Identity> identities = snapshot.data![0];
+            return IdentityPageContent(identities: identities, updateStateCallback: updateStateCallback);
           } else if (snapshot.hasError) {
             // 如果发生错误，显示错误信息
             return Center(
@@ -69,20 +70,20 @@ class _CharacterPageState extends State<CharacterPage> {
   }
 }
 
-class CharacterPageContent extends StatefulWidget {
-  final List<Scene> scenes;
+class IdentityPageContent extends StatefulWidget {
+  final List<Identity> identities;
   final VoidCallback updateStateCallback;
 
-  const CharacterPageContent({Key? key, required this.scenes, required this.updateStateCallback}) : super(key: key);
+  const IdentityPageContent({Key? key, required this.identities, required this.updateStateCallback}) : super(key: key);
 
   @override
-  _CharacterPageContentState createState() => _CharacterPageContentState();
+  _IdentityPageContentState createState() => _IdentityPageContentState();
 }
 
-class _CharacterPageContentState extends State<CharacterPageContent> {
+class _IdentityPageContentState extends State<IdentityPageContent> {
   final _carouselController = CarouselController();
 
-  Scene? _selectedScene;
+  Identity? _selectedIdentity;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +118,7 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
       children: [
         const Center(
           child: Text(
-            'Character',
+            'Notebook',
             style: TextStyle(
               fontSize: 48,
               fontWeight: FontWeight.bold,
@@ -131,8 +132,7 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
           child: IconButton(
             icon: const Icon(Icons.settings_outlined),
             onPressed: () {
-              // 跳转到管理页面，返回该页面是判断是否返回true，如返回则代表数据发生了变化，需要callback
-              Navigator.of(context).pushNamed("/manageSceneUser").then((result) {
+              Navigator.of(context).pushNamed('/manageIdentity').then((result) {
                 if (result != null && result is bool && result) {
                   widget.updateStateCallback();
                 }
@@ -157,28 +157,28 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
             viewportFraction: 0.70,
             enlargeCenterPage: true,
             pageSnapping: true,
-            enableInfiniteScroll: widget.scenes.length >= 3,
+            enableInfiniteScroll: widget.identities.length >= 3,
             // 根据卡片数量决定是否启用无限滚动
             onPageChanged: (index, reason) {
               // 切换到当前卡片，但并未选择
               setState(() {});
             },
           ),
-          items: widget.scenes.map((scene) {
+          items: widget.identities.map((identity) {
             return Builder(
               builder: (BuildContext context) {
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      if (_selectedScene == scene) {
-                        _selectedScene = null;
+                      if (_selectedIdentity == identity) {
+                        _selectedIdentity = null;
                       } else {
-                        _selectedScene = scene;
+                        _selectedIdentity = identity;
                       }
                     });
                   },
                   child: Card(
-                    elevation: _selectedScene == scene ? 12 : 3,
+                    elevation: _selectedIdentity == identity ? 12 : 3,
                     child: Column(
                       children: [
                         Expanded(
@@ -190,8 +190,8 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             child: MyImageShower(
-                              image: scene.backgroundImage,
-                              defaultImage: 'assets/images/scene.png',
+                              image: identity.backgroundImage,
+                              defaultImage: 'assets/images/identity.png',
                             ),
                           ),
                         ),
@@ -199,7 +199,7 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
                           flex: 1,
                           child: Center(
                             child: Text(
-                              scene.sceneName,
+                              identity.identityName,
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -221,15 +221,15 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
 
   Widget buildBottomLayout(BuildContext context) {
     return Visibility(
-      visible: _selectedScene != null,
+      visible: _selectedIdentity != null,
       child: Center(
         child: SizedBox(
           width: 180.0,
           height: 60.0,
           child: FilledButton.tonal(
             onPressed: () {
-              Navigator.of(context).pushNamed('/chat', arguments: {
-                'scene': _selectedScene!,
+              Navigator.of(context).pushNamed('/notebook', arguments: {
+                'identity': _selectedIdentity!,
               });
             },
             child: const Text(
