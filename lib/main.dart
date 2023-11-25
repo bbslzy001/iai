@@ -106,7 +106,7 @@ class MyApp extends StatelessWidget {
             final Map<String, Note> args = settings.arguments as Map<String, Note>;
             return MaterialPageRoute(builder: (context) => NotePage(note: args['note']!));
           case '/editNote':
-            final Map<String, dynamic> args = settings.arguments as Map<String, Note>;
+            final Map<String, dynamic> args = settings.arguments as Map<String, dynamic>;
             return MaterialPageRoute(builder: (context) => EditNotePage(note: args['note']!, noteFeedbacks: args['noteFeedbacks']!));
         }
         return null;

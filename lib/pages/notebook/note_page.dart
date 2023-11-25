@@ -28,7 +28,7 @@ class _NotePageState extends State<NotePage> {
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              Navigator.of(context).pushNamed('editNote', arguments: {
+              Navigator.of(context).pushNamed('/editNote', arguments: {
                 'note': widget.note,
                 'noteFeedbacks': _noteFeedbacks ?? [],
               }).then((result) {

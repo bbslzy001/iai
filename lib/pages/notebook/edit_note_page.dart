@@ -76,85 +76,85 @@ class _EditNoteContentPageState extends State<EditNoteContentPage> {
 
   final _videoController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    _textController.text = widget.note.noteContent;
-    _imageController.text = widget.note.noteImage;
-    _videoController.text = widget.note.noteVideo;
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _textController.text = widget.note.noteContent;
+  //   _imageController.text = widget.note.noteImage;
+  //   _videoController.text = widget.note.noteVideo;
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              TextField(
-                controller: _textController,
-                decoration: const InputDecoration(
-                  labelText: '笔记内容',
-                  hintText: '请输入笔记内容',
-                ),
-                maxLines: 5,
-                maxLength: 1000,
-                onChanged: (value) {
-                  widget.note.noteContent = value;
-                },
-              ),
-              TextField(
-                controller: _imageController,
-                decoration: const InputDecoration(
-                  labelText: '笔记图片',
-                  hintText: '请输入笔记图片',
-                ),
-                maxLines: 1,
-                maxLength: 1000,
-                onChanged: (value) {
-                  widget.note.noteImage = value;
-                },
-              ),
-              TextField(
-                controller: _videoController,
-                decoration: const InputDecoration(
-                  labelText: '笔记视频',
-                  hintText: '请输入笔记视频',
-                ),
-                maxLines: 1,
-                maxLength: 1000,
-                onChanged: (value) {
-                  widget.note.noteVideo = value;
-                },
-              ),
-            ],
-          ),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: TextButton(
-                onPressed: () async {
-                  widget.note.noteStatus = 0;
-                  await _dbHelper.updateNoteStatus(widget.note);
-                  Navigator.pop(context, true);
-                },
-                child: const Text('暂存'),
-              ),
-            ),
-            Expanded(
-              child: TextButton(
-                onPressed: () async {
-                  widget.note.noteStatus = 1;
-                  await _dbHelper.updateNoteStatus(widget.note);
-                  Navigator.pop(context, true);
-                },
-                child: const Text('发布'),
-              ),
-            ),
-          ],
-        ),
+        // Expanded(
+        //   child: ListView(
+        //     padding: const EdgeInsets.all(16),
+        //     children: [
+        //       TextField(
+        //         controller: _textController,
+        //         decoration: const InputDecoration(
+        //           labelText: '笔记内容',
+        //           hintText: '请输入笔记内容',
+        //         ),
+        //         maxLines: 5,
+        //         maxLength: 1000,
+        //         onChanged: (value) {
+        //           widget.note.noteContent = value;
+        //         },
+        //       ),
+        //       TextField(
+        //         controller: _imageController,
+        //         decoration: const InputDecoration(
+        //           labelText: '笔记图片',
+        //           hintText: '请输入笔记图片',
+        //         ),
+        //         maxLines: 1,
+        //         maxLength: 1000,
+        //         onChanged: (value) {
+        //           widget.note.noteImage = value;
+        //         },
+        //       ),
+        //       TextField(
+        //         controller: _videoController,
+        //         decoration: const InputDecoration(
+        //           labelText: '笔记视频',
+        //           hintText: '请输入笔记视频',
+        //         ),
+        //         maxLines: 1,
+        //         maxLength: 1000,
+        //         onChanged: (value) {
+        //           widget.note.noteVideo = value;
+        //         },
+        //       ),
+        //     ],
+        //   ),
+        // ),
+        // Row(
+        //   children: [
+        //     Expanded(
+        //       child: TextButton(
+        //         onPressed: () async {
+        //           widget.note.noteStatus = 0;
+        //           await _dbHelper.updateNoteStatus(widget.note);
+        //           Navigator.pop(context, true);
+        //         },
+        //         child: const Text('暂存'),
+        //       ),
+        //     ),
+        //     Expanded(
+        //       child: TextButton(
+        //         onPressed: () async {
+        //           widget.note.noteStatus = 1;
+        //           await _dbHelper.updateNoteStatus(widget.note);
+        //           Navigator.pop(context, true);
+        //         },
+        //         child: const Text('发布'),
+        //       ),
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }
