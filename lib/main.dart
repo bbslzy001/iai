@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:iai/color_schemes.dart';
 import 'package:iai/helpers/encrypt_helper.dart';
 import 'package:iai/models/identity.dart';
+import 'package:iai/models/note.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/pages/character/add_scene_page.dart';
@@ -22,9 +23,12 @@ import 'package:iai/pages/full_image_page.dart';
 import 'package:iai/pages/full_video_page.dart';
 import 'package:iai/pages/home_page.dart';
 import 'package:iai/pages/notebook/add_identity_page.dart';
+import 'package:iai/pages/notebook/add_note_page.dart';
 import 'package:iai/pages/notebook/edit_identity_page.dart';
+import 'package:iai/pages/notebook/edit_note_page.dart';
 import 'package:iai/pages/notebook/identity_page.dart';
 import 'package:iai/pages/notebook/manage_identity_page.dart';
+import 'package:iai/pages/notebook/note_page.dart';
 import 'package:iai/pages/notebook/notebook_page.dart';
 import 'package:iai/pages/setting_page.dart';
 
@@ -95,6 +99,15 @@ class MyApp extends StatelessWidget {
           case '/fullVideo':
             final Map<String, File> args = settings.arguments as Map<String, File>;
             return MaterialPageRoute(builder: (context) => FullVideoPage(videoThumbnailFile: args['videoThumbnailFile']!, videoFile: args['videoFile']!));
+          case '/addNote':
+            final Map<String, int> args = settings.arguments as Map<String, int>;
+            return MaterialPageRoute(builder: (context) => AddNotePage(identityId: args['identityId']!));
+          case '/note':
+            final Map<String, Note> args = settings.arguments as Map<String, Note>;
+            return MaterialPageRoute(builder: (context) => NotePage(note: args['note']!));
+          case '/editNote':
+            final Map<String, dynamic> args = settings.arguments as Map<String, Note>;
+            return MaterialPageRoute(builder: (context) => EditNotePage(note: args['note']!, noteFeedbacks: args['noteFeedbacks']!));
         }
         return null;
       },

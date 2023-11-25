@@ -3,25 +3,25 @@
 class Note {
   int? id;
   int identityId;
-  String title;
-  String content;
-  int isCompleted;
+  String noteTitle;
+  String noteContent;
+  int noteStatus;
 
   Note({
     this.id,
     required this.identityId,
-    required this.title,
-    required this.content,
-    required this.isCompleted,
+    required this.noteTitle,
+    required this.noteContent,
+    required this.noteStatus,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'identityId': identityId,
-      'title': title,
-      'content': content,
-      'isCompleted': isCompleted,
+      'noteTitle': noteTitle,
+      'noteContent': noteContent,
+      'noteStatus': noteStatus,
     };
   }
 
@@ -29,9 +29,9 @@ class Note {
     return Note(
       id: map['id'],
       identityId: map['identityId'],
-      title: map['title'],
-      content: map['content'],
-      isCompleted: map['isCompleted'],
+      noteTitle: map['noteTitle'],
+      noteContent: map['noteContent'],
+      noteStatus: map['noteStatus'],
     );
   }
 }

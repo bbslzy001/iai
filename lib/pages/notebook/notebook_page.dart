@@ -1,8 +1,6 @@
 // pages/notebook/notebook_page.dart
 
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/identity.dart';
 import 'package:iai/models/note.dart';
@@ -48,10 +46,14 @@ class _NotebookPageState extends State<NotebookPage> {
         title: Text('Notebook: ${widget.identity.identityName}'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_outlined),
+            icon: const Icon(Icons.add),
             onPressed: () {
-              Navigator.of(context).pushNamed('/addNote').then((result) {
-                if (result != null && result is bool && result) {}
+              Navigator.of(context).pushNamed('/addNote', arguments: {
+                'identityId': widget.identity.id!,
+              }).then((result) {
+                if (result != null && result is bool && result) {
+                  updateStateCallback();
+                }
               });
             },
           ),
@@ -80,47 +82,98 @@ class _NotebookPageContentState extends State<NotebookPageContent> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return ListView.builder(
       itemCount: widget.notes.length,
       itemBuilder: (context, index) {
-        return Slidable(
-          endActionPane: ActionPane(
-            motion: const ScrollMotion(),
+        Note note = widget.notes[index];
+        return ListTile(
+          key: ValueKey<int>(note.id!), // 使用note.id作为Key
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SlidableAction(
-                onPressed: (BuildContext context) {
-                  Navigator.of(context).pushNamed('/editNote', arguments: {
-                    'note': widget.notes[index] as Note,
-                  }).then((result) {
-                    if (result != null && result is bool && result) {
-                      widget.updateStateCallback();
-                    }
-                  });
-                },
-                backgroundColor: colorScheme.primary,
-                foregroundColor: colorScheme.primaryContainer,
-                icon: Icons.edit,
-                label: 'Edit',
+              Text(
+                note.noteTitle,
+                style: const TextStyle(fontSize: 20),
               ),
-              SlidableAction(
-                onPressed: (BuildContext context) async {
-                  await _dbHelper.deleteIdentity(widget.notes[index].id!);
-                  widget.updateStateCallback();
-                },
-                backgroundColor: colorScheme.error,
-                foregroundColor: colorScheme.errorContainer,
-                icon: Icons.delete,
-                label: 'Delete',
-              ),
+              _buildStatusIndicator(note.noteStatus),
             ],
           ),
-          child: ListTile(
-            title: Text(widget.notes[index].title),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          ),
+          onTap: () {
+            Navigator.of(context).pushNamed('/note', arguments: {
+              'note': note,
+            }).then((result) {
+              if (result != null && result is bool && result) {
+                widget.updateStateCallback();
+              }
+            });
+          },
+          onLongPress: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (BuildContext context) {
+                return Container(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      _buildStatusOption(note, -1, 'Undo'),
+                      _buildStatusOption(note, 0, 'Doing'),
+                      _buildStatusOption(note, 1, 'Done'),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
         );
+      },
+    );
+  }
+
+  Widget _buildStatusIndicator(int status) {
+    Color indicatorColor;
+    String statusText;
+
+    switch (status) {
+      case -1:
+        indicatorColor = Colors.yellow; // 设置Undo状态的颜色
+        statusText = 'Undo';
+        break;
+      case 0:
+        indicatorColor = Colors.blue; // 设置Doing状态的颜色
+        statusText = 'Doing';
+        break;
+      case 1:
+        indicatorColor = Colors.green; // 设置Done状态的颜色
+        statusText = 'Done';
+        break;
+      default:
+        indicatorColor = Colors.grey; // 默认状态的颜色
+        statusText = 'Unknown';
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: indicatorColor,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Text(
+        statusText,
+        style: const TextStyle(color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildStatusOption(Note note, int value, String text) {
+    return ListTile(
+      title: Text(text),
+      onTap: () async {
+        setState(() {
+          note.noteStatus = value;
+        });
+        _dbHelper.updateNote(note);
+        Navigator.of(context).pop();
       },
     );
   }

@@ -101,9 +101,9 @@ class DatabaseHelper {
       CREATE TABLE note (
         id INTEGER PRIMARY KEY,
         identityId INTEGER NOT NULL,
-        title TEXT NOT NULL,
-        content TEXT NOT NULL,
-        isCompleted INTEGER NOT NULL
+        noteTitle TEXT NOT NULL,
+        noteContent TEXT NOT NULL,
+        noteStatus INTEGER NOT NULL
       )
     ''');
 
