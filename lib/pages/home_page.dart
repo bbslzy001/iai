@@ -34,15 +34,13 @@ class HomePage extends StatelessWidget {
   Widget buildTitleLayout(BuildContext context) {
     return Stack(
       children: [
-        Container(
-          child: Center(
-            child: Text(
-              'IAI',
-              style: TextStyle(
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Pacifico',
-              ),
+        const Center(
+          child: Text(
+            'IAI',
+            style: TextStyle(
+              fontSize: 48,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Pacifico',
             ),
           ),
         ),
@@ -62,15 +60,15 @@ class HomePage extends StatelessWidget {
 
   Widget buildContentLayout(BuildContext context) {
     final sections = [
-      Section(name: 'character', backgroundImage: ''),
-      Section(name: 'notebook', backgroundImage: ''),
+      Section(name: 'character', path: '/character'),
+      Section(name: 'notebook', path: '/identity'),
     ];
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: GridView.builder(
         padding: EdgeInsets.zero, // 去除 GridView 内边距
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 5 / 6, // 设置宽高比
           crossAxisSpacing: 8.0,
@@ -84,7 +82,7 @@ class HomePage extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pushNamed("/${sections[index].name}");
+                  Navigator.of(context).pushNamed(sections[index].path);
                 },
                 child: Card(
                   elevation: 6,
@@ -96,7 +94,7 @@ class HomePage extends StatelessWidget {
               ),
               Text(
                 sections[index].name,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontFamily: 'Pacifico',
                 ),
@@ -111,10 +109,10 @@ class HomePage extends StatelessWidget {
 
 class Section {
   final String name;
-  final String backgroundImage;
+  final String path;
 
   Section({
     required this.name,
-    required this.backgroundImage,
+    required this.path,
   });
 }

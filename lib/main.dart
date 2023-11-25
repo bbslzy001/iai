@@ -15,6 +15,7 @@ import 'package:iai/pages/home_page.dart';
 import 'package:iai/pages/notebook/add_identity_page.dart';
 import 'package:iai/pages/notebook/edit_identity_page.dart';
 import 'package:iai/pages/notebook/manage_identity_page.dart';
+import 'package:iai/pages/notebook/notebook_page.dart';
 import 'package:iai/pages/setting_page.dart';
 import 'package:iai/pages/character/add_scene_page.dart';
 import 'package:iai/pages/character/add_user_page.dart';
@@ -55,8 +56,11 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(builder: (context) => const SettingPage());
           case '/character':
             return MaterialPageRoute(builder: (context) => const CharacterPage());
-          case '/notebook':
+          case '/identity':
             return MaterialPageRoute(builder: (context) => const IdentityPage());
+          case '/notebook':
+            final Map<String, Identity> args = settings.arguments as Map<String, Identity>;
+            return MaterialPageRoute(builder: (context) => NotebookPage(identity: args['identity']!,));
           case '/addScene':
             return MaterialPageRoute(builder: (context) => const AddScenePage());
           case '/addUser':
@@ -74,11 +78,11 @@ class MyApp extends StatelessWidget {
             final Map<String, Identity> args = settings.arguments as Map<String, Identity>;
             return MaterialPageRoute(builder: (context) => EditIdentityPage(identity: args['identity']!));
           case '/editScene':
-            final Map<String, int> args = settings.arguments as Map<String, int>;
-            return MaterialPageRoute(builder: (context) => EditScenePage(sceneId: args['sceneId']!));
+            final Map<String, Scene> args = settings.arguments as Map<String, Scene>;
+            return MaterialPageRoute(builder: (context) => EditScenePage(scene: args['scene']!));
           case '/editUser':
-            final Map<String, int> args = settings.arguments as Map<String, int>;
-            return MaterialPageRoute(builder: (context) => EditUserPage(userId: args['userId']!));
+            final Map<String, User> args = settings.arguments as Map<String, User>;
+            return MaterialPageRoute(builder: (context) => EditUserPage(user: args['user']!));
           case '/scene':
             final Map<String, Scene> args = settings.arguments as Map<String, Scene>;
             return MaterialPageRoute(builder: (context) => ScenePage(scene: args['scene']!));

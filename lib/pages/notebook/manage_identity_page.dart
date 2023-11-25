@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:iai/helpers/database_helper.dart';
-import 'package:iai/widgets/avatar_provider.dart';
 import 'package:iai/models/identity.dart';
+import 'package:iai/utils/build_future_builder.dart';
+import 'package:iai/widgets/avatar_provider.dart';
 
 class ManageIdentityPage extends StatefulWidget {
   const ManageIdentityPage({Key? key}) : super(key: key);
@@ -46,66 +47,39 @@ class _ManageIdentityPageState extends State<ManageIdentityPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(
-          onPressed: () {
-            Navigator.pop(context, _isChanged);
-          },
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, _isChanged);
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Management'),
+          actions: [
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'addIdentity') {
+                  Navigator.of(context).pushNamed('/addIdentity').then((result) {
+                    if (result != null && result is bool && result) {
+                      _isChanged = true; // 表明数据发生变化
+                      updateStateCallback();
+                    }
+                  });
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: 'addIdentity',
+                  child: Text('Add Identity'),
+                ),
+              ],
+            ),
+          ],
         ),
-        title: const Text('Management'),
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'addIdentity') {
-                Navigator.of(context).pushNamed('/addIdentity').then((result) {
-                  if (result != null && result is bool && result) {
-                    _isChanged = true; // 表明数据发生变化
-                    updateStateCallback();
-                  }
-                });
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'addIdentity',
-                child: Text('Add Identity'),
-              ),
-            ],
-          ),
-        ],
-      ),
-      body: FutureBuilder(
-        // 传入Future列表
-        future: Future.wait([_identitiesFuture]),
-        // 构建页面的回调
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          // 当重新触发FutureBuilder时，虽然snapshot.connectionState会变为waiting，但是snapshot中的数据不会消失，所以hasData为true，因此要先判断状态再判断是否有数据或错误
-          if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.active) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              // 数据准备完成，构建页面
-              final identities = snapshot.data![0];
-              return ManageIdentityContent(identities: identities, updateStateCallback: updateStateCallback, isChangedCallback: isChangedCallback);
-            } else {
-              return const Center(
-                child: Text('Not Found Data'),
-              );
-            }
-          } else if (snapshot.hasError) {
-            // 如果发生错误，显示错误信息
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            return const Center(
-              child: Text('Unknown Error'),
-            );
-          }
-        },
+        body: buildFutureBuilder([_identitiesFuture], (dataList) {
+          final identities = dataList[0];
+          return ManageIdentityContent(identities: identities, updateStateCallback: updateStateCallback, isChangedCallback: isChangedCallback);
+        }),
       ),
     );
   }

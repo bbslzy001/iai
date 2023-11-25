@@ -7,6 +7,7 @@ import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/widgets/avatar_provider.dart';
+import 'package:iai/utils/build_future_builder.dart';
 
 class ManageSceneUserPage extends StatefulWidget {
   const ManageSceneUserPage({Key? key}) : super(key: key);
@@ -28,63 +29,57 @@ class _ManageSceneUserPageState extends State<ManageSceneUserPage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2, // Number of tabs
-      child: Scaffold(
-        appBar: AppBar(
-          leading: BackButton(
-            onPressed: () {
-              Navigator.pop(context, _isChanged);
-            },
-          ),
-          title: const Text('Management'),
-          actions: [
-            PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'addScene') {
-                  Navigator.of(context).pushNamed('/addScene').then((result) {
-                    if (result != null && result is bool && result) {
-                      // 通过持有GlobalKey来获取相应的_TabContentState对象，然后调用其方法来刷新数据
-                      _isChanged = true; // 表明数据发生变化
-                      _scenesTabWidgetKey.currentState?.updateStateCallback();
-                    }
-                  });
-                } else if (value == 'addUser') {
-                  Navigator.of(context).pushNamed('/addUser').then((result) {
-                    if (result != null && result is bool && result) {
-                      // 通过持有GlobalKey来获取相应的_TabContentState对象，然后调用其方法来刷新数据
-                      _isChanged = true; // 表明数据发生变化
-                      _usersTabWidgetKey.currentState?.updateStateCallback();
-                    }
-                  });
-                }
-              },
-              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                const PopupMenuItem<String>(
-                  value: 'addScene',
-                  child: Text('Add Scene'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'addUser',
-                  child: Text('Add User'),
-                ),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, _isChanged);
+        return true;
+      },
+      child: DefaultTabController(
+        length: 2, // Number of tabs
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Management'),
+            actions: [
+              PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'addScene') {
+                    Navigator.of(context).pushNamed('/addScene').then((result) {
+                      if (result != null && result is bool && result) {
+                        // 通过持有GlobalKey来获取相应的_TabContentState对象，然后调用其方法来刷新数据
+                        _isChanged = true; // 表明数据发生变化
+                        _scenesTabWidgetKey.currentState?.updateStateCallback();
+                      }
+                    });
+                  } else if (value == 'addUser') {
+                    Navigator.of(context).pushNamed('/addUser').then((result) {
+                      if (result != null && result is bool && result) {
+                        // 通过持有GlobalKey来获取相应的_TabContentState对象，然后调用其方法来刷新数据
+                        _isChanged = true; // 表明数据发生变化
+                        _usersTabWidgetKey.currentState?.updateStateCallback();
+                      }
+                    });
+                  }
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: 'addScene',
+                    child: Text('Add Scene'),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'addUser',
+                    child: Text('Add User'),
+                  ),
+                ],
+              ),
+            ],
+            bottom: const TabBar(
+              tabs: [
+                Tab(text: 'Scenes'),
+                Tab(text: 'Users'),
               ],
             ),
-          ],
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'Scenes'),
-              Tab(text: 'Users'),
-            ],
           ),
-        ),
-        body: WillPopScope(
-          // 拦截返回按钮，返回时传递数据
-          onWillPop: () async {
-            Navigator.pop(context, _isChanged);
-            return false;
-          },
-          child: TabBarView(
+          body: TabBarView(
             children: [
               TabWidget(tabName: 'Scenes', isChangedCallback: isChangedCallback, key: _scenesTabWidgetKey),
               TabWidget(tabName: 'Users', isChangedCallback: isChangedCallback, key: _usersTabWidgetKey),
@@ -148,29 +143,10 @@ class _TabWidgetState extends State<TabWidget> with AutomaticKeepAliveClientMixi
     super.build(context); // 使用AutomaticKeepAliveClientMixin需要调用super.build(context)
 
     return Scaffold(
-      body: FutureBuilder(
-        // 传入Future列表
-        future: Future.wait([_dataFuture]),
-        // 构建页面的回调
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          // 检查异步操作的状态
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // 如果正在加载数据，可以显示加载指示器
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            // 如果发生错误，可以显示错误信息
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            // 数据准备好后，构建页面
-            final data = snapshot.data![0];
-            return TabWidgetContent(data: data, updateStateCallback: updateStateCallback, isChangedCallback: widget.isChangedCallback);
-          }
-        },
-      ),
+      body: buildFutureBuilder([_dataFuture], (dataList) {
+        final data = dataList[0];
+        return TabWidgetContent(data: data, updateStateCallback: updateStateCallback, isChangedCallback: widget.isChangedCallback);
+      }),
     );
   }
 
@@ -203,7 +179,7 @@ class TabWidgetContent extends StatelessWidget {
                 onPressed: (BuildContext context) {
                   if (data[index] is Scene) {
                     Navigator.of(context).pushNamed('/editScene', arguments: {
-                      'sceneId': data[index].id as int,
+                      'scene': data[index] as Scene,
                     }).then((result) {
                       if (result != null && result is bool && result) {
                         isChangedCallback();
@@ -212,7 +188,7 @@ class TabWidgetContent extends StatelessWidget {
                     });
                   } else {
                     Navigator.of(context).pushNamed('/editUser', arguments: {
-                      'userId': data[index].id as int,
+                      'user': data[index] as User,
                     }).then((result) {
                       if (result != null && result is bool && result) {
                         isChangedCallback();

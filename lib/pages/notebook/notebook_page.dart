@@ -6,6 +6,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/identity.dart';
 import 'package:iai/models/note.dart';
+import 'package:iai/utils/build_future_builder.dart';
 
 class NotebookPage extends StatefulWidget {
   final Identity identity;
@@ -50,37 +51,16 @@ class _NotebookPageState extends State<NotebookPage> {
             icon: const Icon(Icons.settings_outlined),
             onPressed: () {
               Navigator.of(context).pushNamed('/addNote').then((result) {
-                if (result != null && result is bool && result) {
-
-                }
+                if (result != null && result is bool && result) {}
               });
             },
           ),
         ],
       ),
-      body: FutureBuilder(
-        // 传入Future列表
-        future: Future.wait([_notesFuture]),
-        // 构建页面的回调
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          // 检查异步操作的状态
-          if (snapshot.hasData) {
-            // 数据准备完成，构建页面
-            final notes = snapshot.data![0];
-            return NotebookPageContent(notes: notes, updateStateCallback: updateStateCallback);
-          } else if (snapshot.hasError) {
-            // 如果发生错误，显示错误信息
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            // 如果正在加载数据，显示加载指示器
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
+      body: buildFutureBuilder([_notesFuture], (dataList) {
+        final notes = dataList[0];
+        return NotebookPageContent(notes: notes, updateStateCallback: updateStateCallback);
+      }),
     );
   }
 }

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/identity.dart';
-
+import 'package:iai/utils/build_future_builder.dart';
 import 'package:iai/widgets/image_shower.dart';
 
 class IdentityPage extends StatefulWidget {
@@ -43,29 +43,10 @@ class _IdentityPageState extends State<IdentityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        // 传入Future列表
-        future: Future.wait([_identitiesFuture]),
-        // 构建页面的回调
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          // 检查异步操作的状态
-          if (snapshot.hasData) {
-            // 数据准备完成，构建页面
-            List<Identity> identities = snapshot.data![0];
-            return IdentityPageContent(identities: identities, updateStateCallback: updateStateCallback);
-          } else if (snapshot.hasError) {
-            // 如果发生错误，显示错误信息
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            // 如果正在加载数据，显示加载指示器
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
+      body: buildFutureBuilder([_identitiesFuture], (dataList) {
+        final identities = dataList[0];
+        return IdentityPageContent(identities: identities, updateStateCallback: updateStateCallback);
+      }),
     );
   }
 }

@@ -10,11 +10,12 @@ import 'package:iai/models/user.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/helpers/file_helper.dart';
 import 'package:iai/widgets/image_picker.dart';
+import 'package:iai/utils/build_future_builder.dart';
 
 class EditScenePage extends StatefulWidget {
-  final int sceneId;
+  final Scene scene;
 
-  const EditScenePage({Key? key, required this.sceneId}) : super(key: key);
+  const EditScenePage({Key? key, required this.scene}) : super(key: key);
 
   @override
   _EditScenePageState createState() => _EditScenePageState();
@@ -30,33 +31,12 @@ class _EditScenePageState extends State<EditScenePage> {
         title: const Text('Edit Scene'),
       ),
       resizeToAvoidBottomInset: false, // 设置为false，禁止调整界面以避免底部被软键盘顶起
-      body: FutureBuilder(
-        // 传入Future列表
-        future: Future.wait([
-          _dbHelper.getUsers(),
-          _dbHelper.getSceneById(widget.sceneId),
-        ]),
-        // 构建页面的回调
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          // 检查异步操作的状态
-          if (snapshot.hasData) {
-            // 数据准备完成，构建页面
-            List<User> users = snapshot.data![0];
-            Scene scene = snapshot.data![1];
-            return EditScenePageContent(users: users, scene: scene);
-          } else if (snapshot.hasError) {
-            // 如果发生错误，显示错误信息
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            // 如果正在加载数据，显示加载指示器
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
+      body: buildFutureBuilder([
+        _dbHelper.getUsers(),
+      ], (dataList) {
+        final users = dataList[0];
+        return EditScenePageContent(users: users, scene: widget.scene);
+      }),
     );
   }
 }

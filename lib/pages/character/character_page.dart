@@ -6,6 +6,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/widgets/image_shower.dart';
+import 'package:iai/utils/build_future_builder.dart';
 
 class CharacterPage extends StatefulWidget {
   const CharacterPage({Key? key}) : super(key: key);
@@ -42,29 +43,10 @@ class _CharacterPageState extends State<CharacterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        // 传入Future列表
-        future: Future.wait([_scenesFuture]),
-        // 构建页面的回调
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          // 检查异步操作的状态
-          if (snapshot.hasData) {
-            // 数据准备完成，构建页面
-            List<Scene> scenes = snapshot.data![0];
-            return CharacterPageContent(scenes: scenes, updateStateCallback: updateStateCallback);
-          } else if (snapshot.hasError) {
-            // 如果发生错误，显示错误信息
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            // 如果正在加载数据，显示加载指示器
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
+      body: buildFutureBuilder([_scenesFuture], (dataList) {
+        final scenes = dataList[0];
+        return CharacterPageContent(scenes: scenes, updateStateCallback: updateStateCallback);
+      }),
     );
   }
 }

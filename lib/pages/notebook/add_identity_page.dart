@@ -5,8 +5,8 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/helpers/file_helper.dart';
-import 'package:iai/widgets/image_picker.dart';
 import 'package:iai/models/identity.dart';
+import 'package:iai/widgets/image_picker.dart';
 
 class AddIdentityPage extends StatefulWidget {
   const AddIdentityPage({Key? key}) : super(key: key);

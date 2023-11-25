@@ -12,6 +12,7 @@ import 'package:iai/models/user.dart';
 import 'package:iai/widgets/avatar_provider.dart';
 import 'package:iai/helpers/file_helper.dart';
 import 'package:iai/widgets/media_message_shower.dart';
+import 'package:iai/utils/build_future_builder.dart';
 
 class ChatPage extends StatefulWidget {
   final Scene scene;
@@ -28,33 +29,16 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: Future.wait([
-          _dbHelper.getMessagesBySceneId(widget.scene.id!),
-          _dbHelper.getUserById(widget.scene.user1Id),
-          _dbHelper.getUserById(widget.scene.user2Id),
-        ]),
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          // 检查异步操作的状态
-          if (snapshot.hasData) {
-            // 数据准备完成，构建页面
-            List<Message> messages = snapshot.data![0];
-            User user1 = snapshot.data![1];
-            User user2 = snapshot.data![2];
-            return ChatPageContent(sceneId: widget.scene.id!, messages: messages, user1: user1, user2: user2);
-          } else if (snapshot.hasError) {
-            // 如果发生错误，显示错误信息
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            // 如果正在加载数据，显示加载指示器
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
+      body: buildFutureBuilder([
+        _dbHelper.getMessagesBySceneId(widget.scene.id!),
+        _dbHelper.getUserById(widget.scene.user1Id),
+        _dbHelper.getUserById(widget.scene.user2Id),
+      ], (dataList) {
+        final messages = dataList[0];
+        final user1 = dataList[1];
+        final user2 = dataList[2];
+        return ChatPageContent(sceneId: widget.scene.id!, messages: messages, user1: user1, user2: user2);
+      }),
     );
   }
 }
