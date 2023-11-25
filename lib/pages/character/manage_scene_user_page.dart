@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:iai/helpers/database_helper.dart';
-import 'package:iai/models/user.dart';
 import 'package:iai/models/scene.dart';
-import 'package:iai/widgets/avatar_provider.dart';
+import 'package:iai/models/user.dart';
 import 'package:iai/utils/build_future_builder.dart';
+import 'package:iai/widgets/avatar_provider.dart';
 
 class ManageSceneUserPage extends StatefulWidget {
   const ManageSceneUserPage({Key? key}) : super(key: key);

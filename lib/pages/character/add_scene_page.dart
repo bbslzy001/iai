@@ -5,12 +5,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:iai/models/scene.dart';
-import 'package:iai/models/user.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/helpers/file_helper.dart';
-import 'package:iai/widgets/image_picker.dart';
+import 'package:iai/models/scene.dart';
+import 'package:iai/models/user.dart';
 import 'package:iai/utils/build_future_builder.dart';
+import 'package:iai/widgets/image_picker.dart';
 
 class AddScenePage extends StatefulWidget {
   const AddScenePage({Key? key}) : super(key: key);

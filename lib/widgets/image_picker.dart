@@ -24,7 +24,7 @@ class MyImagePicker extends StatefulWidget {
 
 class _MyImagePickerState extends State<MyImagePicker> {
   File? _file;
-  bool isGotten = false;  // 避免编辑图片时切换图片后再次执行getImage导致循环
+  bool isGotten = false; // 避免编辑图片时切换图片后再次执行getImage导致循环
 
   @override
   Widget build(BuildContext context) {

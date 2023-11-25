@@ -20,9 +20,7 @@ class MyAvatarProvider extends ImageProvider<MyAvatarProvider> {
   // 这个方法用于加载图像数据，并返回一个ImageStreamCompleter对象
   @override
   ImageStreamCompleter load(MyAvatarProvider key, DecoderCallback decode) {
-    return OneFrameImageStreamCompleter(
-        _loadAsync(key.imageName)
-    );
+    return OneFrameImageStreamCompleter(_loadAsync(key.imageName));
   }
 
   Future<ImageInfo> _loadAsync(String image) async {

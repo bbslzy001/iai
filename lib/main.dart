@@ -5,18 +5,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:iai/color_schemes.dart';
+import 'package:iai/helpers/encrypt_helper.dart';
+import 'package:iai/models/identity.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
-import 'package:iai/pages/character/scene_page.dart';
-import 'package:iai/pages/character/user_page.dart';
-import 'package:iai/pages/full_image_page.dart';
-import 'package:iai/pages/full_video_page.dart';
-import 'package:iai/pages/home_page.dart';
-import 'package:iai/pages/notebook/add_identity_page.dart';
-import 'package:iai/pages/notebook/edit_identity_page.dart';
-import 'package:iai/pages/notebook/manage_identity_page.dart';
-import 'package:iai/pages/notebook/notebook_page.dart';
-import 'package:iai/pages/setting_page.dart';
 import 'package:iai/pages/character/add_scene_page.dart';
 import 'package:iai/pages/character/add_user_page.dart';
 import 'package:iai/pages/character/character_page.dart';
@@ -24,9 +16,17 @@ import 'package:iai/pages/character/chat_page.dart';
 import 'package:iai/pages/character/edit_scene_page.dart';
 import 'package:iai/pages/character/edit_user_page.dart';
 import 'package:iai/pages/character/manage_scene_user_page.dart';
+import 'package:iai/pages/character/scene_page.dart';
+import 'package:iai/pages/character/user_page.dart';
+import 'package:iai/pages/full_image_page.dart';
+import 'package:iai/pages/full_video_page.dart';
+import 'package:iai/pages/home_page.dart';
+import 'package:iai/pages/notebook/add_identity_page.dart';
+import 'package:iai/pages/notebook/edit_identity_page.dart';
 import 'package:iai/pages/notebook/identity_page.dart';
-import 'package:iai/helpers/encrypt_helper.dart';
-import 'package:iai/models/identity.dart';
+import 'package:iai/pages/notebook/manage_identity_page.dart';
+import 'package:iai/pages/notebook/notebook_page.dart';
+import 'package:iai/pages/setting_page.dart';
 
 void main() async {
   // Ensure widgets are initialized before runApp is called.
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(builder: (context) => const IdentityPage());
           case '/notebook':
             final Map<String, Identity> args = settings.arguments as Map<String, Identity>;
-            return MaterialPageRoute(builder: (context) => NotebookPage(identity: args['identity']!,));
+            return MaterialPageRoute(builder: (context) => NotebookPage(identity: args['identity']!));
           case '/addScene':
             return MaterialPageRoute(builder: (context) => const AddScenePage());
           case '/addUser':

@@ -5,9 +5,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:iai/models/user.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/helpers/file_helper.dart';
+import 'package:iai/models/user.dart';
 import 'package:iai/widgets/image_picker.dart';
 
 class AddUserPage extends StatefulWidget {

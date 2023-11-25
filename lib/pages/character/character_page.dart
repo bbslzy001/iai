@@ -1,12 +1,12 @@
 // pages/character/character_page.dart
 
-import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
 
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/scene.dart';
-import 'package:iai/widgets/image_shower.dart';
 import 'package:iai/utils/build_future_builder.dart';
+import 'package:iai/widgets/image_shower.dart';
 
 class CharacterPage extends StatefulWidget {
   const CharacterPage({Key? key}) : super(key: key);

@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:iai/helpers/database_helper.dart';
-import 'package:iai/models/scene.dart';
-import 'package:iai/models/message.dart';
-import 'package:iai/models/user.dart';
-import 'package:iai/widgets/avatar_provider.dart';
 import 'package:iai/helpers/file_helper.dart';
-import 'package:iai/widgets/media_message_shower.dart';
+import 'package:iai/models/message.dart';
+import 'package:iai/models/scene.dart';
+import 'package:iai/models/user.dart';
 import 'package:iai/utils/build_future_builder.dart';
+import 'package:iai/widgets/avatar_provider.dart';
+import 'package:iai/widgets/media_message_shower.dart';
 
 class ChatPage extends StatefulWidget {
   final Scene scene;
