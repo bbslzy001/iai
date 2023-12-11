@@ -19,7 +19,7 @@ class _MyImageShowerState extends State<MyImageShower> {
 
     if (widget.image.isNotEmpty) {
       return FutureBuilder(
-        future: FileHelper.getMedia(widget.image),
+        future: FileHelper.getFile(widget.image),
         builder: (context, snapshot) {
           // 检查异步操作的状态
           if (snapshot.hasData) {

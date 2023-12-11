@@ -119,10 +119,10 @@ class _AddUserPageContentState extends State<AddUserPageContent> {
                     });
 
                     if (_avatarImage?.existsSync() == true) {
-                      _user.avatarImage = await FileHelper.saveMedia(_avatarImage!);
+                      _user.avatarImage = await FileHelper.saveFile(_avatarImage!);
                     }
                     if (_backgroundImage?.existsSync() == true) {
-                      _user.backgroundImage = await FileHelper.saveMedia(_backgroundImage!);
+                      _user.backgroundImage = await FileHelper.saveFile(_backgroundImage!);
                     }
 
                     await _dbHelper.insertUser(_user);

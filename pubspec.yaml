@@ -18,11 +18,9 @@ dependencies:
   image_picker: ^1.0.4  # 从相册选择媒体文件
   photo_view: ^0.14.0  # 查看图片
   video_player: ^2.8.1  # 播放视频
+  chewie: ^1.7.4  # 播放视频（在video_player的基础上进行封装）
   video_thumbnail: ^0.5.3  # 生成视频缩略图
-  encrypt: ^5.0.3  # 加密解密库
-  pointycastle: ^3.3.4  # 密码学库
   sqflite: ^2.0.1  # 提供sqlite数据库
-  flutter_cache_manager: ^3.3.1  # 管理缓存
 
 dev_dependencies:
   flutter_test:

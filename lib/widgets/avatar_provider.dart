@@ -24,7 +24,7 @@ class MyAvatarProvider extends ImageProvider<MyAvatarProvider> {
   }
 
   Future<ImageInfo> _loadAsync(String image) async {
-    final file = await FileHelper.getMedia(image);
+    final file = await FileHelper.getFile(image);
 
     if (file.existsSync()) {
       final bytes = await file.readAsBytes(); // 用于将文件对象转换为字节列表

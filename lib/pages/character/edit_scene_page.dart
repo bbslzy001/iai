@@ -121,7 +121,7 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                   child: MyImagePicker(
                     labelText: 'Background',
                     getImage: () async {
-                      _backgroundImage = await FileHelper.getMedia(widget.scene.backgroundImage);
+                      _backgroundImage = await FileHelper.getFile(widget.scene.backgroundImage);
                       return _backgroundImage;
                     },
                     onTap: () async {
@@ -146,7 +146,7 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
                       });
 
                       if (_backgroundImage?.existsSync() == true) {
-                        widget.scene.backgroundImage = await FileHelper.saveMedia(_backgroundImage!);
+                        widget.scene.backgroundImage = await FileHelper.saveFile(_backgroundImage!);
                       }
 
                       await _dbHelper.updateScene(widget.scene);

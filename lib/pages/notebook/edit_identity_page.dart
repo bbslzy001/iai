@@ -54,7 +54,7 @@ class _EditIdentityPageState extends State<EditIdentityPage> {
                     child: MyImagePicker(
                       labelText: 'Background',
                       getImage: () async {
-                        _backgroundImage = await FileHelper.getMedia(widget.identity.backgroundImage);
+                        _backgroundImage = await FileHelper.getFile(widget.identity.backgroundImage);
                         return _backgroundImage;
                       },
                       onTap: () async {
@@ -79,7 +79,7 @@ class _EditIdentityPageState extends State<EditIdentityPage> {
                         });
 
                         if (_backgroundImage?.existsSync() == true) {
-                          widget.identity.backgroundImage = await FileHelper.saveMedia(_backgroundImage!);
+                          widget.identity.backgroundImage = await FileHelper.saveFile(_backgroundImage!);
                         }
 
                         await _dbHelper.updateIdentity(widget.identity);

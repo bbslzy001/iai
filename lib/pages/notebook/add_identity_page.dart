@@ -88,7 +88,7 @@ class _AddIdentityPageContentState extends State<AddIdentityPageContent> {
                     });
 
                     if (_backgroundImage?.existsSync() == true) {
-                      _identity.backgroundImage = await FileHelper.saveMedia(_backgroundImage!);
+                      _identity.backgroundImage = await FileHelper.saveFile(_backgroundImage!);
                     }
 
                     await _dbHelper.insertIdentity(_identity);

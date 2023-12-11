@@ -1,12 +1,29 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
-import 'package:iai/helpers/encrypt_helper.dart';
+class FileDirectoryManager {
+  late final String fileDirectory;
+
+  // 创建 FileDirectoryManager 的单例实例
+  static final FileDirectoryManager _instance = FileDirectoryManager._privateConstructor();
+
+  // 获取单例实例
+  factory FileDirectoryManager() {
+    return _instance;
+  }
+
+  FileDirectoryManager._privateConstructor();
+
+  Future<void> initialize() async {
+    final appDocDir = await getApplicationDocumentsDirectory(); // 获取应用文档目录
+    fileDirectory = '${appDocDir.path}/idata';
+    await Directory(fileDirectory).create(recursive: true); // 创建文件夹
+  }
+}
 
 class FileHelper {
   // 从相册获取单个图片文件
@@ -27,89 +44,40 @@ class FileHelper {
     return imagePicker.pickVideo(source: ImageSource.gallery);
   }
 
-  // 从视频中解析出缩略图
-  static Future<Uint8List?> getThumbnailBytes(File videoFile) async {
-    final thumbnail = await VideoThumbnail.thumbnailData(
+  // 保存视频缩略图
+  static Future<String> saveThumbnail(File videoFile) async {
+    final thumbnailBytes = await VideoThumbnail.thumbnailData(
       video: videoFile.path,
       imageFormat: ImageFormat.JPEG,
       timeMs: 1000, // 获取视频缩略图的时间位置，这里设置为第一秒
       quality: 100,
     );
-    return thumbnail;
-  }
-
-  // 保存视频缩略图（仅保存到缓存中）
-  static Future<Map<String, File>> saveThumbnail(File videoFile) async {
-    final thumbnailBytes = await FileHelper.getThumbnailBytes(videoFile);
     if (thumbnailBytes != null) {
-      final thumbnailName = '${DateTime.now().millisecondsSinceEpoch}.temp';
-      final cachePath = await getTemporaryDirectory(); // 获取应用缓存目录
-      final thumbnailFile = await DefaultCacheManager().putFile(cachePath.path, thumbnailBytes, key: thumbnailName);
-      return {thumbnailName: thumbnailFile};
+      return await _saveFileBytes(thumbnailBytes);
     } else {
-      return {};
+      return '';
     }
   }
 
-  // 获取视频缩略图
-  static Future<File> getThumbnail(String thumbnailName, String videoName) async {
-    if (thumbnailName.isNotEmpty) {
-      // 缩略图存在于缓存中，直接返回缩略图
-      final fileInfo = await DefaultCacheManager().getFileFromCache(thumbnailName);
-      if (fileInfo != null) {
-        return fileInfo.file; // 如果缩略图存在于缓存中，直接返回缓存的缩略图
-      }
-    }
-    final videoFile = await getMedia(videoName);
-    if (videoFile.existsSync()) {
-      final thumbnailBytes = await FileHelper.getThumbnailBytes(videoFile);
-      if (thumbnailBytes != null) {
-        // 如果上一次生成缩略图出错，就生成新的缩略图名称
-        final newThumbnailName = thumbnailName.isNotEmpty ? thumbnailName : '${DateTime.now().millisecondsSinceEpoch}.temp';
-        final cachePath = await getTemporaryDirectory(); // 获取应用缓存目录
-        return DefaultCacheManager().putFile(cachePath.path, thumbnailBytes, key: newThumbnailName); // 保存缩略图到缓存目录，并返回缩略图
-        // TODO: 更新数据库中缩略图的名称
-      }
-    }
-    return File(''); // 获取失败，可能是获取视频失败，也可能是生成缓存图失败
-  }
-
-  static Future<String> saveMedia(File file) async {
+  // 保存文件到文档目录
+  static Future<String> saveFile(File file) async {
     final fileBytes = await file.readAsBytes();
-    final fileName = '${DateTime.now().millisecondsSinceEpoch}.enc';
+    return await _saveFileBytes(fileBytes);
+  }
 
-    // 缓存
-    final cachePath = await getTemporaryDirectory(); // 获取应用缓存目录
-    await DefaultCacheManager().putFile(cachePath.path, fileBytes, key: fileName); // 保存原始文件到缓存目录
-
-    // 加密存储
-    final encryptedFileBytes = await compute(EncryptHelper.encryptData, EncryptData(fileBytes, EncryptManager().encrypter)); // 使用encryptHelper进行加密
-    final savePath = await getApplicationDocumentsDirectory(); // 获取应用文档目录
-    await File('${savePath.path}/$fileName').writeAsBytes(encryptedFileBytes); // 保存加密文件到文档目录
-
+  static Future<String> _saveFileBytes(Uint8List fileBytes) async {
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.txt';
+    await File('${FileDirectoryManager().fileDirectory}/$fileName').writeAsBytes(fileBytes); // 保存文件到文档目录
     return fileName;
   }
 
-  static Future<File> getMedia(String fileName) async {
-    // 文件存在于缓存中，直接返回原始文件
-    final fileInfo = await DefaultCacheManager().getFileFromCache(fileName);
-    if (fileInfo != null) {
-      return fileInfo.file; // 如果文件存在于缓存中，直接返回缓存的原始文件
+  // 从文档目录读取文件
+  static Future<File> getFile(String fileName) async {
+    final file = File('${FileDirectoryManager().fileDirectory}/$fileName');
+    if (await file.exists()) {
+      return file;
+    } else {
+      return File('');
     }
-
-    // 文件不存在于缓存中，则从文档目录中读取并解密文件，缓存后返回原始文件
-    final savePath = await getApplicationDocumentsDirectory(); // 获取应用文档目录
-    final encryptedFile = File('${savePath.path}/$fileName');
-    if (encryptedFile.existsSync()) {
-      final encryptedFileBytes = await encryptedFile.readAsBytes(); // 提取二进制信息
-
-      // 解密
-      final fileBytes = await compute(EncryptHelper.decryptData, EncryptData(encryptedFileBytes, EncryptManager().encrypter)); // 解密文件
-      final cachePath = await getTemporaryDirectory(); // 获取应用缓存目录
-      return DefaultCacheManager().putFile(cachePath.path, fileBytes, key: fileName); // 保存原始文件到缓存目录，并返回原始文件
-    }
-
-    // 如果文件不存在于文档目录中，返回空文件
-    return File('');
   }
 }

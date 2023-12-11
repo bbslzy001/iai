@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:iai/color_schemes.dart';
-import 'package:iai/helpers/encrypt_helper.dart';
+import 'package:iai/helpers/file_helper.dart';
 import 'package:iai/models/identity.dart';
 import 'package:iai/models/note.dart';
 import 'package:iai/models/scene.dart';
@@ -36,8 +36,8 @@ void main() async {
   // Ensure widgets are initialized before runApp is called.
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 初始化 KeyManager
-  await EncryptManager().initialize();
+  // 初始化 FileDirectoryManager
+  await FileDirectoryManager().initialize();
 
   runApp(const MyApp());
 }

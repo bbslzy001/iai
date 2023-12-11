@@ -35,15 +35,15 @@ class _MyMediaMessageShowerState extends State<MyMediaMessageShower> {
 
   // 异步获取数据
   Future<File> _getImageFuture() async {
-    return await FileHelper.getMedia(widget.image!);
+    return await FileHelper.getFile(widget.image!);
   }
 
   Future<File> _getVideoThumbnailFuture() async {
-    return await FileHelper.getThumbnail(widget.videoThumbnail!, widget.video!);
+    return await FileHelper.getFile(widget.videoThumbnail!);
   }
 
   Future<File> _getVideoFuture() async {
-    return await FileHelper.getMedia(widget.video!);
+    return await FileHelper.getFile(widget.video!);
   }
 
   @override

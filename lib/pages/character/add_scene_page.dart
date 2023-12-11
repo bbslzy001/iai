@@ -145,7 +145,7 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
                     });
 
                     if (_backgroundImage?.existsSync() == true) {
-                      _scene.backgroundImage = await FileHelper.saveMedia(_backgroundImage!);
+                      _scene.backgroundImage = await FileHelper.saveFile(_backgroundImage!);
                     }
 
                     await _dbHelper.insertScene(_scene);

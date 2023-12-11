@@ -101,7 +101,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
     setState(() {
       _cacheMessages.insert(0, CacheMessage(message, imageFile: imageFile));
     });
-    final fileName = await FileHelper.saveMedia(imageFile);
+    final fileName = await FileHelper.saveFile(imageFile);
     message.contentImage = fileName;
     await _dbHelper.insertMessage(message);
   }
@@ -117,15 +117,15 @@ class _ChatPageContentState extends State<ChatPageContent> {
       contentVideo: '',
     );
     late final File thumbnailFile;
-    final thumbnailResult = await FileHelper.saveThumbnail(videoFile);
-    if (thumbnailResult.isNotEmpty) {
-      message.contentImage = thumbnailResult.keys.first;
-      thumbnailFile = thumbnailResult[message.contentImage]!;
+    final thumbnailName = await FileHelper.saveThumbnail(videoFile);
+    if (thumbnailName.isNotEmpty) {
+      message.contentImage = thumbnailName;
+      thumbnailFile = await FileHelper.getFile(thumbnailName);
     }
     setState(() {
       _cacheMessages.insert(0, CacheMessage(message, videoFile: videoFile, videoThumbnailFile: thumbnailFile));
     });
-    final videoName = await FileHelper.saveMedia(videoFile);
+    final videoName = await FileHelper.saveFile(videoFile);
     message.contentVideo = videoName;
     _dbHelper.insertMessage(message);
   }

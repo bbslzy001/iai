@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SettingPage extends StatefulWidget {
@@ -26,11 +25,6 @@ class _SettingPageState extends State<SettingPage> {
             ClearItem(
               buttonText: 'Clear Unused Cache',
               clearFunction: _clearUnusedCache,
-            ),
-            const Divider(),
-            ClearItem(
-              buttonText: 'Clear Data Cache',
-              clearFunction: _clearDataCache,
             ),
             const Divider(),
             ClearItem(
@@ -62,10 +56,6 @@ class _SettingPageState extends State<SettingPage> {
         entity.deleteSync(recursive: true); // 递归删除子目录和子文件
       }
     }
-  }
-
-  Future<void> _clearDataCache() async {
-    DefaultCacheManager().emptyCache();
   }
 
   Future<void> _clearAppData() async {}

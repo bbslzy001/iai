@@ -70,7 +70,7 @@ class _EditUserPageState extends State<EditUserPage> {
                     child: MyImagePicker(
                       labelText: 'Avatar',
                       getImage: () async {
-                        _avatarImage = await FileHelper.getMedia(widget.user.avatarImage);
+                        _avatarImage = await FileHelper.getFile(widget.user.avatarImage);
                         return _avatarImage;
                       },
                       onTap: () async {
@@ -89,7 +89,7 @@ class _EditUserPageState extends State<EditUserPage> {
                     child: MyImagePicker(
                       labelText: 'Background',
                       getImage: () async {
-                        _backgroundImage = await FileHelper.getMedia(widget.user.backgroundImage);
+                        _backgroundImage = await FileHelper.getFile(widget.user.backgroundImage);
                         return _backgroundImage;
                       },
                       onTap: () async {
@@ -114,10 +114,10 @@ class _EditUserPageState extends State<EditUserPage> {
                         });
 
                         if (_avatarImage?.existsSync() == true) {
-                          widget.user.avatarImage = await FileHelper.saveMedia(_avatarImage!);
+                          widget.user.avatarImage = await FileHelper.saveFile(_avatarImage!);
                         }
                         if (_backgroundImage?.existsSync() == true) {
-                          widget.user.backgroundImage = await FileHelper.saveMedia(_backgroundImage!);
+                          widget.user.backgroundImage = await FileHelper.saveFile(_backgroundImage!);
                         }
 
                         await _dbHelper.updateUser(widget.user);

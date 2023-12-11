@@ -64,19 +64,22 @@ class _FullVideoPageState extends State<FullVideoPage> {
                     child: VideoPlayer(_controller),
                   )
                 : const CircularProgressIndicator(),
-            IconButton(
-              icon: Icon(_controller.value.position == _controller.value.duration
-                  ? Icons.replay
-                  : _controller.value.isPlaying
-                      ? Icons.pause
-                      : Icons.play_arrow),
-              onPressed: () {
-                setState(() {
-                  _controller.value.isPlaying ? _controller.pause() : _controller.play();
-                });
-              },
-              iconSize: 48.0,
-              color: Colors.white,
+            Visibility(
+              visible: _controller.value.isInitialized, // Show only if video is initialized
+              child: IconButton(
+                icon: Icon(_controller.value.position == _controller.value.duration
+                    ? Icons.replay
+                    : _controller.value.isPlaying
+                        ? Icons.pause
+                        : Icons.play_arrow),
+                onPressed: () {
+                  setState(() {
+                    _controller.value.isPlaying ? _controller.pause() : _controller.play();
+                  });
+                },
+                iconSize: 48.0,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
