@@ -23,7 +23,7 @@ class MyMediaMessageShower extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MyMediaMessageShowerState createState() => _MyMediaMessageShowerState();
+  State<MyMediaMessageShower> createState() => _MyMediaMessageShowerState();
 }
 
 class _MyMediaMessageShowerState extends State<MyMediaMessageShower> {

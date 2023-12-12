@@ -12,7 +12,7 @@ class CharacterPage extends StatefulWidget {
   const CharacterPage({Key? key}) : super(key: key);
 
   @override
-  _CharacterPageState createState() => _CharacterPageState();
+  State<CharacterPage> createState() => _CharacterPageState();
 }
 
 class _CharacterPageState extends State<CharacterPage> {
@@ -58,7 +58,7 @@ class CharacterPageContent extends StatefulWidget {
   const CharacterPageContent({Key? key, required this.scenes, required this.updateStateCallback}) : super(key: key);
 
   @override
-  _CharacterPageContentState createState() => _CharacterPageContentState();
+  State<CharacterPageContent> createState() => _CharacterPageContentState();
 }
 
 class _CharacterPageContentState extends State<CharacterPageContent> {

@@ -9,7 +9,7 @@ class UserPage extends StatefulWidget {
   const UserPage({Key? key, required this.user}) : super(key: key);
 
   @override
-  _UserPageState createState() => _UserPageState();
+  State<UserPage> createState() => _UserPageState();
 }
 
 class _UserPageState extends State<UserPage> {

@@ -16,7 +16,7 @@ class EditUserPage extends StatefulWidget {
   const EditUserPage({Key? key, required this.user}) : super(key: key);
 
   @override
-  _EditUserPageState createState() => _EditUserPageState();
+  State<EditUserPage> createState() => _EditUserPageState();
 }
 
 class _EditUserPageState extends State<EditUserPage> {

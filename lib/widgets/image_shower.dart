@@ -9,7 +9,7 @@ class MyImageShower extends StatefulWidget {
   const MyImageShower({Key? key, required this.image, required this.defaultImage}) : super(key: key);
 
   @override
-  _MyImageShowerState createState() => _MyImageShowerState();
+  State<MyImageShower> createState() => _MyImageShowerState();
 }
 
 class _MyImageShowerState extends State<MyImageShower> {

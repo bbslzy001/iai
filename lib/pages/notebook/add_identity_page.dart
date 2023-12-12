@@ -12,7 +12,7 @@ class AddIdentityPage extends StatefulWidget {
   const AddIdentityPage({Key? key}) : super(key: key);
 
   @override
-  _AddIdentityPageState createState() => _AddIdentityPageState();
+  State<AddIdentityPage> createState() => _AddIdentityPageState();
 }
 
 class _AddIdentityPageState extends State<AddIdentityPage> {
@@ -32,7 +32,7 @@ class AddIdentityPageContent extends StatefulWidget {
   const AddIdentityPageContent({Key? key}) : super(key: key);
 
   @override
-  _AddIdentityPageContentState createState() => _AddIdentityPageContentState();
+  State<AddIdentityPageContent> createState() => _AddIdentityPageContentState();
 }
 
 class _AddIdentityPageContentState extends State<AddIdentityPageContent> {

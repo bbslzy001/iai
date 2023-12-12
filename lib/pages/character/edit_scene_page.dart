@@ -18,7 +18,7 @@ class EditScenePage extends StatefulWidget {
   const EditScenePage({Key? key, required this.scene}) : super(key: key);
 
   @override
-  _EditScenePageState createState() => _EditScenePageState();
+  State<EditScenePage> createState() => _EditScenePageState();
 }
 
 class _EditScenePageState extends State<EditScenePage> {
@@ -48,7 +48,7 @@ class EditScenePageContent extends StatefulWidget {
   const EditScenePageContent({Key? key, required this.users, required this.scene}) : super(key: key);
 
   @override
-  _EditScenePageContentState createState() => _EditScenePageContentState();
+  State<EditScenePageContent> createState() => _EditScenePageContentState();
 }
 
 class _EditScenePageContentState extends State<EditScenePageContent> {

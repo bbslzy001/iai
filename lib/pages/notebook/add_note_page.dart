@@ -9,7 +9,7 @@ class AddNotePage extends StatefulWidget {
   const AddNotePage({Key? key, required this.identityId}) : super(key: key);
 
   @override
-  _AddNotePageState createState() => _AddNotePageState();
+  State<AddNotePage> createState() => _AddNotePageState();
 }
 
 class _AddNotePageState extends State<AddNotePage> {
@@ -31,7 +31,7 @@ class AddNotePageContent extends StatefulWidget {
   const AddNotePageContent({Key? key, required this.identityId}) : super(key: key);
 
   @override
-  _AddNotePageContentState createState() => _AddNotePageContentState();
+  State<AddNotePageContent> createState() => _AddNotePageContentState();
 }
 
 class _AddNotePageContentState extends State<AddNotePageContent> {

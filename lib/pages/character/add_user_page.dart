@@ -14,7 +14,7 @@ class AddUserPage extends StatefulWidget {
   const AddUserPage({Key? key}) : super(key: key);
 
   @override
-  _AddUserPageState createState() => _AddUserPageState();
+  State<AddUserPage> createState() => _AddUserPageState();
 }
 
 class _AddUserPageState extends State<AddUserPage> {
@@ -34,7 +34,7 @@ class AddUserPageContent extends StatefulWidget {
   const AddUserPageContent({Key? key}) : super(key: key);
 
   @override
-  _AddUserPageContentState createState() => _AddUserPageContentState();
+  State<AddUserPageContent> createState() => _AddUserPageContentState();
 }
 
 class _AddUserPageContentState extends State<AddUserPageContent> {

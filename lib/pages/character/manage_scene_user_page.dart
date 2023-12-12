@@ -7,13 +7,13 @@ import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/utils/build_future_builder.dart';
-import 'package:iai/widgets/avatar_provider.dart';
+import 'package:iai/utils/avatar_provider.dart';
 
 class ManageSceneUserPage extends StatefulWidget {
   const ManageSceneUserPage({Key? key}) : super(key: key);
 
   @override
-  _ManageSceneUserPageState createState() => _ManageSceneUserPageState();
+  State<ManageSceneUserPage> createState() => _ManageSceneUserPageState();
 }
 
 class _ManageSceneUserPageState extends State<ManageSceneUserPage> {
@@ -98,7 +98,7 @@ class TabWidget extends StatefulWidget {
   const TabWidget({Key? key, required this.tabName, required this.isChangedCallback}) : super(key: key);
 
   @override
-  _TabWidgetState createState() => _TabWidgetState();
+  State<TabWidget> createState() => _TabWidgetState();
 }
 
 class _TabWidgetState extends State<TabWidget> with AutomaticKeepAliveClientMixin {

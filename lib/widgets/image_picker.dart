@@ -19,7 +19,7 @@ class MyImagePicker extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MyImagePickerState createState() => _MyImagePickerState();
+  State<MyImagePicker> createState() => _MyImagePickerState();
 }
 
 class _MyImagePickerState extends State<MyImagePicker> {

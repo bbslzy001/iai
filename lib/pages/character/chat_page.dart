@@ -11,7 +11,7 @@ import 'package:iai/models/message.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/utils/build_future_builder.dart';
-import 'package:iai/widgets/avatar_provider.dart';
+import 'package:iai/utils/avatar_provider.dart';
 import 'package:iai/widgets/media_message_shower.dart';
 
 class ChatPage extends StatefulWidget {
@@ -20,7 +20,7 @@ class ChatPage extends StatefulWidget {
   const ChatPage({Key? key, required this.scene}) : super(key: key);
 
   @override
-  _ChatPageState createState() => _ChatPageState();
+  State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
@@ -52,7 +52,7 @@ class ChatPageContent extends StatefulWidget {
   const ChatPageContent({Key? key, required this.sceneId, required this.messages, required this.user1, required this.user2}) : super(key: key);
 
   @override
-  _ChatPageContentState createState() => _ChatPageContentState();
+  State<ChatPageContent> createState() => _ChatPageContentState();
 }
 
 class _ChatPageContentState extends State<ChatPageContent> {

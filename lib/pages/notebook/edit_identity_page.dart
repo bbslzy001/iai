@@ -14,7 +14,7 @@ class EditIdentityPage extends StatefulWidget {
   const EditIdentityPage({Key? key, required this.identity}) : super(key: key);
 
   @override
-  _EditIdentityPageState createState() => _EditIdentityPageState();
+  State<EditIdentityPage> createState() => _EditIdentityPageState();
 }
 
 class _EditIdentityPageState extends State<EditIdentityPage> {

@@ -16,7 +16,7 @@ class AddScenePage extends StatefulWidget {
   const AddScenePage({Key? key}) : super(key: key);
 
   @override
-  _AddScenePageState createState() => _AddScenePageState();
+  State<AddScenePage> createState() => _AddScenePageState();
 }
 
 class _AddScenePageState extends State<AddScenePage> {
@@ -45,7 +45,7 @@ class AddScenePageContent extends StatefulWidget {
   const AddScenePageContent({Key? key, required this.users}) : super(key: key);
 
   @override
-  _AddScenePageContentState createState() => _AddScenePageContentState();
+  State<AddScenePageContent> createState() => _AddScenePageContentState();
 }
 
 class _AddScenePageContentState extends State<AddScenePageContent> {

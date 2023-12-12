@@ -12,7 +12,7 @@ class NotebookPage extends StatefulWidget {
   const NotebookPage({Key? key, required this.identity}) : super(key: key);
 
   @override
-  _NotebookPageState createState() => _NotebookPageState();
+  State<NotebookPage> createState() => _NotebookPageState();
 }
 
 class _NotebookPageState extends State<NotebookPage> {
@@ -74,7 +74,7 @@ class NotebookPageContent extends StatefulWidget {
   const NotebookPageContent({Key? key, required this.notes, required this.updateStateCallback}) : super(key: key);
 
   @override
-  _NotebookPageContentState createState() => _NotebookPageContentState();
+  State<NotebookPageContent> createState() => _NotebookPageContentState();
 }
 
 class _NotebookPageContentState extends State<NotebookPageContent> {

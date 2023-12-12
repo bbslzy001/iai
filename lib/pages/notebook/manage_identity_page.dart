@@ -6,13 +6,13 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/identity.dart';
 import 'package:iai/utils/build_future_builder.dart';
-import 'package:iai/widgets/avatar_provider.dart';
+import 'package:iai/utils/avatar_provider.dart';
 
 class ManageIdentityPage extends StatefulWidget {
   const ManageIdentityPage({Key? key}) : super(key: key);
 
   @override
-  _ManageIdentityPageState createState() => _ManageIdentityPageState();
+  State<ManageIdentityPage> createState() => _ManageIdentityPageState();
 }
 
 class _ManageIdentityPageState extends State<ManageIdentityPage> {

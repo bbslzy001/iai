@@ -12,7 +12,7 @@ class IdentityPage extends StatefulWidget {
   const IdentityPage({Key? key}) : super(key: key);
 
   @override
-  _IdentityPageState createState() => _IdentityPageState();
+  State<IdentityPage> createState() => _IdentityPageState();
 }
 
 class _IdentityPageState extends State<IdentityPage> {
@@ -58,7 +58,7 @@ class IdentityPageContent extends StatefulWidget {
   const IdentityPageContent({Key? key, required this.identities, required this.updateStateCallback}) : super(key: key);
 
   @override
-  _IdentityPageContentState createState() => _IdentityPageContentState();
+  State<IdentityPageContent> createState() => _IdentityPageContentState();
 }
 
 class _IdentityPageContentState extends State<IdentityPageContent> {
