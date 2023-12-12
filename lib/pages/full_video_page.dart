@@ -164,7 +164,7 @@ class _FullVideoPageState extends State<FullVideoPage> {
           // 加入透明度动画
           opacity: _playControlOpacity,
           duration: const Duration(milliseconds: 300),
-          child: Container(
+          child: SizedBox(
             // 底部控件的容器
             width: screenWidth,
             height: 60,

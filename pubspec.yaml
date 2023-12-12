@@ -30,6 +30,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/character.png
+    - assets/images/identity.png
     - assets/images/notebook.png
     - assets/images/scene.png
     - assets/images/user.png
