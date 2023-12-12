@@ -72,7 +72,7 @@ class ClearItem extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ClearItemState createState() => _ClearItemState();
+  State<ClearItem> createState() => _ClearItemState();
 }
 
 class _ClearItemState extends State<ClearItem> {

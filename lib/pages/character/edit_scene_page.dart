@@ -3,14 +3,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/helpers/file_helper.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/utils/build_future_builder.dart';
 import 'package:iai/widgets/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditScenePage extends StatefulWidget {
   final Scene scene;
@@ -141,6 +140,8 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
             FilledButton.tonal(
               onPressed: (widget.scene.sceneName != '')
                   ? () async {
+                      final navigator = Navigator.of(context);
+
                       setState(() {
                         _isSaving = true;
                       });
@@ -151,7 +152,10 @@ class _EditScenePageContentState extends State<EditScenePageContent> {
 
                       await _dbHelper.updateScene(widget.scene);
 
-                      Navigator.pop(context, true); // 返回管理页面，数据发生变化
+                      // 检查小部件是否仍然挂载
+                      if (mounted) {
+                        navigator.pop(true); // 返回管理页面，数据发生变化
+                      }
                     }
                   : null, // 设置为null禁用按钮
               child: Container(

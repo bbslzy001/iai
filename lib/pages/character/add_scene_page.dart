@@ -3,14 +3,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/helpers/file_helper.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/utils/build_future_builder.dart';
 import 'package:iai/widgets/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddScenePage extends StatefulWidget {
   const AddScenePage({Key? key}) : super(key: key);
@@ -140,6 +139,8 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
           FilledButton.tonal(
             onPressed: (_scene.sceneName != '' && _scene.user1Id != -1 && _scene.user2Id != -1)
                 ? () async {
+                    final navigator = Navigator.of(context);
+
                     setState(() {
                       _isSaving = true;
                     });
@@ -150,7 +151,10 @@ class _AddScenePageContentState extends State<AddScenePageContent> {
 
                     await _dbHelper.insertScene(_scene);
 
-                    Navigator.pop(context, true); // 返回管理页面，数据发生变化
+                    // 检查小部件是否仍然挂载
+                    if (mounted) {
+                      navigator.pop(true); // 返回管理页面，数据发生变化
+                    }
                   }
                 : null, // 设置为null禁用按钮
             child: Container(

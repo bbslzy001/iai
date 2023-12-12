@@ -109,6 +109,8 @@ class _EditUserPageState extends State<EditUserPage> {
               FilledButton.tonal(
                 onPressed: (widget.user.username != '')
                     ? () async {
+                        final navigator = Navigator.of(context);
+
                         setState(() {
                           _isSaving = true;
                         });
@@ -122,7 +124,10 @@ class _EditUserPageState extends State<EditUserPage> {
 
                         await _dbHelper.updateUser(widget.user);
 
-                        Navigator.pop(context, true); // 返回管理页面，数据发生变化
+                        // 检查小部件是否仍然挂载
+                        if (mounted) {
+                          navigator.pop(true); // 返回管理页面，数据发生变化
+                        }
                       }
                     : null, // 设置为null禁用按钮
                 child: Container(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/note.dart';
 
@@ -77,13 +76,18 @@ class _AddNotePageContentState extends State<AddNotePageContent> {
           FilledButton.tonal(
             onPressed: (_note.noteTitle != '')
                 ? () async {
+                    final navigator = Navigator.of(context);
+
                     setState(() {
                       _isSaving = true;
                     });
 
                     await _dbHelper.insertNote(_note);
 
-                    Navigator.pop(context, true); // 返回管理页面，数据发生变化
+                    // 检查小部件是否仍然挂载
+                    if (mounted) {
+                      navigator.pop(true); // 返回管理页面，数据发生变化
+                    }
                   }
                 : null, // 设置为null禁用按钮
             child: Container(

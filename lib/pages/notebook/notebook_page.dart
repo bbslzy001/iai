@@ -95,7 +95,7 @@ class _NotebookPageContentState extends State<NotebookPageContent> {
                 note.noteTitle,
                 style: const TextStyle(fontSize: 20),
               ),
-              _buildStatusIndicator(note.noteStatus),
+              _buildStatusIndicator(context, note),
             ],
           ),
           onTap: () {
@@ -107,34 +107,16 @@ class _NotebookPageContentState extends State<NotebookPageContent> {
               }
             });
           },
-          onLongPress: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return Container(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      _buildStatusOption(note, -1, 'Undo'),
-                      _buildStatusOption(note, 0, 'Doing'),
-                      _buildStatusOption(note, 1, 'Done'),
-                    ],
-                  ),
-                );
-              },
-            );
-          },
         );
       },
     );
   }
 
-  Widget _buildStatusIndicator(int status) {
+  Widget _buildStatusIndicator(BuildContext context, Note note) {
     Color indicatorColor;
     String statusText;
 
-    switch (status) {
+    switch (note.noteStatus) {
       case -1:
         indicatorColor = Colors.yellow; // 设置Undo状态的颜色
         statusText = 'Undo';
@@ -152,28 +134,55 @@ class _NotebookPageContentState extends State<NotebookPageContent> {
         statusText = 'Unknown';
     }
 
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: indicatorColor,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Text(
-        statusText,
-        style: const TextStyle(color: Colors.white),
+    return GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  _buildStatusOption(context, note, -1, 'Undo'),
+                  _buildStatusOption(context, note, 0, 'Doing'),
+                  _buildStatusOption(context, note, 1, 'Done'),
+                ],
+              ),
+            );
+          },
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: indicatorColor,
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Text(
+          statusText,
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
     );
   }
 
-  Widget _buildStatusOption(Note note, int value, String text) {
+  Widget _buildStatusOption(BuildContext context, Note note, int value, String text) {
     return ListTile(
       title: Text(text),
       onTap: () async {
+        final navigator = Navigator.of(context);
+
         setState(() {
           note.noteStatus = value;
         });
-        _dbHelper.updateNote(note);
-        Navigator.of(context).pop();
+
+        await _dbHelper.updateNote(note);
+
+        // 检查小部件是否仍然挂载
+        if (mounted) {
+          navigator.pop(true); // 返回管理页面，数据发生变化
+        }
       },
     );
   }
