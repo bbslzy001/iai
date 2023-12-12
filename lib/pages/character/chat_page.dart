@@ -313,7 +313,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
   }
 
   Widget buildMessageWidget(BuildContext context, CacheMessage cacheMessage, bool isMe) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     final isText = cacheMessage.message.contentType == 'text';
 

@@ -5,6 +5,7 @@ import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/identity.dart';
 import 'package:iai/models/note.dart';
 import 'package:iai/utils/build_future_builder.dart';
+import 'package:iai/utils/my_color.dart';
 
 class NotebookPage extends StatefulWidget {
   final Identity identity;
@@ -43,7 +44,7 @@ class _NotebookPageState extends State<NotebookPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notebook: ${widget.identity.identityName}'),
+        title: Text(widget.identity.identityName),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -82,22 +83,14 @@ class _NotebookPageContentState extends State<NotebookPageContent> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
+
+    return ListView.separated(
       itemCount: widget.notes.length,
+      separatorBuilder: (context, index) => Divider(height: 8, thickness: 8, color: isLightMode ? MyLightModeColor.divider : MyDarkModeColor.divider),
       itemBuilder: (context, index) {
         Note note = widget.notes[index];
-        return ListTile(
-          key: ValueKey<int>(note.id!), // 使用note.id作为Key
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                note.noteTitle,
-                style: const TextStyle(fontSize: 20),
-              ),
-              _buildStatusIndicator(context, note),
-            ],
-          ),
+        return InkWell(
           onTap: () {
             Navigator.of(context).pushNamed('/note', arguments: {
               'note': note,
@@ -107,30 +100,60 @@ class _NotebookPageContentState extends State<NotebookPageContent> {
               }
             });
           },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      note.noteTitle,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    _buildStatusIndicator(context, note),
+                  ],
+                ),
+                const SizedBox(height: 8), // Add some space between title and content
+                Text(
+                  note.noteContent,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
   }
 
   Widget _buildStatusIndicator(BuildContext context, Note note) {
-    Color indicatorColor;
-    String statusText;
+    final Color foregroundColor;
+    final Color backgroundColor;
+    final String statusText;
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
 
     switch (note.noteStatus) {
-      case -1:
-        indicatorColor = Colors.yellow; // 设置Undo状态的颜色
+      case -1: // 设置Undo状态的颜色
+        foregroundColor = isLightMode ? MyLightModeColor.warningForeground : MyDarkModeColor.warningForeground;
+        backgroundColor = isLightMode ? MyLightModeColor.warningBackground : MyDarkModeColor.warningBackground;
         statusText = 'Undo';
         break;
-      case 0:
-        indicatorColor = Colors.blue; // 设置Doing状态的颜色
+      case 0: // 设置Doing状态的颜色
+        foregroundColor = isLightMode ? MyLightModeColor.primaryForeground : MyDarkModeColor.primaryForeground;
+        backgroundColor = isLightMode ? MyLightModeColor.primaryBackground : MyDarkModeColor.primaryBackground;
         statusText = 'Doing';
         break;
-      case 1:
-        indicatorColor = Colors.green; // 设置Done状态的颜色
+      case 1: // 设置Done状态的颜色
+        foregroundColor = isLightMode ? MyLightModeColor.successForeground : MyDarkModeColor.successForeground;
+        backgroundColor = isLightMode ? MyLightModeColor.successBackground : MyDarkModeColor.successBackground;
         statusText = 'Done';
         break;
-      default:
-        indicatorColor = Colors.grey; // 默认状态的颜色
+      default: // 默认状态的颜色
+        foregroundColor = isLightMode ? MyLightModeColor.infoForeground : MyDarkModeColor.infoForeground;
+        backgroundColor = isLightMode ? MyLightModeColor.infoBackground : MyDarkModeColor.infoBackground;
         statusText = 'Unknown';
     }
 
@@ -156,12 +179,12 @@ class _NotebookPageContentState extends State<NotebookPageContent> {
       child: Container(
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color: indicatorColor,
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Text(
           statusText,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: foregroundColor),
         ),
       ),
     );
