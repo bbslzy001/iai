@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+
 import 'package:iai/models/identity.dart';
 import 'package:iai/models/note.dart';
 import 'package:iai/models/scene.dart';
@@ -83,7 +84,7 @@ class MyAppRouter {
         return MaterialPageRoute(builder: (context) => NotePage(note: args['note']!));
       case '/editNote':
         final Map<String, dynamic> args = settings.arguments as Map<String, dynamic>;
-        return MaterialPageRoute(builder: (context) => EditNotePage(note: args['note']!, noteFeedbacks: args['noteFeedbacks']!));
+        return MaterialPageRoute(builder: (context) => EditNotePage(note: args['note']!));
     }
     return null;
   }

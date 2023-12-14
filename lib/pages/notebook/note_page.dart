@@ -19,33 +19,98 @@ class _NotePageState extends State<NotePage> {
 
   List<NoteFeedback>? _noteFeedbacks;
 
+  bool _isSaving = false;
+  bool _isUpdated = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.note.noteTitle),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pop(_isUpdated);
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.of(context).pushNamed('/editNote', arguments: {
-                'note': widget.note,
-                'noteFeedbacks': _noteFeedbacks ?? [],
-              }).then((result) {
-                if (result != null && result is bool && result) {
-                  setState(() {});
-                }
+              setState(() {
+                Navigator.of(context).pop(_isUpdated);
               });
             },
           ),
-        ],
+          title: Text(widget.note.noteTitle),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: _isSaving == false
+                  ? () async {
+                      final navigator = Navigator.of(context);
+
+                      final result = await showDialog<bool>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Delete Note'),
+                            content: const Text('Are you sure to delete this note?'),
+                            actions: [
+                              TextButton(
+                                child: const Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                              ),
+                              TextButton(
+                                child: const Text('Delete'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+
+                      if (result == true) {
+                        setState(() {
+                          _isSaving = true;
+                        });
+
+                        await _dbHelper.deleteNote(widget.note.id!);
+
+                        // 检查小部件是否仍然挂载
+                        if (mounted) {
+                          navigator.pop(true); // 返回管理页面，数据发生变化
+                        }
+                      }
+                    }
+                  : null,
+            ),
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: _isSaving == false
+                  ? () {
+                      Navigator.of(context).pushNamed('/editNote', arguments: {
+                        'note': widget.note,
+                      }).then((result) {
+                        if (result != null && result is bool && result) {
+                          setState(() {
+                            _isUpdated = true;
+                          });
+                        }
+                      });
+                    }
+                  : null,
+            ),
+          ],
+        ),
+        body: buildFutureBuilder([
+          _dbHelper.getNoteFeedbacksByNoteId(widget.note.id!),
+        ], (dataList) {
+          _noteFeedbacks = dataList[0];
+          return NotePageContent(note: widget.note, noteFeedbacks: _noteFeedbacks!);
+        }),
       ),
-      body: buildFutureBuilder([
-        _dbHelper.getNoteFeedbacksByNoteId(widget.note.id!),
-      ], (dataList) {
-        _noteFeedbacks = dataList[0];
-        return NotePageContent(note: widget.note, noteFeedbacks: _noteFeedbacks!);
-      }),
     );
   }
 }
@@ -63,11 +128,16 @@ class NotePageContent extends StatefulWidget {
 class _NotePageContentState extends State<NotePageContent> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(widget.note.noteContent),
-        for (var feedback in widget.noteFeedbacks) FeedbackWidget(feedback: feedback),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text(widget.note.noteContent),
+            for (var feedback in widget.noteFeedbacks) FeedbackWidget(feedback: feedback),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -49,7 +49,7 @@ class _ManageIdentityPageState extends State<ManageIdentityPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.pop(context, _isChanged);
+        Navigator.of(context).pop(_isChanged);
         return true;
       },
       child: Scaffold(

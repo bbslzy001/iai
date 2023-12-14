@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/note.dart';
 
@@ -12,28 +13,6 @@ class AddNotePage extends StatefulWidget {
 }
 
 class _AddNotePageState extends State<AddNotePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Note'),
-      ),
-      resizeToAvoidBottomInset: false, // 设置为false，禁止调整界面以避免底部被软键盘顶起
-      body: AddNotePageContent(identityId: widget.identityId),
-    );
-  }
-}
-
-class AddNotePageContent extends StatefulWidget {
-  final int identityId;
-
-  const AddNotePageContent({Key? key, required this.identityId}) : super(key: key);
-
-  @override
-  State<AddNotePageContent> createState() => _AddNotePageContentState();
-}
-
-class _AddNotePageContentState extends State<AddNotePageContent> {
   final _dbHelper = DatabaseHelper();
 
   final _note = Note(identityId: 0, noteTitle: '', noteContent: '', noteStatus: -1);
@@ -43,38 +22,13 @@ class _AddNotePageContentState extends State<AddNotePageContent> {
   Widget build(BuildContext context) {
     _note.identityId = widget.identityId;
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          TextFormField(
-            initialValue: _note.noteTitle,
-            decoration: const InputDecoration(
-              labelText: 'Title',
-              border: OutlineInputBorder(),
-            ),
-            onChanged: (value) {
-              setState(() {
-                _note.noteTitle = value;
-              });
-            },
-          ),
-          const SizedBox(height: 16.0),
-          TextFormField(
-            initialValue: _note.noteContent,
-            decoration: const InputDecoration(
-              labelText: 'Content',
-              border: OutlineInputBorder(),
-            ),
-            onChanged: (value) {
-              setState(() {
-                _note.noteContent = value;
-              });
-            },
-          ),
-          const SizedBox(height: 16.0),
-          FilledButton.tonal(
-            onPressed: (_note.noteTitle != '')
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Add Note'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.file_upload_outlined),
+            onPressed: (_note.noteTitle != '' && _isSaving == false)
                 ? () async {
                     final navigator = Navigator.of(context);
 
@@ -89,23 +43,45 @@ class _AddNotePageContentState extends State<AddNotePageContent> {
                       navigator.pop(true); // 返回管理页面，数据发生变化
                     }
                   }
-                : null, // 设置为null禁用按钮
-            child: Container(
-              width: 96,
-              height: 48,
-              alignment: Alignment.center,
-              child: _isSaving
-                  ? const SizedBox(
-                      width: 24.0, // 设置宽度
-                      height: 24.0, // 设置高度
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.0, // 设置线条粗细
-                      ),
-                    )
-                  : const Text('Finish'),
-            ),
+                : null, // 设置为null禁用按钮,
           ),
         ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextFormField(
+                initialValue: _note.noteTitle,
+                decoration: const InputDecoration(
+                  hintText: 'Title',
+                ),
+                maxLength: 50,
+                onChanged: (value) {
+                  setState(() {
+                    _note.noteTitle = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 8.0),
+              TextFormField(
+                initialValue: _note.noteContent,
+                decoration: const InputDecoration(
+                  hintText: 'Content',
+                  border: InputBorder.none, // 不显示横线
+                ),
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                onChanged: (value) {
+                  setState(() {
+                    _note.noteContent = value;
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
