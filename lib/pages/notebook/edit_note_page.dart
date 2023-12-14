@@ -9,7 +9,7 @@ class EditNotePage extends StatefulWidget {
   const EditNotePage({Key? key, required this.note}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _EditNotePageState();
+  State<EditNotePage> createState() => _EditNotePageState();
 }
 
 class _EditNotePageState extends State<EditNotePage> {

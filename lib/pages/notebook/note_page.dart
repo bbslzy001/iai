@@ -138,7 +138,16 @@ class _NotePageContentState extends State<NotePageContent> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(widget.note.noteContent),
-                  for (var feedback in widget.noteFeedbacks) FeedbackWidget(feedback: feedback),
+                  ListView.builder(
+                    shrinkWrap: true, // Important to wrap the ListView in SingleChildScrollView
+                    itemCount: widget.noteFeedbacks.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      var feedback = widget.noteFeedbacks[index];
+                      return ListTile(
+                        title: Text(feedback.contentText),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -148,27 +157,19 @@ class _NotePageContentState extends State<NotePageContent> {
             right: 16.0,
             child: FloatingActionButton(
               onPressed: () {
-                // 处理按钮点击事件
-                // 在这里添加您希望执行的操作
+                Navigator.of(context).pushNamed('/addReply', arguments: {
+                  'note': widget.note as Note,
+                }).then((result) {
+                  if (result != null && result is bool && result) {
+                    setState(() {});
+                  }
+                });
               },
               child: const Icon(Icons.add), // 按钮上显示的图标
             ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class FeedbackWidget extends StatelessWidget {
-  final NoteFeedback feedback;
-
-  const FeedbackWidget({Key? key, required this.feedback}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(feedback.contentText),
     );
   }
 }

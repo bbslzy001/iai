@@ -3,23 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/note.dart';
 import 'package:iai/models/notefeedback.dart';
-import 'package:iai/utils/build_future_builder.dart';
 
-class EditNotePage extends StatefulWidget {
+class AddReplyPage extends StatefulWidget {
   final Note note;
-  final List<NoteFeedback> noteFeedbacks;
 
-  const EditNotePage({Key? key, required this.note, required this.noteFeedbacks}) : super(key: key);
+  const AddReplyPage({Key? key, required this.note}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _EditNotePageState();
+  State<AddReplyPage> createState() => _AddReplyPageState();
 }
 
-class _EditNotePageState extends State<EditNotePage> {
+class _AddReplyPageState extends State<AddReplyPage> {
   final _dbHelper = DatabaseHelper();
+
+  bool _isSaving = false;
+
+  String contentType = 'text';
 
   @override
   Widget build(BuildContext context) {
+    final noteFeedback = NoteFeedback(
+      noteId: widget.note.id!,
+      contentType: '',
+      contentText: '',
+      contentImage: '',
+      contentVideo: '',
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.note.noteTitle),
@@ -33,130 +43,82 @@ class _EditNotePageState extends State<EditNotePage> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () async {
-              await _dbHelper.updateNote(widget.note);
-              for (final feedback in widget.noteFeedbacks) {
-                await _dbHelper.updateNoteFeedback(feedback);
-              }
-              Navigator.pop(context, true);
-            },
+            icon: const Icon(Icons.send),
+            onPressed: _isSaving == false
+                ? () async {
+                    final navigator = Navigator.of(context);
+
+                    setState(() {
+                      _isSaving = true;
+                    });
+
+                    await _dbHelper.insertNoteFeedback(noteFeedback);
+
+                    if (mounted) {
+                      navigator.pop(true);
+                    }
+                  }
+                : null,
           ),
         ],
       ),
-      body: widget.noteFeedbacks.isEmpty
-          ? buildFutureBuilder([
-        _dbHelper.getNoteFeedbacksByNoteId(widget.note.id!),
-      ],
-            (dataList) {
-          final noteFeedbacks = dataList[0];
-          return EditNoteContentPage(note: widget.note, noteFeedbacks: noteFeedbacks);
-        },
-      )
-          : EditNoteContentPage(note: widget.note, noteFeedbacks: widget.noteFeedbacks),
-    );
-  }
-}
-
-class EditNoteContentPage extends StatefulWidget {
-  final Note note;
-  final List<NoteFeedback> noteFeedbacks;
-
-  const EditNoteContentPage({Key? key, required this.note, required this.noteFeedbacks}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() => _EditNoteContentPageState();
-}
-
-class _EditNoteContentPageState extends State<EditNoteContentPage> {
-  final _dbHelper = DatabaseHelper();
-
-  final _textController = TextEditingController();
-
-  final _imageController = TextEditingController();
-
-  final _videoController = TextEditingController();
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _textController.text = widget.note.noteContent;
-  //   _imageController.text = widget.note.noteImage;
-  //   _videoController.text = widget.note.noteVideo;
-  // }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Expanded(
-        //   child: ListView(
-        //     padding: const EdgeInsets.all(16),
-        //     children: [
-        //       TextField(
-        //         controller: _textController,
-        //         decoration: const InputDecoration(
-        //           labelText: '笔记内容',
-        //           hintText: '请输入笔记内容',
-        //         ),
-        //         maxLines: 5,
-        //         maxLength: 1000,
-        //         onChanged: (value) {
-        //           widget.note.noteContent = value;
-        //         },
-        //       ),
-        //       TextField(
-        //         controller: _imageController,
-        //         decoration: const InputDecoration(
-        //           labelText: '笔记图片',
-        //           hintText: '请输入笔记图片',
-        //         ),
-        //         maxLines: 1,
-        //         maxLength: 1000,
-        //         onChanged: (value) {
-        //           widget.note.noteImage = value;
-        //         },
-        //       ),
-        //       TextField(
-        //         controller: _videoController,
-        //         decoration: const InputDecoration(
-        //           labelText: '笔记视频',
-        //           hintText: '请输入笔记视频',
-        //         ),
-        //         maxLines: 1,
-        //         maxLength: 1000,
-        //         onChanged: (value) {
-        //           widget.note.noteVideo = value;
-        //         },
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        // Row(
-        //   children: [
-        //     Expanded(
-        //       child: TextButton(
-        //         onPressed: () async {
-        //           widget.note.noteStatus = 0;
-        //           await _dbHelper.updateNoteStatus(widget.note);
-        //           Navigator.pop(context, true);
-        //         },
-        //         child: const Text('暂存'),
-        //       ),
-        //     ),
-        //     Expanded(
-        //       child: TextButton(
-        //         onPressed: () async {
-        //           widget.note.noteStatus = 1;
-        //           await _dbHelper.updateNoteStatus(widget.note);
-        //           Navigator.pop(context, true);
-        //         },
-        //         child: const Text('发布'),
-        //       ),
-        //     ),
-        //   ],
-        // ),
-      ],
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: () {
+          if (contentType == 'text') {
+            return TextFormField(
+              initialValue: noteFeedback.contentText,
+              decoration: const InputDecoration(
+                hintText: 'Reply',
+              ),
+              onChanged: (value) {
+                setState(() {
+                  noteFeedback.contentText = value;
+                });
+              },
+            );
+          } else if (contentType == 'image') {
+            return InkWell(
+              onTap: () {
+                //selectPictures();
+              },
+              child: Container(
+                color: Color(0xFFF0F0F0),
+                child: Center(
+                  child: Icon(
+                    Icons.add,
+                  ),
+                ),
+              ),
+            );
+            return TextFormField(
+              initialValue: noteFeedback.contentImage,
+              decoration: const InputDecoration(
+                hintText: 'Reply',
+              ),
+              onChanged: (value) {
+                setState(() {
+                  noteFeedback.contentImage = value;
+                });
+              },
+            );
+          } else if (contentType == 'video') {
+            return TextFormField(
+              initialValue: noteFeedback.contentVideo,
+              decoration: const InputDecoration(
+                hintText: 'Reply',
+              ),
+              onChanged: (value) {
+                setState(() {
+                  noteFeedback.contentVideo = value;
+                });
+              },
+            );
+          } else {
+            return Container(); // Return a default widget if contentType is not recognized
+          }
+        }(),
+      ),
     );
   }
 }
