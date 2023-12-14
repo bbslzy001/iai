@@ -20,7 +20,7 @@ class FileDirectoryManager {
 
   Future<void> initialize() async {
     final appDocDir = await getApplicationDocumentsDirectory(); // 获取应用文档目录
-    fileDirectory = '${appDocDir.path}/idata';
+    fileDirectory = '${appDocDir.path}/cdata'; // common data
     await Directory(fileDirectory).create(recursive: true); // 创建文件夹
   }
 }
@@ -66,7 +66,7 @@ class FileHelper {
   }
 
   static Future<String> _saveFileBytes(Uint8List fileBytes) async {
-    final fileName = '${DateTime.now().millisecondsSinceEpoch}.txt';
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.common';
     await File('${FileDirectoryManager().fileDirectory}/$fileName').writeAsBytes(fileBytes); // 保存文件到文档目录
     return fileName;
   }

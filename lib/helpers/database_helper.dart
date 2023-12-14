@@ -2,17 +2,16 @@
 
 import 'dart:io';
 
-import 'package:iai/models/identity.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
 
+import 'package:iai/models/identity.dart';
 import 'package:iai/models/message.dart';
 import 'package:iai/models/note.dart';
+import 'package:iai/models/notefeedback.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
-import 'package:iai/models/notefeedback.dart';
 
-// TODO: 提供级联删除
 class DatabaseHelper {
   static const _databaseName = "iai.db";
   static const _databaseVersion = 1;
@@ -45,7 +44,18 @@ class DatabaseHelper {
   _initDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = '${documentsDirectory.path}/$_databaseName';
-    return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
+    return await openDatabase(
+      path,
+      version: _databaseVersion,
+      onCreate: _onCreate,
+      onConfigure: _onConfigure,
+    );
+  }
+
+  // 设置外键支持
+  Future<void> _onConfigure(Database db) async {
+    // 启用外键支持
+    await db.execute('PRAGMA foreign_keys = ON');
   }
 
   // SQL code to create the database tables
@@ -60,7 +70,8 @@ class DatabaseHelper {
         contentType TEXT NOT NULL,
         contentText TEXT NOT NULL,
         contentImage TEXT NOT NULL,
-        contentVideo TEXT NOT NULL
+        contentVideo TEXT NOT NULL,
+        FOREIGN KEY (sceneId) REFERENCES scene (id) ON DELETE CASCADE
       )
     ''');
 
@@ -71,7 +82,9 @@ class DatabaseHelper {
         sceneName TEXT NOT NULL,
         backgroundImage TEXT NOT NULL,
         user1Id INTEGER NOT NULL,
-        user2Id INTEGER NOT NULL
+        user2Id INTEGER NOT NULL,
+        FOREIGN KEY (user1Id) REFERENCES user (id) ON DELETE CASCADE,
+        FOREIGN KEY (user2Id) REFERENCES user (id) ON DELETE CASCADE
       )
     ''');
 
@@ -102,7 +115,8 @@ class DatabaseHelper {
         identityId INTEGER NOT NULL,
         noteTitle TEXT NOT NULL,
         noteContent TEXT NOT NULL,
-        noteStatus INTEGER NOT NULL
+        noteStatus INTEGER NOT NULL,
+        FOREIGN KEY (identityId) REFERENCES identity (id) ON DELETE CASCADE
       )
     ''');
 
@@ -114,7 +128,8 @@ class DatabaseHelper {
         contentType TEXT NOT NULL,
         contentText TEXT NOT NULL,
         contentImage TEXT NOT NULL,
-        contentVideo TEXT NOT NULL
+        contentVideo TEXT NOT NULL,
+        FOREIGN KEY (noteId) REFERENCES note (id) ON DELETE CASCADE
       )
     ''');
   }
