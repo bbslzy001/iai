@@ -129,14 +129,32 @@ class _NotePageContentState extends State<NotePageContent> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Text(widget.note.noteContent),
-            for (var feedback in widget.noteFeedbacks) FeedbackWidget(feedback: feedback),
-          ],
-        ),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(widget.note.noteContent),
+                  for (var feedback in widget.noteFeedbacks) FeedbackWidget(feedback: feedback),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 16.0,
+            right: 16.0,
+            child: FloatingActionButton(
+              onPressed: () {
+                // 处理按钮点击事件
+                // 在这里添加您希望执行的操作
+              },
+              child: const Icon(Icons.add), // 按钮上显示的图标
+            ),
+          ),
+        ],
       ),
     );
   }
