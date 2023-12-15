@@ -1,15 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-
 import 'package:iai/helpers/database_helper.dart';
+import 'package:iai/helpers/file_helper.dart';
 import 'package:iai/models/note.dart';
 import 'package:iai/models/notefeedback.dart';
 import 'package:iai/utils/build_future_builder.dart';
 import 'package:iai/widgets/expandable_floating_action_button.dart';
-import 'package:iai/helpers/file_helper.dart';
 import 'package:iai/widgets/media_message_shower.dart';
+import 'package:image_picker/image_picker.dart';
 
 class NotePage extends StatefulWidget {
   final Note note;
@@ -141,7 +140,7 @@ class _NotePageState extends State<NotePage> {
           future: _noteFeedbacksFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-              _cacheNoteFeedbacks ??= snapshot.data!.map((noteFeedback) => CacheNoteFeedback(noteFeedback)).toList();  // 确保数据已经加载完成
+              _cacheNoteFeedbacks ??= snapshot.data!.map((noteFeedback) => CacheNoteFeedback(noteFeedback)).toList(); // 确保数据已经加载完成
               return ExpandableFab(
                 distance: 80,
                 children: [
@@ -282,28 +281,24 @@ class _NotePageContentState extends State<NotePageContent> {
     return Stack(
       children: [
         Positioned.fill(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                  child: Text(widget.note.noteContent),
+          child: ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: Text(widget.note.noteContent),
+              ),
+              Visibility(
+                visible: widget.note.noteContent.isNotEmpty,
+                child: const Divider(height: 1, thickness: 1),
+              ),
+              for (int index = 0; index < widget.cacheNoteFeedbacks.length; index++)
+                Column(
+                  children: [
+                    _buildNoteFeedbackWidget(widget.cacheNoteFeedbacks[index]),
+                    if (index < widget.cacheNoteFeedbacks.length - 1) const Divider(height: 1, thickness: 1),
+                  ],
                 ),
-                Visibility(
-                  visible: widget.note.noteContent.isNotEmpty,
-                  child: const Divider(),
-                ),
-                ListView.separated(
-                  shrinkWrap: true, // Important to wrap the ListView in SingleChildScrollView
-                  separatorBuilder: (context, index) => const Divider(height: 1, thickness: 1),
-                  itemCount: widget.cacheNoteFeedbacks.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return _buildNoteFeedbackWidget(widget.cacheNoteFeedbacks[index]);
-                  },
-                ),
-              ],
-            ),
+            ],
           ),
         ),
       ],
@@ -314,11 +309,12 @@ class _NotePageContentState extends State<NotePageContent> {
     final noteFeedback = cacheNoteFeedback.noteFeedback;
 
     return ListTile(
-      title: Text(noteFeedback.contentText),
-      subtitle: noteFeedback.contentType != 'text' ? _buildMediaReplyWidget(cacheNoteFeedback):null,
+      contentPadding: const EdgeInsets.only(left: 16.0, right: 0), // 调整水平内边距
+      title: noteFeedback.contentText.isNotEmpty ? Text(noteFeedback.contentText) : null,
+      subtitle: noteFeedback.contentType != 'text' ? _buildMediaReplyWidget(cacheNoteFeedback) : null,
       trailing: PopupMenuButton<String>(
-        onSelected: (value)  async {
-          if (value == 'delete')  {
+        onSelected: (value) async {
+          if (value == 'delete') {
             setState(() {
               widget.cacheNoteFeedbacks.remove(cacheNoteFeedback);
             });
