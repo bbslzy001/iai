@@ -334,19 +334,20 @@ class _NotePageContentState extends State<NotePageContent> {
   Widget _buildMediaReplyWidget(CacheNoteFeedback cacheNoteFeedback) {
     final noteFeedback = cacheNoteFeedback.noteFeedback;
 
-    if (noteFeedback.contentType == 'image') {
-      if (noteFeedback.contentImage.isNotEmpty) {
-        return MyMediaShower(height: 160, image: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback));
-      } else {
-        return MyMediaShower(height: 160, imageFile: cacheNoteFeedback.imageFile, key: ObjectKey(cacheNoteFeedback));
-      }
-    } else {
-      if (noteFeedback.contentVideo.isNotEmpty) {
-        return MyMediaShower(height: 160, video: noteFeedback.contentVideo, videoThumbnail: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback));
-      } else {
-        return MyMediaShower(height: 160, videoThumbnailFile: cacheNoteFeedback.videoThumbnailFile, videoFile: cacheNoteFeedback.videoFile, key: ObjectKey(cacheNoteFeedback));
-      }
-    }
+    return SizedBox(
+      height: 160.0,
+      child: FittedBox(
+        fit: BoxFit.contain,
+        alignment: Alignment.centerLeft,
+        child: noteFeedback.contentType == 'image'
+            ? noteFeedback.contentImage.isNotEmpty
+                ? MyMediaShower(image: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback))
+                : MyMediaShower(imageFile: cacheNoteFeedback.imageFile, key: ObjectKey(cacheNoteFeedback))
+            : noteFeedback.contentVideo.isNotEmpty
+                ? MyMediaShower(video: noteFeedback.contentVideo, videoThumbnail: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback))
+                : MyMediaShower(videoThumbnailFile: cacheNoteFeedback.videoThumbnailFile, videoFile: cacheNoteFeedback.videoFile, key: ObjectKey(cacheNoteFeedback)),
+      ),
+    );
   }
 }
 

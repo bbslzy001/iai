@@ -1,12 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
 import 'package:iai/helpers/file_helper.dart';
 
 class MyMediaShower extends StatefulWidget {
-  final double? width;
-  final double? height;
   final BoxFit fit;
   final String? image;
   final String? videoThumbnail;
@@ -19,8 +16,6 @@ class MyMediaShower extends StatefulWidget {
 
   const MyMediaShower({
     Key? key,
-    this.width,
-    this.height,
     this.fit = BoxFit.cover,
     this.image,
     this.videoThumbnail,
@@ -81,11 +76,9 @@ class _MyMediaShowerState extends State<MyMediaShower> {
         widget.videoThumbnailFile == null &&
         widget.videoFile == null &&
         widget.defaultPicture != null) {
-      return _buildMediaContainer(
-        Image.asset(
-          widget.defaultPicture!,
-          fit: widget.fit,
-        ),
+      return Image.asset(
+        widget.defaultPicture!,
+        fit: widget.fit,
       );
     }
 
@@ -146,11 +139,11 @@ class _MyMediaShowerState extends State<MyMediaShower> {
           // ObjectKey是一个用于创建一个基于对象的键（key）的类。
           // 在Flutter中，ObjectKey通常用于为具有唯一身份的对象生成全局唯一的标识符，以便在构建小部件树时，框架可以识别它们。
           tag: ObjectKey(imageFile), // 使用相同的tag以便Flutter知道这两个Hero是相关联的
-          child: _buildMediaContainer(imageWidget),
+          child: imageWidget,
         ),
       );
     } else {
-      return _buildMediaContainer(imageWidget);
+      return imageWidget;
     }
   }
 
@@ -182,41 +175,11 @@ class _MyMediaShowerState extends State<MyMediaShower> {
         },
         child: Hero(
           tag: ObjectKey(videoThumbnailFile),
-          child: _buildMediaContainer(videoWidget),
+          child: videoWidget,
         ),
       );
     } else {
-      return _buildMediaContainer(videoWidget);
-    }
-  }
-
-  Widget _buildMediaContainer(Widget child) {
-    if (widget.width != null && widget.height != null) {
-      // 如果同时指定了宽度和高度，则返回指定宽高的SizedBox
-      return SizedBox(
-        width: widget.width,
-        height: widget.height,
-        child: FittedBox(
-          fit: BoxFit.contain,
-          alignment: Alignment.centerLeft, // 通过Alignment指定对齐方式
-          child: child,
-        ),
-      );
-    } else if (widget.width != null || widget.height != null) {
-      return SizedBox(
-        width: widget.width,
-        height: widget.height,
-        child: FittedBox(
-          fit: BoxFit.contain,
-          alignment: Alignment.centerLeft, // 通过Alignment指定对齐方式
-          child: child,
-        ),
-      );
-    } else {
-      // 如果没有指定宽度和高度，则返回占满父容器的SizedBox
-      return SizedBox.expand(
-        child: child,
-      );
+      return videoWidget;
     }
   }
 }
