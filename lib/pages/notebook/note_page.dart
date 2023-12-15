@@ -7,7 +7,7 @@ import 'package:iai/models/note.dart';
 import 'package:iai/models/notefeedback.dart';
 import 'package:iai/utils/build_future_builder.dart';
 import 'package:iai/widgets/expandable_floating_action_button.dart';
-import 'package:iai/widgets/media_message_shower.dart';
+import 'package:iai/widgets/media_shower.dart';
 import 'package:image_picker/image_picker.dart';
 
 class NotePage extends StatefulWidget {
@@ -336,15 +336,15 @@ class _NotePageContentState extends State<NotePageContent> {
 
     if (noteFeedback.contentType == 'image') {
       if (noteFeedback.contentImage.isNotEmpty) {
-        return MyMediaMessageShower(image: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback));
+        return MyMediaShower(height: 160, image: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback));
       } else {
-        return MyMediaMessageShower(imageFile: cacheNoteFeedback.imageFile, key: ObjectKey(cacheNoteFeedback));
+        return MyMediaShower(height: 160, imageFile: cacheNoteFeedback.imageFile, key: ObjectKey(cacheNoteFeedback));
       }
     } else {
       if (noteFeedback.contentVideo.isNotEmpty) {
-        return MyMediaMessageShower(video: noteFeedback.contentVideo, videoThumbnail: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback));
+        return MyMediaShower(height: 160, video: noteFeedback.contentVideo, videoThumbnail: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback));
       } else {
-        return MyMediaMessageShower(videoThumbnailFile: cacheNoteFeedback.videoThumbnailFile, videoFile: cacheNoteFeedback.videoFile, key: ObjectKey(cacheNoteFeedback));
+        return MyMediaShower(height: 160, videoThumbnailFile: cacheNoteFeedback.videoThumbnailFile, videoFile: cacheNoteFeedback.videoFile, key: ObjectKey(cacheNoteFeedback));
       }
     }
   }

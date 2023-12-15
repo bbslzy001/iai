@@ -12,7 +12,7 @@ import 'package:iai/models/scene.dart';
 import 'package:iai/models/user.dart';
 import 'package:iai/utils/build_future_builder.dart';
 import 'package:iai/utils/avatar_provider.dart';
-import 'package:iai/widgets/media_message_shower.dart';
+import 'package:iai/widgets/media_shower.dart';
 
 class ChatPage extends StatefulWidget {
   final Scene scene;
@@ -346,15 +346,15 @@ class _ChatPageContentState extends State<ChatPageContent> {
 
     if (message.contentType == 'image') {
       if (message.contentImage.isNotEmpty) {
-        return MyMediaMessageShower(image: message.contentImage, key: ObjectKey(cacheMessage));
+        return MyMediaShower(image: message.contentImage, key: ObjectKey(cacheMessage));
       } else {
-        return MyMediaMessageShower(imageFile: cacheMessage.imageFile!, key: ObjectKey(cacheMessage));
+        return MyMediaShower(imageFile: cacheMessage.imageFile!, key: ObjectKey(cacheMessage));
       }
     } else {
       if (message.contentVideo.isNotEmpty) {
-        return MyMediaMessageShower(video: message.contentVideo, videoThumbnail: message.contentImage, key: ObjectKey(cacheMessage));
+        return MyMediaShower(video: message.contentVideo, videoThumbnail: message.contentImage, key: ObjectKey(cacheMessage));
       } else {
-        return MyMediaMessageShower(videoThumbnailFile: cacheMessage.videoThumbnailFile, videoFile: cacheMessage.videoFile, key: ObjectKey(cacheMessage));
+        return MyMediaShower(videoThumbnailFile: cacheMessage.videoThumbnailFile, videoFile: cacheMessage.videoFile, key: ObjectKey(cacheMessage));
       }
     }
   }
