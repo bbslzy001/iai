@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/scene.dart';
 import 'package:iai/utils/build_future_builder.dart';
-import 'package:iai/widgets/image_shower.dart';
+import 'package:iai/widgets/media_shower.dart';
 
 class CharacterPage extends StatefulWidget {
   const CharacterPage({Key? key}) : super(key: key);
@@ -171,9 +171,12 @@ class _CharacterPageContentState extends State<CharacterPageContent> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
-                            child: MyImageShower(
-                              image: scene.backgroundImage,
-                              defaultImage: 'assets/images/scene.png',
+                            child: SizedBox.expand(
+                              child: MyMediaShower(
+                                image: scene.backgroundImage,
+                                defaultPicture: 'assets/images/scene.png',
+                                clickable: false,
+                              ),
                             ),
                           ),
                         ),

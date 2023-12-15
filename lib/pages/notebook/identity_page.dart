@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/identity.dart';
 import 'package:iai/utils/build_future_builder.dart';
-import 'package:iai/widgets/image_shower.dart';
+import 'package:iai/widgets/media_shower.dart';
 
 class IdentityPage extends StatefulWidget {
   const IdentityPage({Key? key}) : super(key: key);
@@ -170,9 +170,12 @@ class _IdentityPageContentState extends State<IdentityPageContent> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
-                            child: MyImageShower(
-                              image: identity.backgroundImage,
-                              defaultImage: 'assets/images/identity.png',
+                            child: SizedBox.expand(
+                              child: MyMediaShower(
+                                image: identity.backgroundImage,
+                                defaultPicture: 'assets/images/identity.png',
+                                clickable: false,
+                              ),
                             ),
                           ),
                         ),

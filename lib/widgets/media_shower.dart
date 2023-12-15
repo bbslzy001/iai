@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+
 import 'package:iai/helpers/file_helper.dart';
 
 class MyMediaShower extends StatefulWidget {
@@ -11,7 +12,7 @@ class MyMediaShower extends StatefulWidget {
   final File? imageFile;
   final File? videoThumbnailFile;
   final File? videoFile;
-  final String? defaultPicture;
+  final String defaultPicture;
   final bool clickable;
 
   const MyMediaShower({
@@ -23,7 +24,7 @@ class MyMediaShower extends StatefulWidget {
     this.imageFile,
     this.videoThumbnailFile,
     this.videoFile,
-    this.defaultPicture,
+    this.defaultPicture = '',
     this.clickable = true,
   }) : super(key: key);
 
@@ -69,19 +70,6 @@ class _MyMediaShowerState extends State<MyMediaShower> {
       _videoFuture = _getVideoFuture();
     }
 
-    if (widget.image == null &&
-        widget.videoThumbnail == null &&
-        widget.video == null &&
-        widget.imageFile == null &&
-        widget.videoThumbnailFile == null &&
-        widget.videoFile == null &&
-        widget.defaultPicture != null) {
-      return Image.asset(
-        widget.defaultPicture!,
-        fit: widget.fit,
-      );
-    }
-
     return FutureBuilder(
       future: _isImage ? Future.wait([_imageFuture!]) : Future.wait([_videoThumbnailFuture!, _videoFuture!]),
       builder: (context, snapshot) {
@@ -100,11 +88,18 @@ class _MyMediaShowerState extends State<MyMediaShower> {
               return _buildVideo(context, videoThumbnailFile, videoFile, colorScheme.primary);
             }
           }
-          return Container(
-            alignment: Alignment.center,
-            color: colorScheme.primaryContainer,
-            child: const Text('Error: File not found'),
-          );
+          if (widget.defaultPicture.isNotEmpty) {
+            return Image.asset(
+              widget.defaultPicture,
+              fit: widget.fit,
+            );
+          } else {
+            return Container(
+              alignment: Alignment.center,
+              color: colorScheme.primaryContainer,
+              child: const Text('Error: File not found'),
+            );
+          }
         } else if (snapshot.hasError) {
           // 如果发生错误，显示错误信息
           return Container(

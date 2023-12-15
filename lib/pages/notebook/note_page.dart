@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/helpers/file_helper.dart';
 import 'package:iai/models/note.dart';
@@ -8,7 +10,6 @@ import 'package:iai/models/notefeedback.dart';
 import 'package:iai/utils/build_future_builder.dart';
 import 'package:iai/widgets/expandable_floating_action_button.dart';
 import 'package:iai/widgets/media_shower.dart';
-import 'package:image_picker/image_picker.dart';
 
 class NotePage extends StatefulWidget {
   final Note note;
@@ -334,18 +335,18 @@ class _NotePageContentState extends State<NotePageContent> {
   Widget _buildMediaReplyWidget(CacheNoteFeedback cacheNoteFeedback) {
     final noteFeedback = cacheNoteFeedback.noteFeedback;
 
-    return SizedBox(
-      height: 160.0,
-      child: FittedBox(
-        fit: BoxFit.contain,
-        alignment: Alignment.centerLeft,
+    return Container(
+      alignment: Alignment.centerLeft,
+      child: SizedBox(
+        height: 160.0,
+        width: 160.0,
         child: noteFeedback.contentType == 'image'
             ? noteFeedback.contentImage.isNotEmpty
-                ? MyMediaShower(image: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback))
-                : MyMediaShower(imageFile: cacheNoteFeedback.imageFile, key: ObjectKey(cacheNoteFeedback))
+            ? MyMediaShower(image: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback))
+            : MyMediaShower(imageFile: cacheNoteFeedback.imageFile, key: ObjectKey(cacheNoteFeedback))
             : noteFeedback.contentVideo.isNotEmpty
-                ? MyMediaShower(video: noteFeedback.contentVideo, videoThumbnail: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback))
-                : MyMediaShower(videoThumbnailFile: cacheNoteFeedback.videoThumbnailFile, videoFile: cacheNoteFeedback.videoFile, key: ObjectKey(cacheNoteFeedback)),
+            ? MyMediaShower(video: noteFeedback.contentVideo, videoThumbnail: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback))
+            : MyMediaShower(videoThumbnailFile: cacheNoteFeedback.videoThumbnailFile, videoFile: cacheNoteFeedback.videoFile, key: ObjectKey(cacheNoteFeedback)),
       ),
     );
   }

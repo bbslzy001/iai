@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:iai/models/scene.dart';
-import 'package:iai/widgets/image_shower.dart';
+import 'package:iai/widgets/media_shower.dart';
 
 class ScenePage extends StatefulWidget {
   final Scene scene;
@@ -45,9 +45,12 @@ class _ScenePageState extends State<ScenePage> {
                   height: screenHeight * 0.2,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20.0), // Adjust the value as needed
-                    child: MyImageShower(
-                      image: widget.scene.backgroundImage,
-                      defaultImage: 'assets/images/scene.png',
+                    child: SizedBox.expand(
+                      child: MyMediaShower(
+                        image: widget.scene.backgroundImage,
+                        defaultPicture: 'assets/images/scene.png',
+                        clickable: false,
+                      ),
                     ),
                   ),
                 ),

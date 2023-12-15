@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:iai/models/user.dart';
-import 'package:iai/widgets/image_shower.dart';
+import 'package:iai/widgets/media_shower.dart';
 
 class UserPage extends StatefulWidget {
   final User user;
@@ -45,9 +45,12 @@ class _UserPageState extends State<UserPage> {
                   height: screenHeight * 0.2,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20.0), // Adjust the value as needed
-                    child: MyImageShower(
-                      image: widget.user.backgroundImage,
-                      defaultImage: 'assets/images/user.png',
+                    child: SizedBox.expand(
+                      child: MyMediaShower(
+                        image: widget.user.backgroundImage,
+                        defaultPicture: 'assets/images/user.png',
+                        clickable: false,
+                      ),
                     ),
                   ),
                 ),
