@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:iai/helpers/database_helper.dart';
 import 'package:iai/models/note.dart';
 import 'package:iai/models/notefeedback.dart';
 import 'package:iai/utils/build_future_builder.dart';
+import 'package:iai/widgets/expandable_floating_action_button.dart';
+import 'package:iai/helpers/file_helper.dart';
+import 'package:iai/widgets/media_message_shower.dart';
 
 class NotePage extends StatefulWidget {
   final Note note;
@@ -17,10 +23,32 @@ class NotePage extends StatefulWidget {
 class _NotePageState extends State<NotePage> {
   final _dbHelper = DatabaseHelper();
 
-  List<NoteFeedback>? _noteFeedbacks;
+  List<CacheNoteFeedback>? _cacheNoteFeedbacks;
 
   bool _isSaving = false;
   bool _isUpdated = false;
+
+  late Future<List<NoteFeedback>> _noteFeedbacksFuture;
+
+  // 异步获取数据
+  Future<List<NoteFeedback>> _getNoteFeedbacksFuture() async {
+    return await _dbHelper.getNoteFeedbacksByNoteId(widget.note.id!);
+  }
+
+  // 第一次获取数据
+  @override
+  void initState() {
+    super.initState();
+    _noteFeedbacksFuture = _getNoteFeedbacksFuture();
+  }
+
+  // 重新获取数据，定义给子组件使用的回调函数
+  void updateStateCallback() {
+    // Future数据的状态从 completed 到 waiting，不需要手动设置为 null，FutureBuilder 会自动重新触发页面重新绘制
+    setState(() {
+      _noteFeedbacksFuture = _getNoteFeedbacksFuture();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,22 +132,145 @@ class _NotePageState extends State<NotePage> {
             ),
           ],
         ),
-        body: buildFutureBuilder([
-          _dbHelper.getNoteFeedbacksByNoteId(widget.note.id!),
-        ], (dataList) {
-          _noteFeedbacks = dataList[0];
-          return NotePageContent(note: widget.note, noteFeedbacks: _noteFeedbacks!);
+        body: buildFutureBuilder([_noteFeedbacksFuture], (dataList) {
+          final noteFeedbacks = dataList[0] as List<NoteFeedback>;
+          _cacheNoteFeedbacks ??= noteFeedbacks.map((noteFeedback) => CacheNoteFeedback(noteFeedback)).toList();
+          return NotePageContent(note: widget.note, cacheNoteFeedbacks: _cacheNoteFeedbacks!);
         }),
+        floatingActionButton: FutureBuilder(
+          future: _noteFeedbacksFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+              _cacheNoteFeedbacks ??= snapshot.data!.map((noteFeedback) => CacheNoteFeedback(noteFeedback)).toList();  // 确保数据已经加载完成
+              return ExpandableFab(
+                distance: 80,
+                children: [
+                  ActionButton(
+                    icon: const Icon(Icons.format_size),
+                    onPressed: () async {
+                      TextEditingController textController = TextEditingController();
+
+                      final result = await showDialog<String>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Reply...'),
+                            content: TextField(
+                              controller: textController,
+                              autofocus: true,
+                            ),
+                            actions: [
+                              TextButton(
+                                child: const Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.of(context).pop('');
+                                },
+                              ),
+                              TextButton(
+                                child: const Text('Finish'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(textController.text); // 传递输入内容
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+
+                      if (result != null && result.isNotEmpty) {
+                        _replyText(result);
+                      }
+                    },
+                  ),
+                  ActionButton(
+                    icon: const Icon(Icons.photo),
+                    onPressed: () async {
+                      XFile? pickedFile = await FileHelper.pickImageFromGallery();
+                      if (pickedFile != null) {
+                        File imageFile = File(pickedFile.path);
+                        _replyImage(imageFile);
+                      }
+                    },
+                  ),
+                  ActionButton(
+                    icon: const Icon(Icons.videocam),
+                    onPressed: () async {
+                      XFile? pickedFile = await FileHelper.pickVideoFromGallery();
+                      if (pickedFile != null) {
+                        File videoFile = File(pickedFile.path);
+                        _replyVideo(videoFile);
+                      }
+                    },
+                  ),
+                ],
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          },
+        ),
       ),
     );
+  }
+
+  void _replyText(String text) async {
+    final noteFeedback = NoteFeedback(
+      noteId: widget.note.id!,
+      contentType: 'text',
+      contentText: text,
+      contentImage: '',
+      contentVideo: '',
+    );
+    setState(() {
+      _cacheNoteFeedbacks!.add(CacheNoteFeedback(noteFeedback));
+    });
+    _dbHelper.insertNoteFeedback(noteFeedback);
+  }
+
+  void _replyImage(File imageFile) async {
+    final noteFeedback = NoteFeedback(
+      noteId: widget.note.id!,
+      contentType: 'image',
+      contentText: '',
+      contentImage: '',
+      contentVideo: '',
+    );
+    setState(() {
+      _cacheNoteFeedbacks!.add(CacheNoteFeedback(noteFeedback, imageFile: imageFile));
+    });
+    final fileName = await FileHelper.saveFile(imageFile);
+    noteFeedback.contentImage = fileName;
+    await _dbHelper.insertNoteFeedback(noteFeedback);
+  }
+
+  void _replyVideo(File videoFile) async {
+    final noteFeedback = NoteFeedback(
+      noteId: widget.note.id!,
+      contentType: 'video',
+      contentText: '',
+      contentImage: '',
+      contentVideo: '',
+    );
+    late final File thumbnailFile;
+    final thumbnailName = await FileHelper.saveThumbnail(videoFile);
+    if (thumbnailName.isNotEmpty) {
+      noteFeedback.contentImage = thumbnailName;
+      thumbnailFile = await FileHelper.getFile(thumbnailName);
+    }
+    setState(() {
+      _cacheNoteFeedbacks!.add(CacheNoteFeedback(noteFeedback, videoFile: videoFile, videoThumbnailFile: thumbnailFile));
+    });
+    final videoName = await FileHelper.saveFile(videoFile);
+    noteFeedback.contentVideo = videoName;
+    _dbHelper.insertNoteFeedback(noteFeedback);
   }
 }
 
 class NotePageContent extends StatefulWidget {
   final Note note;
-  final List<NoteFeedback> noteFeedbacks;
+  final List<CacheNoteFeedback> cacheNoteFeedbacks;
 
-  const NotePageContent({Key? key, required this.note, required this.noteFeedbacks}) : super(key: key);
+  const NotePageContent({Key? key, required this.note, required this.cacheNoteFeedbacks}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _NotePageContentState();
@@ -128,48 +279,86 @@ class NotePageContent extends StatefulWidget {
 class _NotePageContentState extends State<NotePageContent> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(widget.note.noteContent),
-                  ListView.builder(
-                    shrinkWrap: true, // Important to wrap the ListView in SingleChildScrollView
-                    itemCount: widget.noteFeedbacks.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      var feedback = widget.noteFeedbacks[index];
-                      return ListTile(
-                        title: Text(feedback.contentText),
-                      );
-                    },
-                  ),
-                ],
-              ),
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  child: Text(widget.note.noteContent),
+                ),
+                Visibility(
+                  visible: widget.note.noteContent.isNotEmpty,
+                  child: const Divider(),
+                ),
+                ListView.separated(
+                  shrinkWrap: true, // Important to wrap the ListView in SingleChildScrollView
+                  separatorBuilder: (context, index) => const Divider(height: 1, thickness: 1),
+                  itemCount: widget.cacheNoteFeedbacks.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return _buildNoteFeedbackWidget(widget.cacheNoteFeedbacks[index]);
+                  },
+                ),
+              ],
             ),
           ),
-          Positioned(
-            bottom: 16.0,
-            right: 16.0,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed('/addReply', arguments: {
-                  'note': widget.note as Note,
-                }).then((result) {
-                  if (result != null && result is bool && result) {
-                    setState(() {});
-                  }
-                });
-              },
-              child: const Icon(Icons.add), // 按钮上显示的图标
-            ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNoteFeedbackWidget(CacheNoteFeedback cacheNoteFeedback) {
+    final noteFeedback = cacheNoteFeedback.noteFeedback;
+
+    return ListTile(
+      title: Text(noteFeedback.contentText),
+      subtitle: noteFeedback.contentType != 'text' ? _buildMediaReplyWidget(cacheNoteFeedback):null,
+      trailing: PopupMenuButton<String>(
+        onSelected: (value)  async {
+          if (value == 'delete')  {
+            setState(() {
+              widget.cacheNoteFeedbacks.remove(cacheNoteFeedback);
+            });
+            await DatabaseHelper().deleteNoteFeedback(noteFeedback.id!);
+          }
+        },
+        itemBuilder: (context) => [
+          const PopupMenuItem<String>(
+            value: 'delete',
+            child: Text('Delete'),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildMediaReplyWidget(CacheNoteFeedback cacheNoteFeedback) {
+    final noteFeedback = cacheNoteFeedback.noteFeedback;
+
+    if (noteFeedback.contentType == 'image') {
+      if (noteFeedback.contentImage.isNotEmpty) {
+        return MyMediaMessageShower(image: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback));
+      } else {
+        return MyMediaMessageShower(imageFile: cacheNoteFeedback.imageFile, key: ObjectKey(cacheNoteFeedback));
+      }
+    } else {
+      if (noteFeedback.contentVideo.isNotEmpty) {
+        return MyMediaMessageShower(video: noteFeedback.contentVideo, videoThumbnail: noteFeedback.contentImage, key: ObjectKey(cacheNoteFeedback));
+      } else {
+        return MyMediaMessageShower(videoThumbnailFile: cacheNoteFeedback.videoThumbnailFile, videoFile: cacheNoteFeedback.videoFile, key: ObjectKey(cacheNoteFeedback));
+      }
+    }
+  }
+}
+
+class CacheNoteFeedback {
+  final NoteFeedback noteFeedback;
+  final File? imageFile;
+  final File? videoThumbnailFile;
+  final File? videoFile;
+
+  CacheNoteFeedback(this.noteFeedback, {this.imageFile, this.videoThumbnailFile, this.videoFile});
 }

@@ -20,7 +20,6 @@ import 'package:iai/pages/full_video_page.dart';
 import 'package:iai/pages/home_page.dart';
 import 'package:iai/pages/notebook/add_identity_page.dart';
 import 'package:iai/pages/notebook/add_note_page.dart';
-import 'package:iai/pages/notebook/add_reply_page.dart';
 import 'package:iai/pages/notebook/edit_identity_page.dart';
 import 'package:iai/pages/notebook/edit_note_page.dart';
 import 'package:iai/pages/notebook/identity_page.dart';
@@ -86,9 +85,6 @@ class MyAppRouter {
       case '/editNote':
         final Map<String, dynamic> args = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(builder: (context) => EditNotePage(note: args['note']!));
-      case '/addReply':
-        final Map<String, Note> args = settings.arguments as Map<String, Note>;
-        return MaterialPageRoute(builder: (context) => AddReplyPage(note: args['note']!));
     }
     return null;
   }

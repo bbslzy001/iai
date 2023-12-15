@@ -28,18 +28,16 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: buildFutureBuilder([
-        _dbHelper.getMessagesBySceneId(widget.scene.id!),
-        _dbHelper.getUserById(widget.scene.user1Id),
-        _dbHelper.getUserById(widget.scene.user2Id),
-      ], (dataList) {
-        final messages = dataList[0];
-        final user1 = dataList[1];
-        final user2 = dataList[2];
-        return ChatPageContent(sceneId: widget.scene.id!, messages: messages, user1: user1, user2: user2);
-      }),
-    );
+    return buildFutureBuilder([
+      _dbHelper.getMessagesBySceneId(widget.scene.id!),
+      _dbHelper.getUserById(widget.scene.user1Id),
+      _dbHelper.getUserById(widget.scene.user2Id),
+    ], (dataList) {
+      final messages = dataList[0];
+      final user1 = dataList[1];
+      final user2 = dataList[2];
+      return ChatPageContent(sceneId: widget.scene.id!, messages: messages, user1: user1, user2: user2);
+    });
   }
 }
 
@@ -73,7 +71,7 @@ class _ChatPageContentState extends State<ChatPageContent> {
   }
 
   void _sendTextMessage(String text) async {
-    Message message = Message(
+    final message = Message(
       sceneId: widget.sceneId,
       senderId: _currentUser.id!,
       receiverId: _oppositeUser.id!,
